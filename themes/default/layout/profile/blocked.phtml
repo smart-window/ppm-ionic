@@ -1,0 +1,45 @@
+<script>
+url = "blocked";
+</script>            
+    <?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+        <div class="col s2 real" style="padding-right: 0px;" >
+        <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+                echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+            }
+        ?>      
+        </div>
+        <div class="col s8 real mainContentBorderColor"  id="site-content" style="background: <?=$sm['theme']['search_card_wall']['val']; ?>;">
+    <?php } else { ?>
+        <div class="col s8 real fix-width-content mainContentBorderColor" style="padding-right: 0px;background: <?=$sm['theme']['search_card_wall']['val']; ?>;" id="site-content">
+    <?php } ?>
+
+    <?php if($sm['theme']['top_menu_wall_gradient']['val'] == 'Yes'){ ?>          
+        <div class="profile-menu top-menu-meet profile-menu-interactions <?=$sm['theme']['top_menu_wall_bg']['val']; ?>">
+    <?php } else { ?> 
+        <div class="profile-menu top-menu-meet profile-menu-interactions" style="background: <?=$sm['theme']['top_menu_wall_bg']['val']; ?>">
+    <?php } ?>
+        <ul>
+
+            <li class="vivify popIn selected"  style="padding-right: 45px;">
+                <?= $sm['lang'][707]['text']; ?> 
+            </li>            
+                                                             
+        </ul>
+    </div>
+    <div class="wall meetContent mainContentBorderColor" style="background: <?= $sm['theme']['search_card_wall']['val']; ?>;padding-left: 5%"> 
+        <?= myBlocks(); ?>
+        <?= getAbsolutePage('footer'); ?>                   
+    </div>
+</div>      
+
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    <div class="col s2 real" style="position: relative;">
+        <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+                echo '<div class="ad-zone-vertical" style="margin-left:79px;">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+            }
+        ?>  
+    </div>
+<?php }?>
+</div> 

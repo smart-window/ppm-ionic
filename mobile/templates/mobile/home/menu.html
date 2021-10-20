@@ -1,0 +1,118 @@
+    <ion-content style="background:#fff;top: 0;z-index: 9" class="slide-top"  >
+
+                <div class="page overlay-page menu visible slide-top"  style="width:{{menuWidth}}px;overflow-y: hidden">
+                    <div id="menu"  style="background: #fff" >
+                        <div class="menu-fade-section" scroll="true" style="height:{{menuHeight}}px;overflow-y: scroll;" >
+                            <div class="vertical three">
+                                <div class="menu-payments font-regular font-small">
+                                    <div class="menu-payment js-payment-overlay qa-paid-feature-status qa-spp" ng-click="openPremiumModal()">
+                                        <div class="menu-payment__name qa-paid-feature-status-title">{{alang[200].text}}</div>
+                                        <div class="font-medium menu-payment__value qa-payment-feature-value">{{premium}}</div>
+                                        <i class="icon-svg icon-svg--lg menu-payment__icon">
+                                            <svg class="icon-svg_">
+                                                <img src="img/spa.png" style="margin-left:15px;width: 23px; margin-top: 10px"/>
+                                            </svg>
+                                        </i>
+                                    </div>
+                                    <div class="menu-payment js-payment-overlay qa-paid-feature-status qa-popularity">
+                                        <div class="menu-payment__name qa-paid-feature-status-title">{{alang[201].text}}</div>
+                                        <div class="red-level font-medium menu-payment__value qa-payment-feature-value">{{alang[202].text}}</div>
+                                        <i class="icon-svg icon-svg--lg menu-payment__icon">
+                                            <svg class="icon-svg_">
+                                                <img src="img/popularity0.png" style="margin-left:15px;width: 23px;  margin-top: 10px"/>
+                                            </svg>
+                                        </i>
+                                    </div>
+                                    <div class="menu-payment js-payment-overlay qa-paid-feature-status qa-credits" ng-click="openCreditsModal()">
+                                        <div class="menu-payment__name qa-paid-feature-status-title">{{alang[203].text}}</div>
+                                        <div class="white-level font-medium menu-payment__value qa-payment-feature-value">{{me.credits}}</div>
+                                        <i class="icon-svg icon-svg--lg menu-payment__icon">
+                                            <svg class="icon-svg_">
+                                                <img src="img/icon-coins-sm.png" style="margin-left:15px;width: 23px;"/>
+                                            </svg>
+                                        </i>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div id="spotlight" >
+                                <div class="spotlight-heading">
+                                    <div class="spotlight-heading__title">{{alang[204].text}}!</div>{{alang[205].text}}!</div>
+                                <div class="spotlight-users">
+                                    <div class="spotlight-users__item spotlight-users__item--add js-spotlight-add-action js-spotlight-add-after-this">
+                                        <div class="brick">
+                                            <div class="brick__image"><img src="{{me.profile_photo}}" alt=""></div>
+                                            <div class="spotlight-ripple"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="spotlight-users__item" ng-repeat="p in spotlight track by $index">
+                                         <div class="brick" ng-click="openProfileModal({{p.id}},'{{p.name}}','{{p.photo}}',{{p.age}},'{{p.city}}')">
+                                            <div class="brick__image" style="background-image:url('{{trustPhoto(p.spotPhoto)}}');">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="js-spotlight-promo" style="display: none">
+                                    <div class="spotlight-promo spotlight-promo--visits">
+                                        <div class="spotlight-promo__title">8 times more visits</div>
+                                        <div class="spotlight-promo__description">To make your photo stand out in Belloo.</div>
+                                        <div class="spotlight-promo__actions">
+                                            <button class="button button--primary js-action-button js-touchable qa-button">
+                                                <div class="button__content"><span class="button__text" style="color: #fff">¡Destaca!</span></div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="menu-slide-section" data-view-id="88">
+                            <div class="menu-navigation" style="position: fixed;background:#7000E3">
+                                <div class="font-medium menu-navigation-item menu-navigation-item--profile  js-menu-link js-touchable qa-menu-link" ng-click="goTo('home.profile','left');" style="margin-top: 20px">
+                                    <div class="menu-navigation-item_">
+                                        <div class="brick menu-navigation-item__avatar">
+                                            <div class="brick__image"><img src="{{me.profile_photo}}"></div>
+                                        </div>
+                                        <div class="menu-navigation-item__name" style="font-size:11px;margin-top:5px">{{me.first_name}}</div>
+                                    </div>
+                                </div>
+                                <div class="font-medium menu-navigation-item js-menu-link js-touchable" ng-click="goTo('home.explore','left');"  style="margin-top: 40px">
+                                    <div class="menu-navigation-item_">
+                                        <img src="img/encuentro.png" width="25" height="25">
+                                      <div class="menu-navigation-item__name" style="color: #fff ; margin-top: 3px">{{alang[206].text}}</div>
+                                    </div>
+                                </div>
+                                <div class="font-medium menu-navigation-item js-menu-link js-touchable" ng-click="goTo('home.meet','left');">
+                                    <div class="menu-navigation-item_">
+                                      <img src="img/meet.png" width="25" height="25">
+                                      <div class="menu-navigation-item__name" style="color: #fff ; margin-top: 3px">{{alang[207].text}}</div>
+                                    </div>
+                                </div>
+                                <div class="font-medium menu-navigation-item js-menu-link js-touchable" ng-click="goTo('home.matches','left');">
+                                    <div class="menu-navigation-item_">
+                                      <img src="img/messages.png" width="25" height="25">
+                                      <div class="menu-navigation-item__name" style="color: #fff ; margin-top: 3px">{{alang[96].text}}</div>
+                                    </div>
+                                </div>
+
+                                <div class="font-medium menu-navigation-item js-menu-link js-touchable" ng-click="goTo('home.match','left');">
+                                    <div class="menu-navigation-item_">
+                                      <img src="img/liked.png" width="25" height="25">
+                                      <div class="menu-navigation-item__name" style="color: #fff ; margin-top: 3px">{{alang[39].text}}</div>
+                                        <mark class="mark mark--sm menu-navigation-item__counter"><span class="mark__text"></span></mark>
+                                    </div>
+                                </div>
+                                <div class="font-medium menu-navigation-item js-menu-link js-touchable" ng-click="goTo('home.visitors','left');">
+                                    <div class="menu-navigation-item_">
+                                      <img src="img/visitors.png" width="25" height="25">
+                                        <div class="menu-navigation-item__name" style="color: #fff ; margin-top: 3px">{{alang[10].text}}</div>
+                                        <mark class="mark mark--sm menu-navigation-item__counter"><span class="mark__text"></span></mark>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          
+            </ion-content>

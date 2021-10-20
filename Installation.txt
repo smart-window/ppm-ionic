@@ -1,0 +1,14 @@
+Upload files to host
+- Go to assets/includes/config.php, edit to your database, don't forget to change site_url to your website.
+- and edit the file domain.php https://domain/ change to your website
+- Go to phpMyAdmin, import the db.sql file and go to settings, edit mobile_site, change https://yourdomain to your domain. (don't delete/mobile)
+
+Administrator username
+User: admin@admin.com
+Pass: 123456
+
+Documentation
+https://premiumdatingscript.com/support/docs/documentation
+
+
+Enjoy

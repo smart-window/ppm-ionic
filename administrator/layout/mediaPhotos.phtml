@@ -1,0 +1,522 @@
+<?php
+  if($sm['admin_ajax'] == false){
+    header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=users');
+  }
+  if($sm['moderator']['Media'] == 'No'){
+    echo '
+    <div class="alert alert-light" role="alert" style="width:50%;margin:0 auto;text-align:center;margin-top:50px;">
+        <strong>Access Denied!</strong> You dont have access to view this section
+    </div>
+    ';
+    exit;
+  } 
+?>
+<script>
+  aurl = 'mediaPhotos';
+  currentMenu = 'all-users';
+  currentMenuCollapse = ''; 
+  if(filterMediaByUserId != 0){
+    $('#filter_id').val(filterMediaByUserId);
+    
+    getData('users','name','WHERE id = '+filterMediaByUserId,function(response){
+      $('#searchMediaByIdName').html(response);
+      $('#searchMediaByIdClose').show();
+      $('[data-uploadUserMedia]').attr('onclick','uploadMediaAdmin('+filterMediaByUserId+',"media")');
+      $('[data-uploadUserStory]').attr('onclick','uploadMediaAdmin('+filterMediaByUserId+',"story")');
+      $('[data-current-media-user]').attr('data-current-media-user',filterMediaByUserId);
+    });
+    filterMediaByUserId = 0;
+  }
+</script>
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" id="mediaContainer" style="padding-top:25px;min-height: 800px ">
+  <div class="card-group" id="globalResult" style="display: none">
+      <div class="card card-body text-center">
+          <div class="d-flex flex-row align-items-center">
+              <div class="card-header__title m-0">Total</div>
+              <div class="text-amount ml-auto font16"><?= selectC('users_photos',''); ?></div>
+          </div>
+      </div>
+      <div class="card card-body text-center">
+          <div class="d-flex flex-row align-items-center">
+              <div class="card-header__title m-0">Real</div>
+              <div class="text-amount ml-auto font16"><?= selectC('users_photos','where fake = 0'); ?></div>
+          </div>
+      </div>      
+      <div class="card card-body text-center">
+          <div class="d-flex flex-row align-items-center">
+              <div class="card-header__title m-0">Fake</div>
+              <div class="text-amount ml-auto font16"><?= selectC('users_photos','where fake = 1'); ?></div>
+          </div>
+      </div>
+      <div class="card card-body text-center">
+          <div class="d-flex flex-row align-items-center">
+              <div class="card-header__title m-0">Public</div>
+              <div class="text-amount ml-auto font16"><?= selectC('users_photos','where blocked = 0'); ?></div>
+          </div>
+      </div>
+      <div class="card card-body text-center">
+          <div class="d-flex flex-row align-items-center">
+              <div class="card-header__title m-0">Private</div>
+              <div class="text-amount ml-auto font16"><?= selectC('users_photos','where blocked = 1'); ?></div>
+          </div>
+      </div>                                                    
+  </div>
+
+  <div class="card card-form d-flex flex-column flex-sm-row" >
+      <div class="card-form__body card-body-form-group flex">
+          <div class="row">
+              <div class="col-sm-3" data-media-filter-col="userid">
+                  <div class="form-group">
+                      <label for="filter_id">Search By User ID</label>
+                      <input id="filter_id" type="search" data-sfmedia="search" class="form-control" placeholder="Search by user ID">
+                  </div>
+              </div>
+              <div class="col-sm-2" data-media-filter-col>
+                  <div class="form-group">
+                      <label for="filter_category">Type</label><br>
+                      <select id="filter_category" data-sfmedia="mediatype" class="custom-select">
+                          <option value="All">All</option>
+                          <option value="photo">Photos</option>
+                          <option value="video">Videos</option>
+                          <option value="story">Story</option>
+                      </select>
+                  </div>
+              </div>              
+              <div class="col-sm-2" data-media-filter-col>
+                  <div class="form-group">
+                      <label for="filter_visible">Visible</label><br>
+                      <select id="filter_visible" data-sfmedia="ptype" class="custom-select">
+                          <option value="All">All</option>
+                          <option value="0">Public</option>
+                          <option value="1">Private</option>
+                      </select>
+                  </div>
+              </div>
+              <div class="col-sm-3" data-media-filter-col>
+                  <div class="form-group">
+                      <label for="filter_status">Status</label><br>
+                      <select id="filter_status" data-sfmedia="status" class="custom-select">
+                          <option value="All">All</option>
+                          <option value="1">Approved</option>                          
+                          <option value="0">Pending review</option>
+                          <option value="2">Deleted by user</option>
+                      </select>
+                  </div>
+              </div> 
+              <div class="col-sm-2" data-media-filter-col="uploaded">
+                  <div class="form-group">
+                      <label for="filter_uploaded">Uploaded</label><br>
+                      <select id="filter_uploaded" data-sfmedia="uploaded" class="custom-select">
+                          <option value="All">All</option>                          
+                          <option value="0">Real users</option>                          
+                          <option value="1">Fake users</option>                          
+                      </select>
+                  </div>
+              </div>                                        
+          </div>
+      </div>
+      <button class="btn bg-white border-left border-top border-top-sm-0 rounded-top-0 rounded-top-sm rounded-left-sm-0" data-update-media-search style="outline: none">
+        <i class="material-icons text-primary icon-30pt" data-update-media-search-btn>refresh</i></button>
+  </div>
+
+
+  <div class="card card-form  flex-column flex-sm-row divHidden" data-search-result style="height: 60px">
+      <div class="card-form__body card-body-form-group flex">
+          <div class="row">
+              <div class="col-sm-12">
+                  <div style="position: absolute;right:25px;display: none" id="searchMediaByUserActionDiv">
+                    <div class="avatar avatar-sm" id="searchresultUserIcon" style="width:34px;height:34px;display: none;margin-right: 5px;margin-top: -5px">
+                        <img src="" id="searchMediaByUserPhoto" class="avatar-img rounded" style="border-radius:50%!important;">
+                    </div>                       
+                    <label>Add media to <span id="searchMediaByIdName"> </span></label>
+                  </div>  
+                  <div class="form-group">
+                      <label id="searching"><i class="material-icons mr-3">search</i> Searching...</label>
+
+                      <label id="searchComplete" style="display: none">
+                        <div style="display: inline-table;width: 40px;">                       
+                          <i class="material-icons mr-3" >search</i>
+                        </div>
+                        Search result <span id="totalResult"></span> photos</label>                    
+                  </div>
+                
+              </div>                                                 
+          </div>
+      </div>
+
+      <div class="dropdown" id="searchMediaByUserAction" style="display: none" data-toggle="tooltip" data-placement="left" title="" data-original-title="Add Media">
+          <button class="btn bg-white border-left border-top border-top-sm-0" data-toggle="dropdown" data-caret="false" style="border-radius:0px;background: #fff;width: 100%;height: 100%;outline: none;" >
+             <i class="material-icons text-primary icon-30pt" style="color: #000">add_circle_outline</i>
+          </button> 
+          <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="javascript:;" data-uploadUserMedia onclick="" style="font-size: 13px;">
+                Upload Media
+              </a> 
+              <a class="dropdown-item" href="javascript:;" data-uploadUserStory onclick="" style="font-size: 13px;">
+                Upload Stories
+              </a>                           
+              <a class="dropdown-item" href="javascript:;" data-current-media-user onclick="openModalUploadInstagram(this)" style="font-size: 13px;">
+                Upload from Instagram
+              </a>                                                                              
+          </div>
+      </div>  
+      <button class="btn bg-white border-left border-top border-top-sm-0 rounded-top-0 rounded-top-sm rounded-left-sm-0" onclick="clearUserMediaFilter()" id="searchMediaByIdClose" style="outline: none;display: none">
+        <i class="material-icons text-dark icon-30pt">close</i></button>               
+  </div>  
+
+
+  <div class="card card-form  flex-column flex-sm-row divHidden" data-selected-data style="display: none">
+      <div class="card-form__body card-body-form-group flex">
+          <div class="row">
+              <div class="col-sm-12">
+                  <div class="form-group">
+                      <label for="filter_name">Selected <strong data-selected-data-total></strong> photos</label>                    
+                  </div>
+                  <div class="avatar-group" data-checkedData style="position: absolute;top: -7px;left: 180px">
+
+
+                  </div>
+              </div>                                                 
+          </div>
+      </div>
+
+      <div class="dropdown">
+          <button class="btn bg-white border-left border-top border-top-sm-0 rounded-top-0 rounded-top-sm rounded-left-sm-0" data-toggle="dropdown" data-caret="false" style="border-radius:0px;background: #fff;width: 100%;height: 100%">
+             <i class="material-icons icon-30pt" style="color: #000">more_horiz</i>
+           </button> 
+          <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="javascript:;" onclick="adminBulkAction('approve','media');" style="font-size: 13px;">
+                Approve <span data-selected-data-total></span> media objects
+              </a>
+              
+              <a class="dropdown-item" href="javascript:;" id="reUploadStoryBulk" onclick="adminBulkAction('reUploadStory','media');" style="font-size: 13px;display: none">
+                Re-upload <span data-selected-data-total></span> stories
+              </a>              
+              <div class="dropdown-divider"></div>                            
+              <a class="dropdown-item" href="javascript:;" onclick="adminBulkAction('delete','media');" style="font-size: 13px;color: #b50000">
+                Delete <span data-selected-data-total></span> media objects
+              </a>                                                 
+          </div>
+      </div>      
+  </div>
+
+  <div class="card card-form">
+      <div class="row no-gutters">
+          <div class="col-lg-12 col-md-12 col-sm-12 card-form__body" style="min-height: 700px">              
+              <div class="table-responsive border-bottom" data-search data-toggle="lists" data-lists-values='["js-lists-values-employee-name"]' style="min-height: 700px" data-table="result">   
+
+
+                  <table class="table mb-0 thead-border-top-0" style="">
+                      <thead>
+                          <tr style="background: #fff">
+                              <th style="width: 18px;">
+                                  <div class="custom-control custom-checkbox">
+                                      <input type="checkbox" onclick="checkAllData(this)" class="custom-control-input" data-target="#dataTable" id="customCheckAll">
+                                      <label class="custom-control-label" style="cursor: pointer;"  for="customCheckAll"><span class="text-hide">Toggle all</span></label>
+                                  </div>
+                              </th>
+                              <th style="width: 180px;">Media</th>
+                              <th style="width: 180px;">Media Type</th>
+                              <th style="width: 200px;">Date</th>
+                              <th style="width: 200px;">Type</th>                              
+                              <th style="width: 200px;">Status</th>
+                              <th style="width: 200px;" id="userCol">User</th>
+                              <th style="width: 24px;"></th>
+                          </tr>
+                      </thead>
+
+                      <tbody class="list" id="dataTable" style="overflow-y: scroll">
+                      </tbody>
+                  </table>
+              </div>
+ 
+              <div class="card-footer text-center">
+                <span class="text-muted">Showing </span>
+                <span data-current-view></span>
+                <span class="text-muted">of </span>
+                <span data-current-total-users></span> 
+                <span class="text-muted">results</span>
+                <a href="#results" data-nextPage-search>
+                  <i class="material-icons icon-muted float-right">arrow_forward</i>
+                </a>
+                <a href="#results" data-backPage-search style="display: none">
+
+                  <i class="material-icons icon-muted float-left" >arrow_backward</i>
+                </a>
+              </div> 
+
+          </div>                    
+      </div>
+  </div>    
+
+  <div class="v-wrapper">
+    <a href="#" class="btn btn-light ml-3" data-close-video><i class="material-icons mr-1">close</i> Close video</a>
+    <video id="playVideo" controls >
+      <source />
+    </video>
+  </div>
+</div>
+
+
+<script>
+    var viewer;
+    var dataPerPage = 50;
+    var viewedData = 0;
+    var lastPageSearch = 0;
+    var search = {};
+    var searchData = [];
+    var checkedData = [];    
+    search['action'] = 'search_media';
+
+    $('[data-sfmedia]').each(function(){
+        var current = $(this).attr('data-sfmedia');
+        search[current] = $(this).val();
+    });
+    $('[data-sfmedia]').change(function(){
+        var current = $(this).attr('data-sfmedia');
+        search[current] = $(this).val();
+        if($(this).val() == 'story'){
+          $('#reUploadStoryBulk').show();
+        } else {
+          $('#reUploadStoryBulk').hide();
+        }        
+    });
+
+    console.log(search);
+
+
+    function showMediaAdmin(image){
+      $('#loadImage').attr('src',image);
+      $('#loadImageHref').attr('href',image);
+      var divWidth = $(".showImageClass").width();
+      var divHeight = $(".showImageClass").height();
+      $('#loadImage').css('max-width',divWidth+'px');  
+      $('#goToVerificationPlugin').hide();
+    }
+    //next result page
+     $('[data-nextPage-search]').click(function(e){
+    
+      $('#customCheckAll').prop("checked",false);         
+        if(searchData.length > viewedData){
+            $('#dataTable').html('');
+            var maxResult = viewedData+dataPerPage;
+
+            lastPageSearch = dataPerPage;
+            if(searchData.length <= maxResult ){
+                maxResult = searchData.length;
+                lastPageSearch = maxResult;
+            }                    
+            for (i = viewedData; i < maxResult; i++) {
+              viewedData++;
+              $('#dataTable').append(searchData[i]);
+              
+
+              
+            }
+            $('[data-current-view]').text(viewedData);  
+            $('[data-backPage-search]').fadeIn(); 
+            viewer = new slimLightbox();
+            checkIfChecked();  
+            tableDropdownEffect();               
+        }                
+     });  
+
+
+     //back page
+     $('[data-backPage-search]').click(function(e){
+        
+        $('#dataTable').html('');
+        $('#customCheckAll').prop("checked",false);
+        var firstBack = dataPerPage*2;
+        viewedData = viewedData-firstBack;
+        console.log(viewedData);
+        if(viewedData <= 0){
+            $('[data-backPage-search]').hide();
+            viewedData = 0;
+        } 
+        var maxResult = viewedData+dataPerPage;
+        if(searchData.length <= maxResult ){
+            maxResult = searchData.length;
+        }                                
+        for (i = viewedData; i < maxResult; i++) {
+          viewedData++;
+          $('#dataTable').append(searchData[i]);
+        }
+        $('[data-current-view]').text(viewedData); 
+        viewer = new slimLightbox();
+        checkIfChecked();  
+        tableDropdownEffect();                               
+     });  
+       
+
+    //load data
+    function loadDataMedia(){
+      $('#dataTable').css('opacity','0.5');
+      
+      $.ajax({
+        url: request_source()+'/admin.php', 
+        data: search,  
+        type: "post",
+        dataType: 'JSON',        
+        success: function(response) {
+            $('#searchresultUserIcon').hide();
+            $('#searchMediaByUserAction').hide();
+            $('#searchMediaByUserActionDiv').hide();  
+            $('#searchMediaByIdClose').hide();
+
+            $('#dataTable').html('');
+            $('#dataTable').css('opacity','1');
+            $('[data-search]').show();
+            $('[data-selected-data]').hide();
+            $('#customCheckAll').prop("checked",false);
+
+            if(response['searchUserId'] != ''){
+              console.log(response['searchUserPhoto']);
+              $('#searchMediaByUserPhoto').attr('src',response['searchUserPhoto']);
+              $('#searchMediaByIdName').html(response['searchUserName']);
+              $('#searchresultUserIcon').show();
+              $('#searchMediaByUserAction').show();
+              $('#searchMediaByUserActionDiv').show();
+              $('#searchMediaByIdClose').show();
+              $('[data-uploadUserMedia]').attr('onclick','uploadMediaAdmin('+response['searchUserId']+',"media")');
+              $('[data-uploadUserStory]').attr('onclick','uploadMediaAdmin('+response['searchUserId']+',"story")');
+              $('[data-current-media-user]').attr('data-current-media-user',response['searchUserId']);
+            }
+
+            setTimeout(function(){
+              checkedData = [];
+            },1500);
+            searchData = response['data'];
+
+            for (i = 0; i < dataPerPage; i++) {
+              viewedData++; 
+              $('#dataTable').append(response['data'][i]);
+            }
+            $('#totalResult').text(response.total);
+
+            if(response['total'] < 49){
+              viewedData = response['total'];
+            }
+            var image = $('[data-media-i=0]').attr('data-media-src');
+            showMediaAdmin(image);          
+            if(response['total'] == 0){
+               $('[data-table="result"]').hide();
+            }
+            viewer = new slimLightbox();
+            $('#searching').hide();
+            $('#searchComplete').show();
+            $('[data-current-total-users]').text(response.total);
+            $('[data-current-view]').text(viewedData);
+
+            tableDropdownEffect();                        
+        },
+      });
+    }
+
+   
+
+    $('[data-update-media-search]').click(function(){
+        $('#dataTable').css('opacity','0.5');
+        checkedData = [];
+        $('#customCheckAll').prop("checked",false);
+        $('[data-selected-data]').hide();
+        $('#searching').show();
+        $('#searchComplete').hide();        
+        $.ajax({
+            url: request_source()+'/admin.php', 
+            data: search,  
+            type: "post",
+            dataType: 'JSON',    
+            beforeSend: function(){
+              $('[data-update-media-search-btn]').addClass('is-loading');
+            },    
+            success: function(response) {
+              $('#searchresultUserIcon').hide();
+              $('#searchMediaByUserAction').hide();
+              $('#searchMediaByUserActionDiv').hide();
+              $('#searchMediaByIdClose').hide();
+
+              $('#dataTable').css('opacity','1');
+              $('[data-search]').show();
+              $('#dataTable').html('');
+              $('#loadImage').attr('src','');
+              $('#loadImageHref').attr('href','');
+
+              if(response['searchUserId'] != ''){
+                console.log(response['searchUserPhoto']);
+                $('#searchMediaByUserPhoto').attr('src',response['searchUserPhoto']);
+                $('#searchMediaByIdName').html(response['searchUserName']);
+                $('#searchresultUserIcon').show();
+                $('#searchMediaByUserAction').show();
+                $('#searchMediaByUserActionDiv').show();
+                $('#searchMediaByIdClose').show();
+                $('[data-uploadUserMedia]').attr('onclick','uploadMediaAdmin('+response['searchUserId']+',"media")');
+                $('[data-uploadUserStory]').attr('onclick','uploadMediaAdmin('+response['searchUserId']+',"story")');
+                $('[data-current-media-user]').attr('data-current-media-user',response['searchUserId']);
+              }
+              searchData = response['data'];
+              $('[data-update-media-search-btn]').removeClass('is-loading');
+              viewedData = 0;
+              for (i = 0; i < dataPerPage; i++) {
+                viewedData++; 
+                $('#dataTable').append(response['data'][i]);
+              }
+              $('#totalResult').text(response.total);
+
+              if(response['total'] < 49){
+                viewedData = response['total'];
+              }
+              if(response['total'] == 0){
+                 $('[data-table="result"]').hide();
+              }
+              $('#searching').hide();
+              $('#searchComplete').show();
+              $('[data-current-total-users]').text(response.total);
+              $('[data-current-view]').text(viewedData);  
+              var image = $('[data-media-i=0]').attr('data-media-src');
+              showMediaAdmin(image);
+              viewer = new slimLightbox();   
+              tableDropdownEffect();
+            },
+        });
+    })
+
+    //play video
+    function playVideo(video){    
+      var $video = $('#playVideo'),
+      videoSrc = $('source', $video).attr('src', video);
+      $video[0].load();
+      $('.v-wrapper').fadeIn();
+      $video[0].play();
+      $('html,body').scrollTop(0);
+    } 
+
+    //close video
+
+    $('[data-close-video]').click(function(e){
+      e.preventDefault();
+      var $video = $('#playVideo');
+      $video[0].pause();
+      $('.v-wrapper').hide();
+    });  
+    fullHeightElement('.v-wrapper',60);
+    fullHeightElement('#playVideo',60);
+    
+    document.onkeydown = checkKey;
+
+    function checkKey(e) {
+        e = e || window.event;
+        if (e.keyCode == '27') {
+          $('[data-close-video]').click();      
+        }    
+    }  
+
+    function searchMediaById(id){
+      $('#filter_id').val(id);
+      search['search'] = id;
+      loadDataMedia();
+      $('html,body').scrollTop(0);
+    }
+   
+</script>

@@ -1,0 +1,166 @@
+<?php $e_age = explode( ',', $sm['user']['s_age'] ); ?>
+<script>
+	url = "meet";
+</script>  
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+	<div class="col s12 real" style="padding-right: 0px;" id="site-content">
+		<button class="button-circular box-shadow vivify popIn" data-url="search" data-open-meet-filter style="opacity: 1; transform: translateY(0px);background: #fff;position:absolute;right: 40px;top:35px;z-index: 9">
+				<svg id="icon-filter" viewBox="0 0 32 32" width="45%" height="45%"><path d="M6.1 6a5.02 5.02 0 0 0 0 2H.5a.5.5 0 0 1-.5-.5v-1A.5.5 0 0 1 .5 6h5.6zm9.8 0h15.6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H15.9a5.02 5.02 0 0 0 0-2zm.2 18a5.02 5.02 0 0 0 0 2H.5a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h15.6zm9.8 0h5.6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-5.6a5.02 5.02 0 0 0 0-2z"></path><path d="M11 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm10 16a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"></path></svg>
+	    </button>
+
+	    <div class="search-post" style="padding-left: 15%;padding-right: 15%">
+<?php } else { ?>
+	<div class="col s8 real fix-width-content" style="padding-right: 0px;" id="site-content">
+    <div class="post-btn-right mainBtn active" id="openSearchFilter" data-url="search" data-open-meet-filter><i class="mdi-content-filter-list"></i> <?= $sm['lang'][106]['text']; ?></div>
+    <div class="post-btn-right-close"><i class="mdi-content-clear"></i></div>                
+    <?php if($sm['theme']['top_menu_wall_gradient']['val'] == 'Yes'){ ?>          
+    	<div class="profile-menu top-menu-meet <?=$sm['theme']['top_menu_wall_bg']['val']; ?>" style="left:-1%;width: 91%!important">
+    <?php } else { ?> 
+    	<div class="profile-menu top-menu-meet" style="background: <?=$sm['theme']['top_menu_wall_bg']['val'];?>;left:-1%;width: 91%!important">
+    <?php } ?>
+        <ul>
+            <li class="selected" id="allusers" data-action="allusers" >
+                <?= $sm['lang'][107]['text']; ?>
+            </li>                           
+            <li data-action="online" id="onlineusers" >
+               <?= $sm['lang'][108]['text']; ?>
+            </li>           
+        </ul>
+    </div>	
+    <div class="search-post">				
+<?php } ?>
+		<div class="coll">
+		  <div class="search-title montserratRegular"><?= $sm['lang'][109]['text']; ?> </div>
+		     <select class="input clever" id="meet_filter_gender"  name="radio" style="margin-top:-5px;width: 90%">
+			<?php
+				$all = count($sm['genders']);
+				$all = $all + 1;
+				foreach($sm['genders'] as $entry){
+					if($entry['id'] == $sm['user']['s_gender']){
+						echo '<option value="'.$entry['id'].'" selected style="color:#000;">'.$entry['text'].'</option>';
+					} else {
+						echo '<option value="'.$entry['id'].'" style="color:#000;">'.$entry['text'].'</option>';
+					}
+				}
+			?>
+			<?php if($sm['plugins']['meet']['showAllGendersOption'] == 'Yes'){ ?>
+				<option value="<?= $all; ?>" <?php if($all == $sm['user']['s_gender']){ echo 'selected'; } ?> style="color:#000;"><?= $sm['lang'][531]['text']; ?></option>	
+			<?php } ?>	
+		   </select>
+		  <div class="search-title montserratRegular" style="margin-bottom:10px;margin-top: 20px"><?= $sm['lang'][300]['text']; ?></div>					  
+		  <div id="slider-range-age1"><?= $e_age[0]; ?></div>	
+		  <div id="slider-range"></div>	
+		  <div id="slider-range-age2"><?= $e_age[1]; ?></div>						  
+		</div>	
+		<div class="coll" style="padding-left: 25px">
+		  <div class="search-title montserratRegular"><?= $sm['lang'][621]['text']; ?></div>
+		  <input  type="" class="input clever" name="searchUsername" id="searchUsername" value="" placeholder="<?= $sm['lang'][622]['text']; ?>" style="top:-10px;" />												  
+		</div>									
+		<div class="coll" style="padding-left:25px;border:none">
+		  <div class="search-title montserratRegular" ><?= $sm['lang'][630]['text']; ?></div>
+		    <input  type="text" class="input clever" autocomplete="new-password" id="loc" value="<?= $sm['user']['city']; ?>" style="top:-10px;" />
+			<input type="hidden" name="city" id="locality" value="<?= $sm['user']['city']; ?>" />
+			<input type="hidden" name="country" id="country" value="<?= $sm['user']['country']; ?>"  />
+			<input type="hidden" name="lat" id="lat" value="<?= $sm['user']['lat']; ?>"  />
+			<input type="hidden" name="lng" id="lng" value="<?= $sm['user']['lng']; ?>"  />					  
+		  <div class="search-title montserratRegular" style="margin-top:10px;" id="slider-distance"><?= $sm['lang'][391]['text']; ?></div>
+		  <div id="slider-range2" style="top:2px"></div>							  
+		</div>	
+		<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+			<div class="search-btn-ok mainBtn active" data-filter style="position: absolute;top: 160px;margin-left: 10px">
+				<?= $sm['lang'][385]['text']; ?>
+			</div>							
+			<div class="search-btn-cancel mainBtn" data-close-filter style="position: absolute;top: 160px;margin-right: 80px">
+				<?= $sm['lang'][386]['text']; ?>
+			</div>
+		<?php } else { ?>
+			<div class="search-btn-ok mainBtn active" data-filter style="position: absolute;top: 160px;margin-left: -15px">
+				<?= $sm['lang'][385]['text']; ?>
+			</div>							
+			<div class="search-btn-cancel mainBtn" data-close-filter style="position: absolute;top: 160px;margin-right: 20px">
+				<?= $sm['lang'][386]['text']; ?>
+			</div>
+		<?php } ?>											
+		<input type="hidden" value="0" id="meet_filter_online" data-filter="meet_filter_online"/>
+		<input type="hidden" value="0" id="meet_filter_limit" data-filter="meet_filter_limit"/>		
+    </div>
+    <div class="wall meetContent mainContentBorderColor" style="background: <?= $sm['theme']['search_card_wall']['val']; ?>"> 
+    <?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    	<?php if($sm['plugins']['spotlight']['enabled'] == 'Yes'){ ?>
+		<div class="stories-feed-layout" data-wide-spotlight style="margin-left: 2%;margin-right: 2%;margin-bottom: 25px;overflow-y: hidden;overflow-x: auto;display: none;">
+				<div style="position: absolute;left: 0;width: 104px;height: 104px" >
+                <div class="brick brick--xlg vivify delay-50 add-yourself box-shadow" style="cursor:pointer;border:4px solid <?= $sm['theme']['spotlight_border_story_add']['val']; ?>">
+                    <div class="brick-img profile-photo"  data-src="<?= $sm['user']['profile_photo']; ?>" style="cursor:pointer;border:2px solid #fff"></div>
+                    <mark class="brick brick--spp brick--bc" data-spotlight-border style="width: 58px;height: 14px;border-radius: 3px;background: <?= $sm['theme']['spotlight_border_story_add']['val']; ?>">
+                      <span class="montserratRegular" style="color:<?= $sm['theme']['spotlight_border_story_add_font']['val'];?>;font-size: 11px;position: relative;text-align: center;line-height: 13px"><?= $sm['lang'][287]['text']; ?></span>
+                    </mark>
+                </div>
+            </div>
+        	<div class="stories-feed" data-spotlight-update data-wide-spotlight-scroll style="margin-left:104px;margin-right:104px;height: 104px;background: none;border-top:none;">
+        		<div data-spotlight-update="1"><?= spotLightMobile($sm['user']['lat'],$sm['user']['lng'],1); ?></div>
+        	</div>
+        </div>  
+      <?php } ?> 
+    <?php } ?>                	
+    	<?php if($sm['user']['premium'] == 0){ ?>
+
+		<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+			<div class="banner-container banner-container--wide" style="margin: 0; width: 80%;margin-left:10%;padding-top: 20px;padding-bottom: 10px">							
+		<?php } else { ?>
+			<div class="banner-container banner-container--wide" style="margin:0;margin-left:4%; width: 90.5%;padding-top: 10px">
+		<?php } ?>                 		
+			<?php if($sm['theme']['premium_banner_gradient']['val'] == 'Yes'){ ?>
+				<div class="banner <?= $sm['theme']['premium_banner_bg']['val']; ?>" >
+			<?php } else { ?>	
+				<div class="banner" style="background:<?= $sm['theme']['premium_banner_bg']['val']; ?> ">			
+			<?php } ?>	
+		        <div class="banner-content" >
+		            <div class="banner-promo" >
+		                <div class="brick-group brick-group--promo">
+		                    <div class="brick brick--lg brick--stroke vivify">
+		                        <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+		                    </div>
+		                    <div class="brick brick--lg brick--stroke vivify ">
+		                        <div class="brick-img profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>
+		                        <mark class="brick brick--xsm brick--spp brick--bc"><img src="<?= $sm['config']['theme_url']; ?>/images/vip_y.png" class="vivify pulsate infinite" width="16px" /></mark>
+		                    </div>
+		                    <div class="brick brick--lg brick--stroke vivify">
+		                        <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+		                    </div>
+		                </div>
+		            </div>
+		            <div class="banner-text montserratRegular" style="color: <?= $sm['theme']['premium_banner_color']['val']; ?>"><?= $sm['lang'][453]['text']; ?>!</div>
+		        </div>
+		        <div class="banner-buttons" onClick="goTo('premium');">
+		            <div class="btn btn--sm " style="background: <?= $sm['theme']['premium_banner_btn_bg']['val']; ?>;color:<?= $sm['theme']['premium_banner_btn_color']['val']; ?>">
+		            	<span class="btn-txt"><?= $sm['lang'][433]['text']; ?>!</span>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+		<?php } ?> 
+
+		<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+			<div style="position: relative;width: 88%;margin-left:6.5%;height: 50px;text-align: center;background: none;margin-bottom: 30px;">
+			    <?php if($sm['theme']['top_menu_wall_gradient']['val'] == 'Yes'){ ?>          
+			    	<div class="profile-menu top-menu-meet <?=$sm['theme']['top_menu_wall_bg']['val']; ?>" style="left:-1%;width: 91%!important">
+			    <?php } else { ?> 
+			    	<div class="profile-menu top-menu-meet" style="background: <?=$sm['theme']['top_menu_wall_bg']['val']; ?>;left:-1%;width: 91%!important">
+			    <?php } ?>
+			        <ul>
+			            <li class="selected" id="allusers" data-action="allusers">
+			                <?= $sm['lang'][107]['text']; ?>
+			            </li>                           
+			            <li data-action="online" id="onlineusers" >
+			               <?= $sm['lang'][108]['text']; ?>
+			            </li>           
+			        </ul>
+			    </div>				
+			</div>
+		<?php } ?>
+		
+		<div class="center" id="meet_section" style="min-height: 500px;"></div>
+
+		<?= getAbsolutePage('footer'); ?>						
+    </div>
+</div> 			

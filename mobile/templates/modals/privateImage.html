@@ -1,0 +1,13 @@
+<div class="modal image-modal transparent">
+	<div class="private-blurred-background" ng-click="closePrivateImageModal()">
+		<div class="blur-black"  style="background: url({{img}}) center no-repeat;"></div>
+	</div>
+	<div id="private" class="private-container">
+		<div class="private-photo">
+			<div class="private-photo--album" ng-click="closePrivateImageModal()"></div>
+			<div class="private-photo--name comforta">{{lang[551].text}}</div>
+			<div class="private-photo--followers comforta" style="color: #FFF">{{lang[192].text}} {{lang[193].text}} {{price}} {{lang[73].text}}</div>
+			<div class="private-photo--button comforta" ng-click="unlockPhotos(cu)">{{lang[191].text}}</div>
+		</div>
+	</div>
+</div>

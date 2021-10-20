@@ -1,0 +1,221 @@
+<?php
+  if($sm['admin_ajax'] == false){
+    header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=plugins');
+  }
+?>
+<script>
+  aurl = 'accounts';
+  currentMenu = 'plugins';
+  currentMenuCollapse = 'accounts';  
+</script>
+
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px;min-height: 500px ">
+  <div class="page__heading d-flex align-items-center">
+      <div class="flex">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','')">Plugins</a></li>
+                <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','Software')">Software</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Account types settings</li>
+            </ol>            
+          </nav>
+      </div>
+      <a href="#" class="btn btn-light ml-3" onclick="goTo('plugins','','')"><i class="material-icons mr-1">arrow_back</i></a>
+  </div>  
+  <div class="row">
+    <div class="col-lg-6" >   
+      <div class="card card-form">
+          <div class="card-header card-header-large bg-white d-flex align-items-center">
+            <h4 class="card-header__title flex m-0">Free account settings</h4>
+            <div></div>
+          </div>    
+          <div class="row no-gutters">
+              <?php
+              unset($sm['basic']['mobile_ads']);
+              unset($sm['basic']['type']);
+              unset($sm['basic']['likes']);
+              unset($sm['basic']['slikes']);
+              unset($sm['basic']['private']);
+              foreach ($sm['basic'] as $key => $val) { 
+                $selected = '';
+
+                switch ($key) {
+                  case 'chat':
+                     $title = 'Daily new conversation';
+                     $p = 'Limit how many new conversations this type of user can start';
+                  break;
+                  case 'videocall':
+                     $title = 'Start a videocall';
+                     $p = 'Allow this type of user to start a videocall';
+                  break;  
+
+                  case 'visits':
+                     $title = 'Profile visits';
+                     $p = 'Allow to this type of user to see who visited his profile';
+                  break;
+
+                  case 'fans':
+                     $title = 'Profile likes';
+                     $p = 'Allow to this type of user to see who liked his profile';
+                  break;                                          
+                  
+                  default:
+                    $title = '';
+                    $p = '';
+                  break;
+                }
+               
+              ?>
+                  <div class="col-lg-7 card-body bg-light" >
+                    <p><strong class="headings-color"><?= $title; ?></strong></p>
+                    <p class="text-muted">
+                      <?= $p; ?>
+                    </p>
+                  </div>
+                  <div class="col-lg-5 card-form__body card-body d-flex align-items-center bg-white" >
+                    <div class="flex" style="">
+                        <label for="pricing" ><?= $key; ?></label><br>
+
+                        <?php if($key != 'chat'){
+                            $checked = '';
+                            if($val == 1){
+                              $checked = 'checked';
+                            }
+                        ?>
+                          <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1" > 
+                              <input <?=$checked; ?> type="checkbox" data-account-check="basic<?= $key; ?>" id="basic<?= $key; ?>" data-account-id="1" data-account-col="<?= $key; ?>" class="custom-control-input" >
+                              <label class="custom-control-label" for="basic<?= $key; ?>"></label>
+                          </div>
+                          <label for="basic<?= $key; ?>" class="mb-0" ></label>                    
+                        <?php } else { ?>
+                          <input type="number" data-account-id="1" data-account-col="<?= $key; ?>" value="<?= $val; ?>" class="form-control" style="width:90px;">             
+                        <?php } ?>
+                    </div>                              
+                  </div>             
+              <?php } ?>
+          </div>
+        <div class="card-footer bg-success" data-footer="1" style="display: none">
+            <span style="color:#fff">Changes saved</span>
+        </div>       
+      </div> 
+    </div>
+
+
+    <div class="col-lg-6" >   
+      <div class="card card-form">
+          <div class="card-header card-header-large bg-white d-flex align-items-center">
+            <h4 class="card-header__title flex m-0">Premium account settings</h4>
+            <div></div>
+          </div>    
+          <div class="row no-gutters">
+              <?php
+              unset($sm['premium']['mobile_ads']);
+              unset($sm['premium']['type']);
+              unset($sm['premium']['likes']);
+              unset($sm['premium']['slikes']);
+              unset($sm['premium']['private']);
+              foreach ($sm['premium'] as $key => $val) { 
+                $selected = '';
+
+                switch ($key) {
+                  case 'chat':
+                     $title = 'Daily new conversation';
+                     $p = 'Limit how many new conversations this type of user can start';
+                  break;
+                  case 'videocall':
+                     $title = 'Start a videocall';
+                     $p = 'Allow this type of user to start a videocall';
+                  break;  
+
+                  case 'visits':
+                     $title = 'Profile visits';
+                     $p = 'Allow to this type of user to see who visited his profile';
+                  break;
+
+                  case 'fans':
+                     $title = 'Profile likes';
+                     $p = 'Allow to this type of user to see who liked his profile';
+                  break;                                          
+                  
+                  default:
+                    $title = '';
+                    $p = '';
+                  break;
+                }
+               
+              ?>
+                  <div class="col-lg-7 card-body bg-light" >
+                    <p><strong class="headings-color"><?= $title; ?></strong></p>
+                    <p class="text-muted">
+                      <?= $p; ?>
+                    </p>
+                  </div>
+                  <div class="col-lg-5 card-form__body card-body d-flex align-items-center bg-white" >
+                    <div class="flex" style="">
+                        <label for="pricing" ><?= $key; ?></label><br>
+
+                        <?php if($key != 'chat'){
+                            $checked = '';
+                            if($val == 1){
+                              $checked = 'checked';
+                            }
+                        ?>
+                          <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1" > 
+                              <input <?=$checked; ?> type="checkbox" data-account-check="premium<?= $key; ?>" id="premium<?= $key; ?>" data-account-id="2"  data-account-col="<?= $key; ?>" class="custom-control-input" >
+                              <label class="custom-control-label" for="premium<?= $key; ?>"></label>
+                          </div>
+                          <label for="premium<?= $key; ?>" class="mb-0" ></label>                    
+                        <?php } else { ?>
+                          <input type="number" data-account-id="2" data-account-col="<?= $key; ?>" value="<?= $val; ?>" class="form-control" style="width:90px;">             
+                        <?php } ?>
+                    </div>                              
+                  </div>             
+              <?php } ?>
+          </div>
+        <div class="card-footer bg-success" data-footer="2" style="display: none">
+            <span style="color:#fff">Changes saved</span>
+        </div>       
+      </div> 
+    </div>
+  </div>
+</div>
+
+
+<script>
+$('[data-account-id]').change(function(){
+  var id = $(this).attr('data-account-id');
+  var check = $(this).attr('data-account-check');
+  var col = $(this).attr('data-account-col');
+  var val;
+  if(col != 'chat'){
+    var checked = $('[data-account-check='+check+']:checked').val();
+    console.log(checked);
+    if(checked != 'on'){
+        val = 0;
+    } else {
+        val = 1;
+    }
+  } else {
+    val = $(this).val();
+  }
+
+  $.ajax({
+      url: request_source()+'/admin.php', 
+      data: {
+          action: 'updateAccounts',
+          val: val,
+          id: id,
+          col: col,
+          globalKey: globalKey
+      },  
+      type: "post",
+      dataType: 'JSON',           
+      success: function(response) {
+      },
+  });      
+  $('[data-footer]').fadeOut('fast');
+  $('[data-footer='+id+']').fadeIn();
+
+});
+</script>

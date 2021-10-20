@@ -1,0 +1,159 @@
+<script>
+    url = "credits";
+</script>            
+    <?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    <div class="col s2 real" style="padding-right: 0px;" >
+        <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+                echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+            }
+        ?>
+    </div>
+    <div class="col s8 real"  id="site-content">
+    <?php } else { ?>
+        <div class="col s8 real fix-width-content" style="padding-right: 0px;" id="site-content">
+    <?php } ?>             
+    <div class="wall" style="background: <?= $sm['theme']['wall_bg_credits']['val']; ?>;"> 
+ 
+        <div class="payment-promo" style="position: relative;" >
+            <div class="payment-promo__content" >
+                <a href="#" onclick="openWidget('purchaseCredits');"  class="btn btn--sm box-shadow-credits vivify fadeIn" style="background: <?= $sm['theme']['credits_section_btn_font_bg']['val'];?>;color: <?= $sm['theme']['credits_section_btn_font_color']['val'];?>;font-size:<?= $sm['theme']['credits_section_btn_font_size']['val'];?>;padding:20px;padding-left: 80px;padding-right: 20px;"><img src="<?= $sm['config']['theme_url']; ?>/images/coingBig.png" class="vivify pulsate" style="width: 60px;position: absolute;left: 8px;top: 16px;">                       
+                   <span class="userCredits btnCreditsStyle" style="font-weight: 900"><?= $sm['user']['credits']; ?> </span>  
+                   <span class="btnCreditsStyle btnCreditsFontStyle"><?= $sm['lang'][73]['text']; ?></span>         
+                </a>                   
+                <ul class="payment-info" >
+                    <li class="payment-info__item vivify fadeIn delay-100" >
+                        <div class="payment-info__ico payment-info__ico--bottom">
+                            <div class="payment-info__photo profile-photo" data-src="<?= randomPhoto($sm['user']['id']); ?>"></div>
+                        <?php
+                        $time = time();
+                        if($sm['user']['last_access'] > $time && $sm['user']['meet'] == 1){
+                            if($sm['theme']['credits_section_rise_up_gradient']['val'] == 'Yes'){
+                                echo '<div class="btn btn--sm '.$sm['theme']['credits_section_rise_up_bg']['val'].' btnCreditsStyle" style="margin-top: 60px;">
+                                    <span class="btn-txt">
+                                        <img src="'.$sm['config']['theme_url'].'/images/check.png" width="25px">
+                                    </span>
+                                </div>';
+                            } else {
+                                echo '<div class="btn btn--sm btnCreditsStyle"
+                                style="margin-top: 60px;background:'.$sm['theme']['credits_section_rise_up_bg']['val'].'">
+                                    <span class="btn-txt">
+                                        <img src="'.$sm['config']['theme_url'].'/images/check.png" width="25px">
+                                    </span>
+                                </div>';                                
+                            }
+                        } else {
+                            if($sm['theme']['credits_section_rise_up_gradient']['val'] == 'Yes'){
+                                echo '<div class="btn btn--sm '.$sm['theme']['credits_section_rise_up_bg']['val'].' btnCreditsStyle" onclick="showRiseUp();" style="margin-top: 60px;">
+                                 <span class="btn-txt" style="color:'.$sm['theme']['credits_section_rise_up_color']['val'].'">'.$sm['lang'][416]['text'].'</span>
+                                </div>';
+                            } else {
+                                echo '<div class="btn btn--sm '.$sm['theme']['credits_section_rise_up_bg']['val'].' btnCreditsStyle" onclick="showRiseUp();" style="margin-top: 60px;background:'.$sm['theme']['credits_section_rise_up_bg']['val'].'">
+                                 <span class="btn-txt" style="color:'.$sm['theme']['credits_section_rise_up_color']['val'].'">'.$sm['lang'][416]['text'].'</span>
+                                </div>';                               
+                            }                            
+
+                        } ?>
+                        <span class="payment-info__hint"><?= $sm['lang'][477]['text']; ?>.
+                        </span>
+                    </li>
+
+                    <li class="payment-info__item vivify fadeIn delay-200">
+                        <div class="payment-info__ico payment-info__ico--top">
+                            <div class="payment-info__photo profile-photo" data-src="<?= randomPhoto($sm['user']['id']); ?>"></div>
+                        <?php
+                        $time = time();
+                        if($sm['user']['last_access'] > $time && $sm['user']['discover'] > 0){ 
+                        echo '<div class="btn btn--sm btnCreditsStyle '.$sm['theme']['credits_section_discover_up_bg']['val'].'" style="background:'.$sm['theme']['credits_section_discover_up_bg']['val'].';margin-top: 60px;">
+                             <span class="btn-txt">
+                                <img src="'.$sm['config']['theme_url'].'/images/check.png" width="25px">
+                             </span>
+                        </div>';
+                        } else {
+                            echo '<div class="btn btn--sm '.$sm['theme']['credits_section_discover_up_bg']['val'].' btnCreditsStyle" onclick="showDiscover()" style="margin-top: 60px;background:'.$sm['theme']['credits_section_discover_up_bg']['val'].'">
+                            <span class="btn-txt" style="color:'.$sm['theme']['credits_section_discover_up_color']['val'].'">'.$sm['lang'][498]['text'].'</span>
+                        </div>';
+                        } ?>                                        
+                         <span class="payment-info__hint"><?= $sm['lang'][478]['text']; ?>.</span>
+                    </li>
+
+                    <li class="payment-info__item vivify fadeIn delay-300">
+                        <div class="payment-info__ico">
+                            <div class="payment-info__photo profile-photo" data-src="<?= randomPhoto($sm['user']['id']); ?>"></div>
+                            <div class="btn btn--sm <?= $sm['theme']['credits_section_spotlight_up_bg']['val']; ?> btnCreditsStyle" onclick="showSpotlight()"  style="margin-top: 30px;background:<?= $sm['theme']['credits_section_spotlight_up_bg']['val']; ?> ">
+                                <span class="btn-txt" style="color: <?= $sm['theme']['credits_section_spotlight_up_color']['val']; ?>">
+                                    <?= $sm['lang'][431]['text']; ?>
+                                </span>
+                            <span class="b-link js-add-to-spotlight"></span> </div>
+                            <span class="payment-info__hint"> <?= $sm['user']['first_name']; ?><?= $sm['lang'][479]['text']; ?><?= $sm['user']['city']; ?> </span>
+                    </li>
+
+                </ul>
+                <div class="payment-features vivify fadeIn delay-400" style="margin-top: 200px;">
+                    <div  style="width: 100%;text-align: center;"><h5 class="btnCreditsFontStyle"><?= $sm['lang'][629]['text']; ?></h5></div>
+                </div>                
+ 
+
+                <div class="payment-features">
+
+                    <!--
+                    <div class="payment-feature vivify fadeIn delay-450">
+                        <div class="payment-feature__ico"><img src="<?php echo $sm['config']['theme_url']; ?>/images/stickers.png"></div>
+                        <span class="link"><?= $sm['lang'][480]['text']; ?><b><?= $sm['config']['name'];?></b></span>
+                    </div> -->
+
+                    <?php if($sm['plugins']['profile']['showSendGift'] == 'Yes'){ ?>
+                    <div class="payment-feature vivify fadeIn delay-500">
+                        <div class="payment-feature__ico"><img src="<?php echo $sm['config']['theme_url']; ?>/images/gifts.png"></div>
+                        <span class="link"><?= $sm['lang'][481]['text']; ?><b><?= $sm['lang'][482]['text']; ?></b> </span>
+                    </div>
+                    <?php } ?>  
+
+                    <div class="payment-feature vivify fadeIn delay-550">
+                        <div class="payment-feature__ico"><img src="<?php echo $sm['config']['theme_url']; ?>/images/showyou.png"></div>
+                        <span class="link"><?= $sm['lang'][483]['text']; ?></span>
+                    </div>
+
+                    <?php if($sm['plugins']['story']['enabled'] == 'Yes'){ ?>
+                    <div class="payment-feature vivify fadeIn delay-600">
+                        <div class="payment-feature__ico"><img src="<?php echo $sm['config']['theme_url']; ?>/images/stories.png"></div>
+                        <span class="link"><?= $sm['lang'][668]['text']; ?></span>
+                    </div> 
+                    <?php } ?>  
+
+                    <?php if($sm['plugins']['videocall']['enabled'] == 'Yes'){ ?>
+                    <div class="payment-feature vivify fadeIn delay-650">
+                        <div class="payment-feature__ico"><img src="<?php echo $sm['config']['theme_url']; ?>/images/icon-videocall.png"></div>
+                        <span class="link"><?= $sm['lang'][628]['text']; ?></span>
+                    </div>
+                    <?php } ?>     
+
+                    <?php if($sm['plugins']['profile']['showSendCredits'] == 'Yes'){ ?>
+                    <div class="payment-feature vivify fadeIn delay-700">
+                        <div class="payment-feature__ico"><img src="<?php echo $sm['config']['theme_url']; ?>/images/icon-coins.png"></div>
+                        <span class="link"><?= $sm['lang'][626]['text']; ?> </span>
+                    </div>
+                    <?php } ?>
+
+                    <?php if($sm['plugins']['withdrawal']['enabled'] == 'Yes'){ ?>
+                    <div class="payment-feature vivify fadeIn delay-750">
+                        <div class="payment-feature__ico"><img src="<?php echo $sm['config']['theme_url']; ?>/images/icon-coins-withdraw.png"></div>
+                        <span class="link"><?= $sm['lang'][627]['text']; ?></span>
+                    </div> 
+                    <?php } ?>                               
+                </div>                
+            </div>
+        </div>
+    </div>
+    
+    <?= getAbsolutePage('footer'); ?>     
+</div>
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    <div class="col s2 real" style="position: relative;">
+        <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+                echo '<div class="ad-zone-vertical" style="margin-left:79px;">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+            }
+        ?>  
+    </div>
+<?php }?>                

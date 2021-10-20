@@ -1,0 +1,30 @@
+<div class="footer-content">  
+  <?php 
+  if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_728x90'] == "Yes"){ 
+    echo '<div class="ad-zone">'.$sm['plugins']['adsWeb']['728x90'].'</div>';
+  }
+  ?>
+  <?php if($sm['plugins']['iosApp']['enabled'] == 'Yes' || $sm['plugins']['androidApp']['enabled'] == "Yes"){ ?>
+  <div class="download-apps">
+    <h3><?= $sm['lang'][434]['text']; ?>:</h3>
+    <?php if($sm['plugins']['iosApp']['enabled'] == 'Yes'){ ?>
+      <a href="<?= $sm['plugins']['iosApp']['link']; ?>" target="_blank">
+        <img src="<?php echo $sm['config']['theme_url']; ?>/images/ios.png" style="width: 28px;position: absolute;margin-top: 5px;margin-left: 5px"/>
+        <h2><?= $sm['lang'][435]['text']; ?></h2>
+      </a>
+    <?php } ?>
+    <?php if($sm['plugins']['androidApp']['enabled'] == 'Yes'){ ?>
+      <a href="<?= $sm['plugins']['androidApp']['link']; ?>" target="_blank">
+        <img src="<?php echo $sm['config']['theme_url']; ?>/images/android.png" style="width: 42px;position: absolute;margin-top: -2px;margin-left: 0px"/><h2><?= $sm['lang'][436]['text']; ?></h2>
+      </a>
+    <?php } ?>
+  </div>
+  <?php } ?>
+  <div class="bottom-left">
+    <a href="<?php echo $sm['config']['site_url']; ?>terms"><h3><?= $sm['lang'][437]['text']; ?></h3></a>
+    <a href="<?php echo $sm['config']['site_url']; ?>privacy"><h3><?= $sm['lang'][63]['text']; ?></h3></a>
+    <a href="<?php echo $sm['config']['site_url']; ?>cookies"><h3><?= $sm['lang'][624]['text']; ?></h3></a>     
+    <a href="mailto:<?php echo $sm['config']['email']; ?>"><h3><?= $sm['lang'][64]['text']; ?></h3></a>
+    <h3><?php echo $sm['config']['name']; ?> <?= date('Y'); ?> </h3>
+  </div>      
+</div>

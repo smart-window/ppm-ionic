@@ -1,0 +1,184 @@
+<div class="modal profile-modal ">
+
+<div class="profile-preview__actions" ng-show="!pLoad" style="background:none;z-index: 9999999 !important;">
+    <div class="profile-actions" ng-if="!myProfile ">
+        <div class="profile-actions__item">
+            <div class="profile-action-button vivify popInBottom" ng-if="showGoToChat" >
+                <div class="icon icon--stretch" ng-click="closeProfileModal();goToChatGlobal('home.messaging','right',cu)">
+                    <svg class="icon__content icon__content--inactive" >
+<svg viewBox="0 0 64 64" id="icon-floating-chat" width="100%" height="100%"><circle fill="#FFF" cx="32" cy="32" r="32"></circle><path d="M45 45c-1.5 0-4.59-.26-7.6-1.17A12.95 12.95 0 0 1 32 45a13 13 0 1 1 10.2-4.93A9.22 9.22 0 0 0 45 45zM27 33.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" fill="#1AB0FF" fill-rule="nonzero"></path></svg>
+                    </svg>
+                </div>
+            </div>            
+        </div>        
+        <div class="profile-actions__item js-vote-yes-button" ng-show="!wtf">
+            <div class="profile-action-button js-touchable vivify popInBottom">
+                <div class="icon icon--stretch" ng-click="closeProfileModal();gameGlobal(id,1,cu);">
+                    <svg class="icon__content icon__content--inactive">
+<svg viewBox="0 0 64 64" id="icon-floating-yes" width="100%" height="100%"><circle fill="#FFF" cx="32" cy="32" r="32"></circle><path d="M18.5 29.7c0-4.25 3.43-7.7 7.65-7.7A7.67 7.67 0 0 1 32 24.73 7.67 7.67 0 0 1 37.85 22a7.68 7.68 0 0 1 7.65 7.7C45.5 36.57 36.46 45 32 45s-13.5-8.42-13.5-15.3z" fill="#FF661B"></path></svg>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <div class="profile-actions__item">
+            <div class="profile-action-button js-touchable vivify popInBottom" >
+                <div class="icon icon--stretch"  ng-click="openSendCreditsModal()">
+                    <img src="img/credits_x2.png" width="50" style="position: absolute;left:8px;top: 15px;"   />
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>	
+<div class="page-container">
+	
+    <div class="page visible scroll" style="z-index: 600;overflow-y: auto;">
+        <div class="profile-preview js-profile-preview">
+            <div class="layout js-screen-container" style="">
+                <div class="layout__content">
+                    <div class="profile-preview__close" ng-click="closeProfileModal()">
+                        <div class="icon" >
+                            <svg class="icon__content icon__content--inactive">
+<svg viewBox="0 0 64 64" id="icon-cross" width="100%" height="100%"><path d="M32 29.92L13.18 11.1a1.47 1.47 0 0 0-2.08 2.08L29.92 32 11.17 50.75a1.47 1.47 0 0 0 2.08 2.08L32 34.08 50.82 52.9a1.47 1.47 0 0 0 2.08-2.08L34.08 32l18.75-18.75a1.47 1.47 0 0 0-2.08-2.08L32 29.92z"></path></svg>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="profile-preview__close gradient17 vivify fadeInTop delay-150 box-shadow" id="hasStory" style="width: 90px;left:40%;top:20px;height:30px;border-radius: 5px;display: none" ng-click="closeProfileModal();openStory(id,1)">
+                        <span class="comforta">{{alang[260].text}}</span>
+                    </div>                    
+
+  
+
+                    <div class="profile-preview__photos" >
+                        <div class="slider-gallery">
+                            <div class="slider-gallery__pages" style="transform: translate3d(0px, 0px, 0px);">
+                                <div class="slider-gallery__page is-active" >
+                                    <div class="multimedia">
+                                        <div class="multimedia__image vivify fadeIn"
+                                            style="background-position: 41% 39%; background-image: url({{photo}});"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-preview__info">
+                        <div class="profile-info">
+                            <div class="profile-info__section">
+                                <div data-view-id="81">
+                                    <div class="profile-info__title">
+                                        <div class="profile-title">
+                                            <div class="profile-title__user qa-headline-text">
+                                                <div class="profile-title__statuses">
+                                                <span class="profile-title__username comforta" style="font-weight: 700">{{name}}</span>,&nbsp;
+                                                <span class="profile-title__age comforta">{{age}}</span>
+                                                <div class="profile-title__statuses"><div class="csms-online-status csms-online-status--online" style="width: 8px;height: 8px;margin-left: 5px" ng-if="status"></div></div></div>
+                                            </div>
+                                            <div class="profile-title__actions">
+                                                <div class="profile-title__actions-item trigger-icon-state  js-favourite-icon-button">
+                                                </div>
+                                                <div class="profile-title__actions-item">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="profile-info__section vrt-personal-info" style="margin-top: 20px">
+                                <div data-view-id="87">
+                                    <div class="profile-info__title comforta">{{alang[170].text}}</div>
+                                    <div class="profile-info__content comforta">
+                                        <p>{{bio}}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profile-info__section vrt-location" >
+                                <div data-view-id="95">
+                                    <div class="profile-info__title">{{alang[239].text}}</div>
+                                    <div class="profile-info__content   js-profile-section">
+                                        <div>{{city}}, {{country}}</div>
+                                    </div>
+                                </div>
+                            </div>                            
+                            <div class="profile-info__section" >
+                                <div class="profile-info__title comforta">{{alang[238].text}}</div>
+                                <div class="profile-info__content">
+                                    <div class="brick brick--lg brick--squared" style="margin: 3px;" ng-repeat="i in photos track by $index"  ng-click="openChatImageModal('{{i.photo}}')" ng-if="i.blocked == 0 && i.approved == 1">
+                                        <div class="brick__image" style="background-image: url('{{i.photo}}')">
+                                        </div>
+                                    </div>
+                                    <div class="brick brick--lg brick--squared " style="margin: 3px;" ng-repeat="i in photos track by $index"  ng-click="openPrivateImage('{{i.photo}}')" ng-if="i.blocked == 1 && unlocked == 0">
+                                        <div class="brick__image" style="background-image: url('{{i.photo}}')">
+                                            <img src="img/privateImg.png" style="border-radius: 3px;">
+                                        </div>
+                                    </div>
+                                    <div class="brick brick--lg brick--squared " style="margin: 3px;" ng-repeat="i in photos track by $index"  ng-click="openChatImageModal('{{i.photo}}')" ng-if="i.blocked == 1 && unlocked == 1">
+                                        <div class="brick__image" style="background-image: url('{{i.photo}}')">
+                                        </div>
+                                    </div>                                                                        
+                                </div>
+                            </div>
+
+
+
+                            <div class="profile-info__section vrt-personal-info" ng-repeat="q in question" ng-if="q.userAnswer !== ''">
+                                <div class="profile-info__title" >{{q.question}}</div>
+                                <div class="profile-info__content  js-profile-section">
+                                    <p>{{q.userAnswer}}</p>
+                                </div>
+                            </div>
+
+                            <div class="profile-info__section vrt-interests" ng-show="interest.length > 0">
+                                <div data-view-id="122">
+                                    <div class="profile-info__title">
+                                    	{{interest.length}} {{lang[276].text}}
+                                    </div>
+                                    <div class="profile-info__content  js-profile-interests">
+                                        <div class="profile-interests js-profile-section-interests">
+                                            <div class="container-grid-interest interestsBorderRadius box-shadow" ng-repeat="i in interest track by $index" style="background-image:url('{{i.icon}}')">
+                                                <div class="interestName">
+                                                    <span class="text-shadow">{{i.name}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profile-info__section vrt-block-report-share" style="padding-bottom: 50px">
+                                <div data-view-id="100">
+                                    <div class="profile-info__content js-profile-section">
+                                        <div class="profile-preview__block qa-additional-actions">
+                                            <div class="button-wrapper">
+                                                <div class="button-wrapper__item">
+                                                    <button class="button button--primary button--stroke" 
+                                                    ng-click="openShareModal()" >
+                                                        <div class="button__content">
+                                                            <span class="button__text js-button-text">{{alang[237].text}}</span>
+                                                        </div>
+                                                    </button>
+                                                </div>
+                                                <div class="button-wrapper__item" ng-if="!myProfile">
+                                                    <button class="button button--transparent" ng-click="blockUser()" style="background: none!important">
+                                                        <div class="button__content">
+                                                            <span class="button__text js-button-text">{{alang[184].text}}</span>
+                                                        </div>
+                                                    </button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

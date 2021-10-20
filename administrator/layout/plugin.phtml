@@ -1,0 +1,780 @@
+<?php 
+if(isset($_GET['plugin'])){
+  $plugin = $_GET['plugin'];
+  $category = $_GET['category']; 
+} else {
+  header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=plugins');
+  exit;
+}
+$whitelist = array(
+    '127.0.0.1',
+    'localhost',
+    'www.localhost',
+    'localhost'
+);
+?>
+
+<script>aurl = 'plugin';</script>
+<script>plugin = '';</script>
+
+<!-- SECTION CONTENT -->
+
+<div class="container-fluid page__container" style="padding-top:25px;padding-bottom: 50px">
+<div class="page__heading d-flex align-items-center">
+    <div class="flex">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <?php if($plugin == 'license'){ ?> 
+              <li class="breadcrumb-item"><a href="#" onclick="goTo('plugin','license','')">License</a></li>
+            <?php } else { ?>
+              <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','')">Plugins</a></li>
+              <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','<?= $category;?>')"><?= $category;?></a></li>
+              <li class="breadcrumb-item active" aria-current="page"><?= $plugin; ?></li>
+            <?php } ?>  
+          </ol>
+        </nav>
+    </div>
+    <a href="#" class="btn btn-light ml-3" onclick="goTo('plugins','','<?= $category;?>')"><i class="material-icons mr-1">arrow_back</i></a>
+</div>
+
+
+<?php 
+$blocks = getDataArrayFull('plugins_blocks','where plugin = "'.$plugin.'" ORDER BY orden DESC'); 
+$beta = getData('plugins','beta','WHERE name = "'.$plugin.'"');
+if($beta == 1){ ?>
+  <div class="alert alert-soft-warning d-flex  align-items-center m-0" role="alert">
+      <i class="material-icons mr-3">error_outline</i>
+      <div class="text-body"><strong>Plugin currently in BETA</strong><br>This plugin is currently undergoing testing and has not yet been officially released.<br>Some of the mentioned functions bellow might not work as expected</div>
+  </div>
+<?php } 
+
+foreach ($blocks as $b) { ?>
+
+
+  <?php if($b['type'] == 1){ ?>
+  <div class="card card-form">
+    <div class="card-header card-header-large bg-white d-flex align-items-center">
+        <h4 class="card-header__title flex m-0"><?= $b['title']; ?></h4>
+        <div></div>
+    </div>       
+     <div class="row no-gutters">
+
+    <?php if($b['block'] == 'gifts_general'){ ?>
+      <div class="col-lg-12 card-form__body card-body d-flex align-items-center bg-white" >
+        <div class="flex">
+          <div id="giftsContainer" style="display: inline-block;"><?= getGiftsAdmin(); ?></div>
+        </div>
+      </div>
+    <?php } ?>
+
+    <?php if($b['block'] == 'spotlight_users'){ ?>
+      <div class="col-lg-12 card-form__body card-body d-flex align-items-center bg-white" >
+        <div class="flex">
+          <div id="giftsContainer" style="display: inline-block;"><?= getSpotlightUsersAdmin(); ?></div>
+        </div>
+      </div>
+    <?php } ?>    
+
+    <?php if($b['block'] == 'interests_general'){ ?>
+      <div class="col-lg-12 card-form__body card-body d-flex align-items-center bg-white" >
+        <div class="flex">
+          <div id="interestsContainer" style="display: inline-block;">
+            <?= getInterestsAdmin(); ?>
+            </div>
+        </div>
+      </div>
+    <?php } ?>    
+
+    <?php
+    $settings = getDataArrayFull('plugins_settings','where block = "'.$b['block'].'" ORDER BY orden DESC');
+    $i = 0;
+    $bg = 'fff';
+    foreach ($settings as $s) { ?>
+
+        <?php 
+          //GET CLIENT PLUGIN VALUES
+          $filter = 'where setting = "'.$s['setting'].'" and plugin = "'.$s['plugin'].'"';
+          $clientSetting = getData('plugins_settings_values','setting_val',$filter); 
+
+          if($clientSetting == 'noData'){
+            $s['setting_val'] = $s['setting_val'];
+          } else {
+            $s['setting_val'] = $clientSetting;
+          } 
+          if(in_array($_SERVER["HTTP_HOST"], $whitelist) && $s['setting'] == 'forceSSL'){
+            continue;
+          } 
+        ?>
+        <div class="col-lg-4 card-body bg-light">
+            <p>
+              <strong class="headings-color"><?= $s['title']; ?></strong>
+              <?php if($s['premium'] == 1){ ?>
+              <span class="badge badge-warning" style="margin-left: 10px;padding-left: 5px;padding-right: 5px">
+                PREMIUM
+              </span>
+              <?php } ?>  
+            </p>
+            <p class="text-muted">
+              <?php if($s['setting'] == 'rate' && $s['plugin'] == 'withdrawal'){ 
+              $info = str_replace('[CREDITS]', number_format($sm['creditsPackages'][2]['credits']), $s['info']);
+              $info = str_replace('[EXAMPLE]', number_format($sm['creditsPackages'][2]['credits']*7.5), $info);
+              $info = str_replace('[PRICE]', $sm['creditsPackages'][2]['price'].' '.$sm['plugins']['settings']['currency'], $info);
+              $info = str_replace('[RATE]',$s['setting_val'].'%', $info); 
+              
+              $creditsPercentage = getPercentage($sm['creditsPackages'][2]['credits'],$sm['creditsPackages'][2]['credits']*7.5);
+              $payout = ($sm['creditsPackages'][2]['price'] / 100) * $creditsPercentage;
+
+              $percent = '0.'.$s['setting_val'];
+              $percent = (double)$percent;
+              $payout = round($payout * $percent);
+              $info = str_replace('[AMOUNT]', $payout.' '.$sm['plugins']['settings']['currency'], $info); 
+              echo $info;
+              } else if($s['setting'] == 'fakeUserUsage'){
+                $info = str_replace('[LICENSE]', $sm['settings']['license'], $s['info']);
+                echo $info;
+              } else { 
+
+                if (strpos($s['info'], '[') !== false) {
+                  $pluginDataOutputArray = getStringsBetween($s['info'], '[', ']');
+                  
+                  foreach ($pluginDataOutputArray as $data) {
+                    $pdo = explode(',', $data);
+                    $pluginDataOutput = $sm[$pdo[0]][$pdo[1]][$pdo[2]];
+                    $s['info'] = str_replace('['.$pdo[0].','.$pdo[1].','.$pdo[2].']', $pluginDataOutput, $s['info']); 
+                  }
+                  echo $s['info'];
+                } else {
+                  echo $s['info'];
+                }
+
+              } ?>
+
+              <?php if($s['docs'] == 1){ ?>
+                <br><br>
+                <strong>Check <a href="https://premiumdatingscript.com/support/docs/<?= $s['plugin']; ?>" target="_blank"><?= $s['title']; ?></a> documentation</strong>
+              <?php } ?>                
+            </p>
+        </div>
+        <div class="col-lg-8 card-form__body card-body d-flex align-items-center bg-white" >
+            <div class="flex">
+                <label for="<?= $s['setting']; ?>"><?= $s['label']; ?></label><br>
+                <!-- FROM TYPE TEXT -->
+                <?php if($s['setting_type'] == 'text'){ ?>   
+                  <input type="<?= $s['setting_type']; ?>" data-plugin-update="<?= $s['plugin']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="form-control" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-block="<?= $s['block']; ?>" placeholder="" value="<?= $s['setting_val']; ?>">
+                <?php } ?> 
+
+                <?php if($s['setting_type'] == 'uploadSize'){ 
+                  $MB = $sm['config']['max_upload'] / 1024 / 1024;
+                ?>   
+                  <input type="<?= $s['setting_type']; ?>" disabled data-plugin-update="<?= $s['plugin']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="form-control" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-block="<?= $s['block']; ?>" placeholder="" value="<?= $MB; ?> MB">
+                <?php } ?>                 
+
+                <!-- FROM TYPE TEXTAREA -->
+                <?php if($s['setting_type'] == 'textarea'){ ?>   
+                  <textarea data-plugin-update="<?= $s['plugin']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="form-control" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-block="<?= $s['block']; ?>" rows="9"><?= $s['setting_val']; ?></textarea>
+                <?php } ?>                   
+
+                <!-- FROM TYPE NUMBER -->
+                <?php if($s['setting_type'] == 'number'){ ?>   
+                  <input type="<?= $s['setting_type']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-update="<?= $s['plugin']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="form-control" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-block="<?= $s['block']; ?>" placeholder="" value="<?= $s['setting_val']; ?>" style="width: 30%">
+                <?php } ?>    
+
+                <!-- FROM TYPE BOOLEAN -->
+                <?php if($s['setting_type'] == 'boolean'){ 
+                  $checked = '';
+                  if($s['setting_val'] == 'Yes'){
+                    $checked = 'checked';
+                  }
+                ?>
+                  <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1" > 
+                      <input <?=$checked; ?> type="checkbox" id="<?= $s['setting']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-update="<?= $s['plugin']; ?>" data-plugin-block="<?= $s['block']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="custom-control-input" >
+                      <label class="custom-control-label" for="<?= $s['setting']; ?>"></label>
+                  </div>
+                  <label for="<?= $s['setting']; ?>" class="mb-0" ></label>
+                <?php } ?>
+
+
+                <!-- FROM TYPE GENDER -->
+                <?php if($s['setting_type'] == 'gender'){ 
+                  $all = count($sm['genders']);
+                  $all = $all + 1;
+
+                  $byUserCriteria = 'By User Criteria';
+                  $val = 0;
+                  if($s['setting'] == 'firstMessage'){
+                    $val = $sm['plugins']['chat']['firstMessage'];
+                    if($sm['plugins']['chat']['firstMessage'] == 0){
+                      $sm['plugins']['chat']['firstMessage'] = $all;
+                    }
+                  }
+
+                  if($s['setting'] == 'creditsPerMessageGender'){
+                    $val = $sm['plugins']['chat']['creditsPerMessageGender'];
+                    if($sm['plugins']['chat']['creditsPerMessageGender'] == 0){
+                      $sm['plugins']['chat']['creditsPerMessageGender'] = $all;
+                    }
+                  }                  
+
+                  if($s['setting'] == 'freePremiumGender'){
+                    $val = $sm['plugins']['rewards']['freePremiumGender'];
+                    if($sm['plugins']['rewards']['freePremiumGender'] == 0){
+                      $sm['plugins']['rewards']['freePremiumGender'] = $all;
+                    }
+                  }                  
+
+                  if($s['setting'] == 'filterGender'){
+                    $val = $sm['plugins']['recordVideocall']['filterGender'];
+                    if($sm['plugins']['recordVideocall']['filterGender'] == 0){
+                      $sm['plugins']['recordVideocall']['filterGender'] = $all;
+                    }
+                  }
+                  if($s['setting'] == 'popularSearchFilterGender'){
+                    $val = $sm['plugins']['populars']['popularSearchFilterGender'];
+                    if($sm['plugins']['populars']['popularSearchFilterGender'] == 0){
+                      $sm['plugins']['populars']['popularSearchFilterGender'] = $all;
+                    }
+                  } 
+                  if($s['setting'] == 'guestDefaultGender'){
+                    $val = $sm['plugins']['autoRegister']['guestDefaultGender'];
+                    if($sm['plugins']['autoRegister']['guestDefaultGender'] == 0){
+                      $sm['plugins']['autoRegister']['guestDefaultGender'] = $all;
+                    }
+                  } 
+                  if($s['setting'] == 'guestDefaultLooking'){
+                    $val = $sm['plugins']['autoRegister']['guestDefaultLooking'];
+                    if($sm['plugins']['autoRegister']['guestDefaultLooking'] == 0){
+                      $sm['plugins']['autoRegister']['guestDefaultLooking'] = $all;
+                    }
+                  }
+                  if($s['setting'] == 'guestCustomOneLooking'){
+                    $val = $sm['plugins']['autoRegister']['guestCustomOneLooking'];
+                    if($sm['plugins']['autoRegister']['guestCustomOneLooking'] == 0){
+                      $sm['plugins']['autoRegister']['guestCustomOneLooking'] = $all;
+                    }
+                  }
+                  if($s['setting'] == 'guestCustomOneGender'){
+                    $val = $sm['plugins']['autoRegister']['guestCustomOneGender'];
+                    if($sm['plugins']['autoRegister']['guestCustomOneGender'] == 0){
+                      $sm['plugins']['autoRegister']['guestCustomOneGender'] = $all;
+                    }
+                  } 
+                  if($s['setting'] == 'guestCustomTwoGender'){
+                    $val = $sm['plugins']['autoRegister']['guestCustomTwoGender'];
+                    if($sm['plugins']['autoRegister']['guestCustomTwoGender'] == 0){
+                      $sm['plugins']['autoRegister']['guestCustomTwoGender'] = $all;
+                    }
+                  }                                     
+                  if($s['setting'] == 'guestCustomTwoLooking'){
+                    $val = $sm['plugins']['autoRegister']['guestCustomTwoLooking'];
+                    if($sm['plugins']['autoRegister']['guestCustomTwoLooking'] == 0){
+                      $sm['plugins']['autoRegister']['guestCustomTwoLooking'] = $all;
+                    }
+                  }
+
+                  if($s['setting'] == 'canStreamGender'){
+                    $val = $sm['plugins']['live']['canStreamGender'];
+                    if($sm['plugins']['live']['canStreamGender'] == 0){
+                      $sm['plugins']['live']['canStreamGender'] = $all;
+                    }
+                  }                                                                                                            
+                  ?>
+                  <select id="<?= $s['setting']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-update="<?= $s['plugin']; ?>" data-plugin-block="<?= $s['block']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="form-control">
+
+                  <?php  if($s['setting'] == 'popularSearchFilterGender'){ ?>
+                    <option value="<?= $byUserCriteria; ?>" <?php if($byUserCriteria == $val){ echo 'selected'; } ?> style="color:#000;">By User Criteria</option> 
+                  <?php } ?>      
+                                                                  
+                  <?php   
+                  $showAll = '';
+
+                  if($s['setting'] == 'guestDefaultGender' || $s['setting'] == 'guestCustomOneGender' || $s['setting'] == 'guestCustomTwoGender'){
+                    $showAll = 'display:none;';
+                  }
+                  if($s['plugin'] == 'autoRegister'){
+                    $textOnly = '';
+                  } else {
+                    $textOnly = 'Only';
+                  }
+                  
+                  foreach($sm['genders'] as $entry){                    
+                    if($entry['id'] == $val){
+                      echo '<option value="'.$entry['id'].'" selected style="color:#000;">'.$textOnly.' '.$entry['text'].'</option>';
+                    } else {
+                      echo '<option value="'.$entry['id'].'" style="color:#000;">'.$textOnly.' '.$entry['text'].'</option>';
+                    } ?>
+                 <?php } ?> 
+                    <option value="<?= $all; ?>" <?php if($all == $val){ echo 'selected'; } ?> style="color:#000;<?= $showAll; ?>">All</option> 
+                 </select>
+                <?php } ?>
+
+                <!-- FROM TYPE LANGUAGE -->
+                <?php if($s['setting_type'] == 'language'){ ?>
+                  <select id="<?= $s['setting']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-update="<?= $s['plugin']; ?>" data-plugin-block="<?= $s['block']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="form-control">
+                    <option value="<?= $s['setting_val']; ?>"> <?= getCurrentLang($s['setting_val']); ?> </option>
+                    <?= getSiteLangs($s['setting_val']); ?>               
+                  </select>
+                <?php } ?>
+
+                <!-- FROM TYPE GESTURE & WATERMARK -->
+                <?php if($s['setting_type'] == 'gesture' || $s['setting_type'] == 'watermark' ){ ?>   
+                <div class="dz-clickable media align-items-center">                
+                    <div class="dz-preview dz-file-preview dz-clickable mr-3">
+                      <div class="avatar dz-image-preview" style="position:relative;width: 80px; height: 80px;background: #eee!important;border-radius: 5px;">
+                            <img src="<?= $s['setting_val']; ?>" id="gesturePreview" style="position: absolute;top: 0;bottom: 0;margin: auto;width: 80px;border-radius: 5px;">
+                        </div>
+                      </div>
+                    <div class="media-body">
+                        <button class="btn btn-sm btn-primary dz-clickable" style="padding: 10px" id="gestureBtn" data-uptype="<?= $s['setting_type']; ?>" onclick="uploadImage(this)">Choose <?= $s['setting_type']; ?></button>
+                    </div>
+                    <input type="hidden" id="gesture" data-plugin-update="<?= $s['plugin']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="form-control" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-block="<?= $s['block']; ?>" placeholder="" value="<?= $s['setting_val']; ?>">                   
+                </div>
+                <?php } ?> 
+
+
+                <!-- FROM TYPE API STATUS FAKE USER GENERATION-->
+                <?php if($s['setting_type'] == 'generateFakeUsersStatus'){ ?> 
+                  <div class="sidebar-p-a sidebar-b-y" style="padding-left: 0;">
+                      <div class="d-flex align-items-top mb-2">
+                          <div class="sidebar-heading m-0 p-0 flex text-body">Api limit</div>
+                          <div class="sidebar-heading m-0 p-0 text-body font-weight-bold">
+                            <span style="margin-right: 25px"><?= $sm['settings']['fakeUserUsage']; ?> / <?= $sm['settings']['fakeUserLimit']; ?> LIMIT</span>
+                            <a href="https://premiumdatingscript.com/buyfakeusers/<?= $sm['settings']['license']; ?>" target="_blank">Upgrade limit</a>
+                          </div>
+                      </div>
+                      <div class="progress">
+                          <div class="progress-bar gradient32" role="progressbar" style="width: <?= getPercentage($sm['settings']['fakeUserLimit'],$sm['settings']['fakeUserUsage']);?>%;" aria-valuemax="100"></div>
+                      </div>
+                  </div>                  
+                <?php } ?> 
+
+                <!-- FROM TYPE LICENSE-->
+                <?php if($s['setting_type'] == 'license'){ ?>   
+                  <input type="<?= $s['setting_type']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-update="<?= $s['plugin']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="form-control" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-block="<?= $s['block']; ?>" placeholder="" value="<?= $sm['settings']['license']; ?>" readonly>
+                <?php } ?>  
+
+                <!-- FROM TYPE LICENSE-->
+                <?php if($s['setting_type'] == 'licenseStats'){ ?> 
+                  <div class="sidebar-p-a sidebar-b-y">
+                      <div class="d-flex align-items-top mb-2">
+                          <div class="sidebar-heading m-0 p-0 flex text-body">Domains</div>
+                          <div class="sidebar-heading m-0 p-0 text-body font-weight-bold">
+                            <span style="margin-right: 25px"><?= $sm['settings']['domainsUsage']; ?> / <?= $sm['settings']['domainsLimit']; ?></span>
+                            <a href="https://premiumdatingscript.com/buyextradomains/<?= $sm['settings']['license']; ?>" target="_blank">Upgrade limit</a>
+                          </div>
+                      </div>
+                      <div class="progress">
+                          <div class="progress-bar gradient32" role="progressbar" style="width:<?= getPercentage($sm['settings']['domainsLimit'],$sm['settings']['domainsUsage']);?>%;" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                  </div>
+                  <div class="sidebar-p-a sidebar-b-y">
+                      <div class="d-flex align-items-top mb-2">
+                          <div class="sidebar-heading m-0 p-0 flex text-body">Fake users</div>
+                          <div class="sidebar-heading m-0 p-0 text-body font-weight-bold">
+                            <span style="margin-right: 25px"><?= $sm['settings']['fakeUserUsage']; ?> / <?= $sm['settings']['fakeUserLimit']; ?></span>
+                            <a href="https://premiumdatingscript.com/buyfakeusers/<?= $sm['settings']['license']; ?>" target="_blank">Upgrade limit</a>
+                          </div>
+                      </div>
+                      <div class="progress">
+                          <div class="progress-bar gradient32" role="progressbar" style="width: <?= getPercentage($sm['settings']['fakeUserLimit'],$sm['settings']['fakeUserUsage']);?>%;" aria-valuemax="100"></div>
+                      </div>
+                  </div>  
+               
+                <?php } ?>                  
+
+                <!-- FROM TYPE EMAIL TEST-->
+                <?php if($s['setting_type'] == 'emailTest'){ ?>   
+                  <button type="button" class="btn btn-light" data-test-email>
+                      <i class="material-icons mr-1">email</i> Send test email to Admin Email (<?= $sm['user']['email']; ?>)
+                  </button>
+                <?php } ?>
+
+                <!-- FROM TYPE MODERATORS -->
+                <?php if($s['setting_type'] == 'moderators'){ 
+                  $mods = getArrayDSelected('id','moderators','where id <> "Admin"');
+                ?>
+                  <div data-tag-input>
+                    <div class='tagHere'> 
+                    <?php foreach ($mods as $mod) { ?>
+                      <div class="tag" data-mod="<?= $mod['id']; ?>">
+                        <a href="#" onclick="removeModerator('<?= $mod['id']; ?>');">
+                          <i class="material-icons" aria-hidden="true">close</i>
+                        </a>
+                        <span><?= $mod['id']; ?></span>
+                      </div>
+                    <?php }
+                    ?></div>
+                    <input type="text" id="<?= $s['setting']; ?>" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-update="<?= $s['plugin']; ?>" data-plugin-block="<?= $s['block']; ?>" data-plugin-setting="<?= $s['setting']; ?>" style="height:34px;border:1px solid #999;border-radius: 5px"  autofocus/>
+                  </div>
+                <?php } ?>  
+                 
+                <!-- FROM TYPE MODERATOR PERMISSIONS-->
+                <?php if($s['setting_type'] == 'moderators_permission'){ $modI = 0; ?>
+                  <div data-manage-mods>
+                  <?php foreach ($mods as $mod) { 
+                    $modData = getArray('moderators_permission','WHERE id = "'.$mod['id'].'"','setting ASC');
+                  ?>   
+                    <script>
+                      var modData<?=$modI; ?> = <?= json_encode($modData); ?>;
+                    </script>
+                    <button type="button" class="btn btn-light" onclick="openModerationPermission('<?= $mod['id']; ?>',modData<?=$modI; ?>)" data-mod="<?= $mod['id']; ?>" style="margin-bottom: 5px;display: block">
+                        <i class="material-icons mr-1">security</i> Manage <?= $mod['id']; ?> permissions
+                    </button>
+                  <?php $modI++; } ?>
+                  </div>
+                <?php } ?>
+
+                <!-- FROM TYPE SELECT-->
+                <?php if($s['setting_type'] == 'select'){ ?>   
+                  <select id="<?= $s['setting']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-update="<?= $s['plugin']; ?>" data-plugin-block="<?= $s['block']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="form-control">
+                    <?php
+                    $select =  explode( ',', $s['setting_options'] );
+                    foreach ($select as $option) { $selected = '';?>
+                      <?php if($option == $s['setting_val']){ $selected = 'selected';} ?>
+                      <option value="<?= $option; ?>" <?= $selected; ?>> <?= $option; ?> </option>
+                    <?php } ?>
+                  </select>
+                <?php } ?>                 
+
+
+            </div>
+        </div>
+    <?php } ?>
+    </div>
+    <div class="card-footer bg-success" data-footer-plugin="<?= $b['block']; ?>" style="display: none">
+        <span style="color:#fff">Changes saved</span>
+    </div> 
+    <div class="card-footer bg-warning" data-footer-plugin-premium="<?= $b['block']; ?>" style="display: none">
+        <span style="color:#333;line-height: 30px;">Your license is not premium, upgrade to our premium plan to use this feature.</span>
+        <a href="https://premiumdatingscript.com/premium" target="_blank" class="btn btn-outline-warning" style="background: #fff;color:#333;float: right;margin-right: 20px;">Suscribe to Premium</a>
+    </div>     
+
+
+    <!-- BLOCK TYPE EMAIL TEST-->
+    <?php if($b['block'] == 'email_test'){ ?>
+      <div class="card-footer bg-danger" data-footer-email="error" style="display: none">
+          <span style="color:#fff">Email cant be sent, please review the information</span>
+      </div> 
+      <div class="card-footer bg-success" data-footer-email="success" style="display: none">
+          <span style="color:#fff">Email sent successfully to <?= $sm['plugins']['settings']['siteEmail']; ?></span>
+      </div>
+    <?php } ?> 
+
+  </div> 
+<?php } else { ?>
+
+  <div class="card card-form">
+    <div class="card-header card-header-large bg-white">
+        <h4 class="card-header__title"><?= $b['title']; ?></h4>
+    </div>    
+     <div class="row no-gutters">
+        <div class="col-lg-4 card-body bg-light" >
+            <p class="text-muted"><?= $b['info']; ?></p>
+        </div>
+        <div class="col-lg-8 card-form__body card-body bg-white" >
+          <div class="form-row">                 
+    <?php
+    $settings = getDataArrayFull('plugins_settings','where block = "'.$b['block'].'" ORDER BY orden DESC');
+    $i = 0;
+    $bg = 'fff';
+    foreach ($settings as $s) { ?>
+
+      <?php 
+        //GET CLIENT PLUGIN VALUES
+        $filter = 'where setting = "'.$s['setting'].'" and plugin = "'.$s['plugin'].'"';
+        $clientSetting = getData('plugins_settings_values','setting_val',$filter); 
+
+        if($clientSetting == 'noData'){
+          $s['setting_val'] = $s['setting_val'];
+        } else {
+          $s['setting_val'] = $clientSetting;
+        }  
+      ?>      
+      <div class="col-12 col-md-6 mb-3">
+        <label for="<?= $s['setting']; ?>"><?= $s['label']; ?></label><br>
+
+        <!-- FROM TYPE TEXT,NUMBER -->
+        <?php if($s['setting_type'] == 'text' || $s['setting_type'] == 'number'){ ?>   
+          <input type="<?= $s['setting_type']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-update="<?= $s['plugin']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="form-control" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-block="<?= $s['block']; ?>" placeholder="" value="<?= $s['setting_val']; ?>">
+        <?php } ?>   
+
+        <!-- FROM TYPE SELECT-->
+        <?php if($s['setting_type'] == 'select'){ ?>   
+          <select id="<?= $s['setting']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-update="<?= $s['plugin']; ?>" data-plugin-block="<?= $s['block']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="form-control">
+            <?php
+            $select =  explode( ',', $s['setting_options'] );
+            foreach ($select as $option) { $selected = '';?>
+              <?php if($option == $s['setting_val']){ $selected = 'selected';} ?>
+              <option value="<?= $option; ?>" <?= $selected; ?>> <?= $option; ?> </option>
+            <?php } ?>
+          </select>
+        <?php } ?> 
+
+        <!-- FROM TYPE BOOLEAN -->
+        <?php if($s['setting_type'] == 'boolean'){ 
+          $checked = '';
+          if($s['setting_val'] == 'Yes'){
+            $checked = 'checked';
+          }
+        ?>
+          <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1">
+              <input <?=$checked; ?> type="checkbox" id="<?= $s['setting']; ?>" data-plugin-premium="<?= $s['premium']; ?>" data-plugin-type="<?=$s['setting_type']; ?>" data-plugin-update="<?= $s['plugin']; ?>" data-plugin-block="<?= $s['block']; ?>" data-plugin-setting="<?= $s['setting']; ?>" class="custom-control-input">
+              <label class="custom-control-label" for="<?= $s['setting']; ?>"></label>
+          </div>
+          <label for="<?= $s['setting']; ?>" class="mb-0"></label>
+        <?php } ?>
+
+      </div>
+
+
+    <?php } ?> 
+
+        </div>  
+      </div>    
+  </div>
+  <div class="card-footer bg-success" data-footer-plugin="<?= $b['block']; ?>" style="display: none">
+      <span style="color:#fff">Changes saved</span>
+  </div>    
+</div> 
+
+<!-- end block foreach -->
+<?php } ?>
+
+
+<?php } ?>
+
+
+<!-- end -->
+</div>
+
+
+<script>
+var bellooPremium = '<?= $sm['settings']['premium']; ?>';
+$('[data-test-email]').click(function(e){
+  e.preventDefault();
+
+  $(this).addClass('is-loading');
+  $(this).addClass('is-loading-sm');
+  $('[data-footer-email="success"]').hide();
+  $('[data-footer-email="error"]').hide();
+  $.ajax({
+      url: request_source()+'/admin.php', 
+      data: {
+          action: 'testsmtp',
+          globalKey: globalKey
+      },  
+      type: "post",
+      dataType: 'JSON',           
+      success: function(response) {
+        $('[data-test-email]').removeClass('is-loading');
+        $('[data-test-email]').removeClass('is-loading-sm');
+
+        if(response.sent == 'Ok'){
+          $('[data-footer-email="success"] span').html(response.response);
+          $('[data-footer-email="success"]').fadeIn();
+        } else {
+          $('[data-footer-email="error"] span').html(response.response);
+          $('[data-footer-email="error"]').fadeIn(); 
+        }       
+      },
+  });  
+})
+
+$('[data-plugin-update]').change(function(){
+  var plugin = $(this).attr('data-plugin-update');
+  var block = $(this).attr('data-plugin-block');      
+  var setting = $(this).attr('data-plugin-setting');
+  var type = $(this).attr('data-plugin-type');
+  var premium = $(this).attr('data-plugin-premium');
+  var val = '';
+  if(type == 'boolean'){
+    var current = $(this).attr('data-plugin-setting');
+    var checked = $('[data-plugin-setting='+current+']:checked').val();
+    if(checked != 'on'){
+        val = 'No';
+    }else {
+        val = 'Yes';
+    }
+  } else {
+    val = $(this).val();
+  }
+  
+  if(bellooPremium == 0 && premium == 1){
+    $('[data-footer-plugin]').fadeOut('fast');
+    $('[data-footer-plugin-premium]').fadeOut('fast');
+    $('[data-footer-plugin-premium='+block+']').fadeIn();    
+    return false;
+  }
+
+  var continueAjax = true;
+
+  if(setting == 'forceSSL' && val == 'Yes'){
+    continueAjax = false;
+    $(this).prop('checked',false);
+    swal({
+        title: 'Forcing Redirect to Secure URL',
+        text: 'Make sure you have your SSL correctly installed before you enable this, otherwise it will make your site crash',
+        confirmButtonText: "Ok, enable force SSL!",               
+        type: "warning",
+        showCancelButton: true,             
+        },
+        function(){
+          $.ajax({
+              url: request_source()+'/admin.php', 
+              data: {
+                  action: 'updatePlugin',
+                  val: val,
+                  plugin: plugin,
+                  setting: setting,
+                  premium: premium,
+                  globalKey: globalKey
+              },  
+              type: "post",          
+              success: function(response) {
+                if(setting == 'forceSSL'){
+                  window.location.reload(); 
+                }             
+              },
+          }); 
+        }); 
+  }
+
+  if(setting == 'removeWWW'){
+    continueAjax = false;
+    $(this).prop('checked',false);
+    $.ajax({
+        url: request_source()+'/admin.php', 
+        data: {
+            action: 'updatePlugin',
+            val: val,
+            plugin: plugin,
+            setting: setting,
+            premium: premium,
+            globalKey: globalKey
+        },  
+        type: "post",          
+        success: function(response) {
+          if(setting == 'removeWWW'){
+            window.location.reload(); 
+          }                
+        },
+    }); 
+  }  
+
+  if(continueAjax == false){
+    return false;
+  }
+  $.ajax({
+      url: request_source()+'/admin.php', 
+      data: {
+          action: 'updatePlugin',
+          val: val,
+          plugin: plugin,
+          setting: setting,
+          premium: premium,
+          globalKey: globalKey
+      },  
+      type: "post",          
+      success: function(response) {
+        if(setting == 'forceSSL'){
+          window.location.reload(); 
+        }
+      },
+  });      
+  $('[data-footer-plugin]').fadeOut('fast');
+  $('[data-footer-plugin-premium]').fadeOut('fast');
+  $('[data-footer-plugin='+block+']').fadeIn();
+
+});
+
+var $input = $("[data-tag-input] input"),
+    $appendHere = $(".tagHere"),
+    oldKey = 0, newKey,
+    TABKEY = 13;
+$input.focus();
+
+$input.keydown(function(e){
+
+  if(e.keyCode == TABKEY) {
+    if(e.preventDefault) {
+      e.preventDefault();
+      if($(this).val() == '' || $(this).val() == ' ') {
+        return false;
+      }
+      addTag($(this),1);
+    }
+    return false;
+  }
+  
+  if($(this).val() == '' && e.keyCode === 8) {
+    $(".tag:last-child").remove();
+  }
+  
+})
+
+var tags = '';
+
+function removeModerator(val){
+  swal({
+      title: 'Remove moderation tag',
+      text: 'The moderation tag will be removed and all the users with this tag will be disabled',
+      confirmButtonText: "Ok, remove it!",               
+      type: "warning",
+      showCancelButton: true,             
+      },
+      function(){
+        $.ajax({
+            url: request_source()+'/admin.php', 
+            data: {
+                action: 'removeModerator',
+                val: val,
+                globalKey: globalKey
+            },  
+            type: "post",
+            dataType: 'JSON',           
+            success: function(response) {
+            },
+        });  
+        $('[data-mod="'+val+'"]').remove();
+      }); 
+}
+function addTag(element,action=0) {
+  var mod = $(element).val();
+  var modOnClick = '"'+mod+'"';
+  var $tag = $("<div data-mod='"+mod+"' />"), $a = $("<a href='#' onclick='removeModerator("+modOnClick+")' />"), $span = $("<span />");
+  $tag.addClass('tag');
+  $('<i class="material-icons" aria-hidden="true">close</i>').appendTo($a);
+  $span.text($(element).val());
+
+ 
+  $a.appendTo($tag);
+  $span.appendTo($tag);
+  $tag.appendTo($appendHere);
+  $('[data-manage-mods]').append(`
+  <button type="button" class="btn btn-light" data-mod="`+mod+`" style="margin-bottom: 5px;display: block">
+      <i class="material-icons mr-1">security</i> Manage `+mod+` permissions
+  </button>`);
+
+  if(action == 1){
+    $.ajax({
+        url: request_source()+'/admin.php', 
+        data: {
+            action: 'updatePlugin',
+            val: $(element).val(),
+            plugin: 'moderator',
+            setting: 'moderators',
+            globalKey: globalKey
+        },  
+        type: "post",
+        dataType: 'JSON',           
+        success: function(response) {
+
+        },
+        complete:function(){
+          goTo('plugin','moderator','Software');
+        }
+    });  
+  }
+  $(element).val('');
+}
+
+</script>

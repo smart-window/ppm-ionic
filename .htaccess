@@ -1,0 +1,15 @@
+Options -Indexes
+RewriteEngine On
+RewriteBase /
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteRule ^([A-Za-z0-9-]+)/?$ index.php?page=$1
+RewriteRule ^profile/([0-9]+)/([A-Za-z0-9-]+)/?$ index.php?page=profile&id=$1
+RewriteRule ^@([A-Za-z0-9_.]+)/?$ index.php?page=profile&id=$1
+RewriteRule ^@([A-Za-z0-9-]+)/([A-Za-z0-9-]+)?$ index.php?page=profile&id=$1&s=$2
+RewriteRule ^administrator/editor/theme/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/?$ administrator/editor/index.php?theme=$1&preset=$2
+RewriteRule ^administrator/([A-Za-z0-9-]+)/?$ index.php?page=admin&p=$1
+RewriteRule ^m_profile/([0-9]+)/([A-Za-z0-9-]+)/?$ mobile.php?page=profile&id=$1
+RewriteRule ^chat/([0-9]+)/([A-Za-z0-9-]+)/?$ index.php?page=chat&id=$1
+RewriteRule ^search/([A-Za-z0-9-]+)/?$ index.php?page=logout
+RewriteRule ^search/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/?$ index.php?page=logout

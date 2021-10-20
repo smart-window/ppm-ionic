@@ -1,0 +1,121 @@
+<script>
+url = "visits";
+</script>            
+	<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+		<div class="col s2 real" style="padding-right: 0px;" >
+		<?php 
+			if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+				echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+			}
+		?>		
+		</div>
+		<div class="col s8 real mainContentBorderColor"  id="site-content" style="background: <?=$sm['theme']['search_card_wall']['val']; ?>;">
+	<?php } else { ?>
+		<div class="col s8 real fix-width-content mainContentBorderColor" style="padding-right: 0px;background: <?=$sm['theme']['search_card_wall']['val']; ?>;" id="site-content">
+	<?php } ?>
+
+    <?php if($sm['theme']['top_menu_wall_gradient']['val'] == 'Yes'){ ?>          
+    	<div class="profile-menu top-menu-meet profile-menu-interactions <?=$sm['theme']['top_menu_wall_bg']['val']; ?>">
+    <?php } else { ?> 
+    	<div class="profile-menu top-menu-meet profile-menu-interactions" style="background: <?=$sm['theme']['top_menu_wall_bg']['val']; ?>">
+    <?php } ?>
+        <ul>
+            <li class="vivify popIn" onclick="goTo('matches')" style="padding-right: 45px;">
+                <?= $sm['lang'][105]['text']; ?> 
+                <div class="notificationBubble box-shadow vivify pulsate">
+                    <?= userMatchesCount($sm['user']['id']); ?>    
+                </div>
+            </li>
+
+            <li class="vivify popIn  selected" onclick="goTo('visits')" style="padding-right: 45px;">
+                <?= $sm['lang'][286]['text']; ?>
+                <div class="notificationBubble box-shadow vivify pulsate">
+                    <?= getUserVisitorsCount($sm['user']['id']); ?>    
+                </div>
+            </li>               
+
+            <li class="vivify popIn  " onclick="goTo('fans')" style="padding-right: 45px;">
+                <?= $sm['lang'][101]['text']; ?>
+                <div class="notificationBubble box-shadow vivify pulsate">
+                    <?= $sm['user']['total_likers']; ?>    
+                </div>                
+            </li>  
+
+            <li class="vivify popIn " onclick="goTo('mylikes')" style="padding-right: 45px;">
+                <?= $sm['lang'][295]['text']; ?>
+                <div class="notificationBubble box-shadow vivify pulsate">
+                    <?= $sm['user']['mylikes']; ?>    
+                </div>                
+            </li>                                    
+        </ul>
+    </div>
+
+    <div class="wall meetContent mainContentBorderColor" style="background: <?= $sm['theme']['search_card_wall']['val']; ?>;padding-left: 5%"> 
+		<?php 
+			if($sm['user']['premium'] == 0 && $sm['basic']['visits'] == 0){ ?>		
+
+				<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+					<div class="banner-container banner-container--wide" style="margin: 0; width: 80%;margin-left:10%;padding-top: 20px;padding-bottom: 10px;margin-top: 40px">							
+				<?php } else { ?>
+					<div class="banner-container banner-container--wide" style="margin:0;margin-left:5%; width: 90%;padding-top: 10px;margin-top: 40px">
+				<?php } ?> 
+
+				<?php if($sm['theme']['premium_banner_gradient']['val'] == 'Yes'){ ?>
+					<div class="banner <?= $sm['theme']['premium_banner_bg']['val']; ?>" >
+				<?php } else { ?>	
+					<div class="banner" style="background:<?= $sm['theme']['premium_banner_bg']['val']; ?> ">			
+				<?php } ?>	
+			        <div class="banner-content">
+			        <span class="x-large montserratRegular" style="color: <?= $sm['theme']['premium_banner_color']['val']; ?>;padding-left: 80px">
+			        	<b class="text-shadow-banner" style="position:absolute;font-size: 4.2rem;top:5px;left: 20px"><?= totalVisits($sm['user']['id'])-1;?></b>
+			        	<?= $sm['lang'][491]['text']; ?>
+			        </span>
+			        </div>
+			        <div class="banner-buttons">
+			            <div>
+			                <div class="btn btn--sm" style="background: <?= $sm['theme']['premium_banner_btn_bg']['val']; ?>;color:<?= $sm['theme']['premium_banner_btn_color']['val']; ?>" onCLick="goTo('premium');"> <span class="btn-txt"><?= $sm['lang'][448]['text']; ?></span> <span class="b-link js-fans-action" ></span> </div>
+			            </div>
+			        </div>
+			    </div>
+			</div>	
+			<div class="section-empty__content">
+			    <div class="promo" style="height: 360px">
+			        <div class="promo__content promo__content--low">
+			            <div class="promo__media">
+			                <div class="brick-group brick-group--promo">
+			                    <div class="brick brick--xlg disabled">
+			                        <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+			                    </div>
+			                    <div class="brick brick--xlg brick--xxxlg brick--stroke disabled">
+			                        <div class="brick-img profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>
+			                        <div class="brick brick--sm brick--spp brick--bc"><img src="<?= $sm['config']['theme_url']; ?>/images/vip_y.png" /></div>
+			                    </div>
+			                    <div class="brick brick--xlg disabled">
+			                        <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+			                    </div>
+			                </div>
+			            </div>
+			            <p class="large"><?= $sm['lang'][492]['text']; ?> <?= $sm['config']['name']; ?>.</p>
+			                <div class="btn" style="background: <?= $sm['theme']['premium_banner_btn_bg']['val']; ?>;color:<?= $sm['theme']['premium_banner_btn_color']['val']; ?>" onCLick="goTo('premium');"> <span class="btn-txt"><?= $sm['lang'][449]['text']; ?></span> <span class="b-link js-fans-action" ></span> </div>			            
+			        </div>
+			    </div>
+			</div>						
+		<?php
+		} else { 	
+			echo getUserVisitors($sm['user']['id']);
+		} ?>  
+
+
+		<?= getAbsolutePage('footer'); ?>					
+    </div>
+</div>      
+
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+	<div class="col s2 real" style="position: relative;">
+		<?php 
+			if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+				echo '<div class="ad-zone-vertical" style="margin-left:79px;">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+			}
+		?>	
+	</div>
+<?php }?>

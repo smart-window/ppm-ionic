@@ -1,0 +1,166 @@
+<?php 
+
+$me = false;
+if($sm['user']['id'] == $sm['profile']['id']) { 
+    $me = true; 
+} else {
+    visit($sm['user']['id'],$sm['profile']['id']);
+}
+$me = false;
+$profile_info = json_encode($sm['profile']);    
+echo 
+'<script>
+current_user_id = ' . $sm['profile']['id'] .';
+var profile_info = '. $profile_info  . ';
+url = "profile";
+</script>';
+?>
+<div class="slider-profile">
+    <div class="gall" style="display: none;top: 0; z-index: 5;" ></div>  
+    <div class="profile-content ">
+    <div class="profile-photos" id="profile-photos">
+        <?= getUserPhotosHeader($sm['profile']['id']); ?>  
+    </div>                
+        <div class="profile-info-v2" style="max-height: 1150px;">
+            <section class="profile-info-v2__left">
+                <div class="js-profile-location-container js-core-events-container">
+                    <div class="section section--profile">
+                        <h2 class="profile-h"><?= $sm['lang'][454]['text']; ?></h2>
+                        <div class="section-editable">
+                            <div class="js-wrap"> <span class="js-location-label montserrat">
+                                <?= $sm['profile']['city']; ?> , <?= $sm['profile']['country']; ?></span>
+                                <div class="location-map location-map--static">
+                                    <div class="location-map__cached">
+                                    <img src="https://maps.googleapis.com/maps/api/staticmap?center=<?= $sm['profile']['lat']; ?>,<?= $sm['profile']['lng']; ?>&zoom=16&size=640x300&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R&key=AIzaSyBFZHfyVXQ0H1Fh30rrZEOUgAi55_zYbZE" alt="" class="js-profile-location-map-image"></div>
+                                    <div class="location-map__layer" >
+                                        <b><?= $sm['lang'][455]['text']; ?><span class="break-word"><?= $sm['profile']['first_name']; ?></span></b>
+                                        <div class="location-map__btn">
+                                            <div class="btn btn--sm btn--blue"><span class="btn-txt"><?= $sm['lang'][456]['text']; ?></span></div>
+                                        </div>
+                                    </div><span class="middle"></span> </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="js-profile-iht-container">
+                    <div class="section section--profile">
+                        <h2 class="profile-h"><?= $sm['profile']['first_name']; ?><?= $sm['lang'][457]['text']; ?>..</h2>
+                        <div class="montserrat"><?= $sm['lang'][458]['text']; ?></div>
+                    </div>
+                </div>
+                <div class="js-profile-interests-container">
+                    <div class="section section--profile">
+                        <h2 class="profile-h"><?= $sm['lang'][276]['text']; ?></h2>
+                        <div class="interests" >
+                            <? if($sm['profile']['id'] == $sm['user']['id']){ ?>
+                            <div class="add-int">
+                                <input type="text" name="add_interest" placeholder="+" id="searchBox"  class="add_interest" />
+                                <ul id="searchResults" class="term-list hiddden"></ul>                  
+                            </div>
+                            <? } ?>                                 
+                            <div class="int"><span><?= $sm['config']['name']; ?></span></div>
+                            <?  if($sm['profile']['id'] != $sm['user']['id']){
+                                    foreach ($sm['profile']['interest'] as $valor) {
+                                        echo '<div class="int"><span>'.$valor['name'].'</span></div>';
+                                    } 
+                                } else {
+                                    foreach ($sm['profile']['interest'] as $valor) {
+                                        echo '<div class="int" data-interest="'.$valor['id'].'">
+                                              <div class="delete_int" onclick="deleteInterest('."'".$valor['id']."'".')" >
+                                               <i class="ion-close-round" style="color:#D52E46;font-size:10px;padding-left:3px"> </i>
+                                              </div>
+                                              <span>'.$valor['name'].'</span>
+                                              </div>';
+                                    } 
+                                }
+                            ?>  
+                            <div id="new-int"></div>                                
+                        </div>
+                    </div>
+                </div>
+                <div class="js-profile-personal-info-container">
+                    <div class="section section--profile">
+                        <h2 class="profile-h"><?= $sm['lang'][132]['text']; ?></h2>
+                        <div class="section-editable">
+                            <div class="form">
+                                <div class="form-row"><span class="profile-section__txt"><?= $sm['profile']['bio']; ?></span> </div>
+                                <br>
+                                <?php
+                                  $arr = array();
+                                  $arr = profileQuestion($sm['user']['lang']);
+                                  foreach($arr as $entry){ $q = $entry['question']; ?>
+                                  <?php $a = userProfileAnswer($sm['profile']['id'],$entry['id']); ?>
+                                    <div class="form-row">
+                                    <div class="form-label b"><b><?= $entry['question'];?></b></div>
+                                    <div class="form-field"> 
+                                        <? if($a == ''){
+                                            echo '<span style="color:#999;">'.$sm['lang'][279]['text'].'</span>';
+                                        } else { 
+                                            echo $a;
+                                        }?> 
+                                    </div>
+                                    </div>                                          
+                                <?php } ?>                                                        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="js-profile-languages-container">
+                    <div class="section section--profile">
+                        <h2 class="profile-h"><?= $sm['lang'][459]['text']; ?></h2>
+                        <div class="section-editable"> <?= getLangName($sm['profile']['lang']); ?></div>
+                    </div>
+                </div>
+            </section>
+            <section class="profile-info-v2__right">
+                <div class="js-profile-score-container">
+                    <div id="profile_score" class="profile-widget">
+                        <h2 class="profile-h"><?= $sm['lang'][460]['text']; ?></h2>
+                        <div class="score-user" style="height: 100px;">
+                            <div class="inline">
+                                 <div class="safari chart" data-percent="<?= $sm['profile']['likes_percentage']; ?>"><div class="tag"></div></div>
+                            </div>
+                            <div class="inline score-user__txt montserrat" style="color:#666;font-size: 12px;margin-left: 95px;margin-top: 30px;">
+                             <?= $sm['profile']['first_name']; ?><?= $sm['lang'][462]['text']; ?><b><?= $sm['profile']['total_likers']; ?></b><?= $sm['lang'][339]['text']; ?>
+                             <b><?= $sm['profile']['totalLikes']; ?></b><?= $sm['lang'][461]['text']; ?>!</div>
+                            <div class="btn-group btn-group--block score-user__btns"> </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="js-profile-secret-comments-container"></div>
+                <div class="js-profile-gifts-container js-core-events-container">
+                    <div id="gifts" class="profile-widget js-wrap js-gifts-container hide">
+                        <h2 class="profile-h"><?= $sm['lang'][463]['text']; ?></h2>
+                        <div class="gift-add">
+                            <div class="inline gift gift--border">
+                                <img src="<?= $sm['config']['theme_url']; ?>/images/rose.png" width="60" height="60" alt="">
+                            </div>
+                            <b class="inline gift-add__txt montserrat" style="color:#666;font-size: 13px;top: 20px;"><?= $sm['lang'][464]['text']; ?>
+                             <?= $sm['profile']['first_name']; ?><?= $sm['lang'][447]['text']; ?></b>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>      
+        <div class="footer-badoo" style="margin-bottom:25px;left:-4.15%;width:104%;">
+            <center>
+            <div class="ad-zone">
+                <?php echo siteConfig('ads'); ?>
+            </div>
+            <div class="download-apps">
+                <h3><?= $sm['lang'][392]['text']; ?>:</h3>
+                <a href="<?php echo $app_ios; ?>">
+                    <img src="<?php echo $sm['config']['theme_url']; ?>/images/ios.png" />
+                    <h2>Iphone <?= $sm['lang'][393]['text']; ?></h2>
+                </a>
+                <a href="<?php echo $app_android; ?>">
+                    <img src="<?php echo $sm['config']['theme_url']; ?>/images/android.png" /><h2>Android<?= $sm['lang'][393]['text']; ?></h2>
+                </a>
+            </div>
+            <div class="bottom-left">
+                <a href="<?php echo $sm['config']['site_url']; ?>/terms"><h3><?= $sm['lang'][43]['text']; ?></h3></a> <a href="<?php echo $sm['config']['site_url']; ?>/privacy"><h3><?= $sm['lang'][45]['text']; ?></h3></a> <a href="mailto:<?php echo $sm['config']['email']; ?>"><h3><?= $sm['lang'][64]['text']; ?></h3></a> <h3>  <?php echo $sm['config']['name']; ?> 2018 </h3>
+            </div>          
+        </center>
+      </div>                                                            
+    </div>
+</div>

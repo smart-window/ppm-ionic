@@ -1,0 +1,85 @@
+<?php
+  if($sm['admin_ajax'] == false){
+    header('Location:'.$sm['config']['site_url'].'admin');
+  }
+?>
+<script>
+  aurl = 'update';
+  currentMenu = 'update';
+  currentMenuCollapse = 'asd';  
+</script>
+<?php 
+$currentTime = time()-300;
+
+$days = 86400 * 7;
+$days = time() - $days;
+$date1 = date('m/d/Y', $days);
+$date2 = date('m/d/Y', time());
+?>
+
+
+
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px;min-height: 800px ">
+
+<div class="alert alert-soft-success alert-dismissible align-items-center card-margin" id="updateSoftware"  style="cursor: pointer;display: none" data-update-software-main-dashboard>
+    <i class="material-icons mr-3" style="position: absolute;right: 10px;top: 10px;font-size: 70px">update</i>
+    <div class="text-body">Software update available<br>Update to version <span id="updateSoftwareVersion"></span><br><br>
+    <a href="javascript:;" class="btn btn-success" style="color: #fff"><i class="material-icons" style="color: #fff">update</i> <strong>Click here for Update the software</strong></a>      
+
+      </div>
+</div>
+
+  <div class="card card-form  flex-column flex-sm-row " style="height: 75px;margin-top: 25px;">
+      <div class="card-form__body card-body-form-group flex bg-primary" >
+          <div class="row">
+              <div class="col-sm-12">
+                  <div class="form-group">
+                      <label for="filter_name" style="width: 74%;font-size: 14px;color:#fff">Current installed software version <?= $sm['settings']['currentVersion']; ?> </label>                    
+                      <select id="filter_updates" class="custom-select" style="width: 25%;" onchange="filterSoftwareUpdates(this.value)">
+                        <option value="all">All Versions</option>
+                      </select>                      
+                  </div>
+              </div>                                                 
+          </div>
+      </div>
+  </div>  
+
+
+  <div id="updatesList">
+
+  </div>
+
+
+
+
+</div>
+
+
+<script>
+var udiv = document.getElementById('updatesList');
+if(softwareUpdateInfo == ''){
+  $.getJSON("https://premiumdatingscript.com/clients/updates.php",{d: document.location.host,l: l,v: sVersion},function(data){
+    udiv.innerHTML = data.updates;  
+    softwareUpdateInfo = data.updates;
+    softwareUpdateSelect = data.select;
+    softwareUpdateVersion = data.version;
+    console.log(data);
+    $('#filter_updates').append(data.select);   
+    if(softwareUpdateVersion > sVersion){
+      $('#updateSoftware').show();
+      $('#updateSoftwareVersion').text(softwareUpdateVersion);
+      $('#updateSoftware').click(function(e){
+        window.location.href = '<?= $sm['config']['site_url'];?>update.php?version='+softwareUpdateVersion;
+      });
+    }                         
+  });
+} else {
+  udiv.innerHTML = softwareUpdateInfo;
+  $('#filter_updates').append(softwareUpdateSelect); 
+  if(softwareUpdateVersion > sVersion){
+    $('#updateSoftware').show();
+    $('#updateSoftwareVersion').text(softwareUpdateVersion);
+  }   
+}         
+</script>

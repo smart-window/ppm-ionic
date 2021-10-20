@@ -1,0 +1,861 @@
+<?php 
+if(isset($_GET['id'])){
+	$usid = secureEncode($_GET['id']);	
+	getUserInfo($usid,1);
+} 
+
+$count = getUserTodayConv($sm['user']['id']);
+$check = blockedUser($sm['user']['id'],$sm['profile']['id']);
+if($check == 1){
+	header('Location:'.$sm['config']['site_url']);
+}
+$profile_info = json_encode($sm['profile']);
+$fan = isFan($sm['user']['id'],$sm['profile']['id']);
+
+$btnAction=1;
+$btnLikeVisible='';
+$btnNoLikeVisible='';
+if($fan == 1){
+	$btnAction = 0;
+	$btnLikeVisible = 'display:none';
+} else {
+	$btnNoLikeVisible = 'display:none';
+}
+$me = false;
+if($sm['user']['id'] == $sm['profile']['id']) { 
+	$me = true;
+	$sm['user'] = $sm['profile'];
+	if($sm['user']['guest'] == 1){
+		header('Location:'.$sm['config']['site_url'].'logout');
+	}
+	$checkIfMessageSent = 0;
+} else {
+	visit($sm['user']['id'],$sm['profile']['id'],$sm['profile']['profile_photo'],$sm['profile']['first_name']);
+	$checkConv = checkConv($sm['user']['id'],$sm['profile']['id']);
+	$checkIfMessageSent = checkConv($sm['user']['id'],$sm['profile']['id']);
+}
+
+$new = getUserTotalConv($sm['user']['id'],$sm['profile']['id']);
+$checkConv = 0;
+if($new == 0 && $count >= $sm['basic']['chat'] && $sm['user']['premium'] == 0 || $new == 0 && $count >= $sm['premium']['chat']){
+	$checkConv = 1;
+}
+$allG = count($sm['genders']);
+$allG = $allG + 1;
+$enableChat = false;	
+if($sm['plugins']['chat']['firstMessage'] == $sm['user']['gender'] || $sm['plugins']['chat']['firstMessage'] == $allG){
+	$enableChat = true;	
+}
+if($checkConv == 1){
+	$enableChat = true;
+}
+if($new == 1){
+	$enableChat = false;
+}
+
+$enableFastMessage = true;
+if($checkIfMessageSent == 1){
+	$enableFastMessage = false;
+}
+echo 
+'<script>
+current_user_id = ' . $sm['profile']['id'] .';
+var profile_info = '. $profile_info  . ';	
+url = "profile";
+
+</script>';
+?>
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+	<div class="col s2 real" style="padding-right: 0px;" >
+		<?php 
+			if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+				echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+			}
+		?>		
+	</div>
+	<div class="col s8 real "  id="site-content" style="border: 1px solid <?= $sm['theme']['wall_border_color']['val']; ?>" >
+<?php } else { ?>
+	<div class="col s8 real fix-width-content mainContentBorderColor" style="padding-right: 0px;border: 1px solid <?= $sm['theme']['wall_border_color']['val']; ?>" id="site-content">
+<?php } ?>
+	<?php if($sm['theme']['top_user_header_gradient_profile']['val'] == 'Yes'){ ?>          
+	<div class="top-user-header topHeaderProfileSection <?=$sm['theme']['top_user_header_bg_profile']['val']; ?>" style="">
+	<?php } else { ?> 
+	<div class="top-user-header topHeaderProfileSection" style="background: <?=$sm['theme']['top_user_header_bg_profile']['val']; ?>;">
+	<?php } ?>				
+	<div class="top-user-header-left" style="display:inline-block">	
+		<?php if($me && $sm['plugins']['story']['enabled'] == 'Yes'){ ?>
+			<mark class="brick brick--bc vivify popIn delay-1000" data-upload-story onclick="upStory()" style="position:absolute;width: 30px;height: 30px;z-index: 99;background: <?= $sm['theme']['story_on']['val'];?>;top:70px;left: -103px;border: 3px solid #fff;cursor: pointer;">
+              <div style="position:relative;top: 0px" >
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </div>
+            </mark>								
+		<?php } ?>	
+
+		<div class="story vivify" onclick="openStory(<?= $sm['profile']['story']; ?>)" style="cursor: pointer;" >
+			<div class="profile-photo vivify popIn" data-left-profile-photo data-src=""></div>
+			<div class="roller" data-storyRoller data-loading-story style="display: none"></div>
+			<div class="over-roller" data-storyPath data-loading-story style="display: none">
+			</div>					
+		</div>	
+		
+
+											
+		<?php if(!$me){ ?>
+			<h2 class="montserrat" style="left: 110px;font-weight: 700">
+				<?= $sm['profile']['name']; ?>, <?= $sm['profile']['age']; ?>
+				<?php if($sm['profile']['premium'] == 1){
+					echo '<div class="premium" data-badge-premium data-tooltip="'.$sm['lang'][438]['text'].'"><i class="mdi-editor-attach-money"></i></div>';
+				}?>
+				<?php if($sm['profile']['verified'] == 1){
+					echo '<div class="verified" data-badge-verified  data-tooltip="'.$sm['lang'][439]['text'].'"><i class="mdi-action-verified-user"></i></div>';
+				}?>
+				<?php if($sm['profile']['popular'] > 1000){
+					echo '<div class="popular" data-badge-popular  data-tooltip="'.$sm['lang'][440]['text'].'"><i class="mdi-social-whatshot"></i></div>';
+				}?>	
+			</h2>
+			<?php  if($sm['profile']['status'] == 'y'){
+				echo '<span style="color:#17D42B!important;left:110px">'.$sm['lang'][441]['text'].'</span>';
+			} else {
+				echo '<span style="left:110px">'.$sm['lang'][465]['text'].' '.time_elapsed_string($sm['profile']['last_access']).'</span>';
+			} ?>
+		<?php } else { ?>
+			<h2 class="montserrat" style="left: 110px;font-weight: 700">
+				<?= $sm['profile']['name']; ?>, <?= $sm['profile']['age']; ?>
+				<?php if($sm['profile']['premium'] == 1){
+					echo '<div class="premium" data-badge-premium data-tooltip="'.$sm['lang'][438]['text'].'"><i class="mdi-editor-attach-money"></i></div>';
+				}?>
+				<?php if($sm['profile']['verified'] == 1){
+					echo '<div class="verified" data-badge-verified  data-tooltip="'.$sm['lang'][439]['text'].'"><i class="mdi-action-verified-user"></i></div>';
+				}?>
+				<?php if($sm['profile']['popular'] > 1000){
+					echo '<div class="popular" data-badge-popular data-tooltip="'.$sm['lang'][440]['text'].'"><i class="mdi-social-whatshot"></i></div>';
+				}?>
+			</h2>
+			<?php  if($sm['profile']['status'] == 'y'){
+				echo '<span style="left:110px;color:#17D42B!important;">'.$sm['lang'][441]['text'].'</span>';
+			} else {
+				echo '<span style="left:110px;">'.$sm['lang'][465]['text'].' '.time_elapsed_string($sm['profile']['last_access']).'</span>';
+			} ?>
+		<?php } ?>
+
+	</div>
+
+	<div class="top-user-header-right" style="display:inline-block;width:40%;">
+		<?php if($me){ ?>
+		    <a href="<?= $sm['config']['site_url']; ?>logout">
+		    	<div class="btn btn--white btn--ico tooltip-no-js-wrap js-profile-header-btn" style="float:right;margin-left: 15px;">
+			    	<i class="icon ion-android-exit" style="font-size: 24px;position: absolute;top: 10px;left:13px"></i> 
+		    	</div>
+			</a>			    
+		    <a href="javascript:;" onclick="openWidget('userProfileBasicInfo');">
+		    <div class="btn btn--white btn--ico tooltip-no-js-wrap js-profile-header-btn" style="float:right;margin-right: 15px;">
+			    <i class="icon ion-gear-a" style="font-size: 24px;position: absolute;top: 10px;left:12px"></i> 
+		    </div></a>	
+		    <div class="btn btn--white btn--ico tooltip-no-js-wrap js-profile-header-btn" data-url="photos" style="float:right;margin-right: 15px;" data-index="0">
+			    <i class="icon ion-images" style="font-size: 24px;position: absolute;top: 10px;left:12px"></i> 
+		    </div>					    				    
+	    <?php } else { ?>
+	    	<?php
+	    	if($enableChat){ $buttonMarginRight = 80; ?>
+
+			    <?php if($sm['plugins']['profile']['showSendCredits'] == 'Yes'){ 
+			    	$buttonMarginRight = 160;
+			    	?>
+				    <button class="button-circular vivify popIn" onclick="showSendCredit()" style="opacity: 1; transform: translateY(0px);background: <?=$sm['theme']['icon_sendcredit_bg_profile']['val']; ?>;position:absolute;right: 80px;top: 18px;">
+				    	<img src="<?= $sm['config']['theme_url']; ?>/images/icon-coins.png"
+							                style="position:absolute;width: 40px;margin-top: -18px;margin-left: -20px;">
+				    </button>
+			    <?php } ?>
+
+			    <button class="button-circular vivify popIn " data-gift="No" data-url="chat" data-uid="<?= $sm['profile']['id']; ?>" style="opacity: 1; transform: translateY(0px);background: <?=$sm['theme']['icon_chat_bg_profile']['val']; ?>;position:absolute;right: <?=$buttonMarginRight;?>px;top: 18px;" >
+			    	 <i class="icon icon--lg ion-chatbubble-working" style="font-size: 35px;color: <?=$sm['theme']['icon_chat_color_profile']['val']; ?>;margin-left: -2px;margin-top: -2px"></i>
+			    </button>				    
+			    <button class="button-circular vivify popIn" data-like-game="0" data-id="<?= $sm['profile']['id']; ?>" style="opacity: 1; transform: translateY(0px);background: <?=$sm['theme']['icon_nolike_bg_profile']['val']; ?>;position:absolute;right: 0px;top: 18px;<?=$btnNoLikeVisible;?>">
+			        <svg class="icon" viewBox="0 0 60 60" style="width: 40px;height: 40px">
+			            <polygon fill="<?=$sm['theme']['icon_nolike_color_discover']['val']; ?>" points="45.82 16.12 43.7 14 29.91 27.79 16.12 14 14 16.12 27.79 29.91 14 43.7 16.12 45.82 29.91 32.03 43.7 45.82 45.82 43.7 32.03 29.91"></polygon>
+			        </svg>
+			    </button>
+
+			    <button class="button-circular vivify popIn" data-like-game="1" data-id="<?= $sm['profile']['id']; ?>" style="opacity: 1; transform: translateY(0px);background: <?=$sm['theme']['icon_like_bg_profile']['val']; ?>;position:absolute;right: 0px;top: 18px;<?=$btnLikeVisible;?>">
+					<svg fill="<?=$sm['theme']['icon_like_color_profile']['val']; ?>" viewBox="0 0 32 32" width="100%" height="100%"><path d="M16 12.06a3.85 3.85 0 0 0-3.12-1.61 3.94 3.94 0 0 0-3.88 4c0 3.6 4.69 8.13 7 8.13 2.31 0 7-4.53 7-8.14 0-2.2-1.74-3.99-3.88-3.99-1.24 0-2.4.6-3.12 1.61z"></path></svg>
+			    </button>
+			    
+			
+	    	<?php } else { ?>
+			    <button class="button-circular vivify popIn" data-like-game="0" data-id="<?= $sm['profile']['id']; ?>" style="opacity: 1; transform: translateY(0px);background: <?=$sm['theme']['icon_nolike_bg_profile']['val']; ?>;position:absolute;right: 0px;top: 18px;<?=$btnNoLikeVisible;?>">
+			        <svg class="icon" viewBox="0 0 60 60" style="width: 40px;height: 40px">
+			            <polygon fill="<?=$sm['theme']['icon_nolike_color_discover']['val']; ?>" points="45.82 16.12 43.7 14 29.91 27.79 16.12 14 14 16.12 27.79 29.91 14 43.7 16.12 45.82 29.91 32.03 43.7 45.82 45.82 43.7 32.03 29.91"></polygon>
+			        </svg>
+			    </button>						    
+			    <button class="button-circular vivify popIn" data-like-game="1" data-id="<?= $sm['profile']['id']; ?>" style="opacity: 1; transform: translateY(0px);background: <?=$sm['theme']['icon_like_bg_profile']['val']; ?>;position:absolute;right: 0px;top: 18px;<?=$btnLikeVisible;?>">
+					<svg fill="<?=$sm['theme']['icon_like_color_profile']['val']; ?>" viewBox="0 0 32 32" width="100%" height="100%"><path d="M16 12.06a3.85 3.85 0 0 0-3.12-1.61 3.94 3.94 0 0 0-3.88 4c0 3.6 4.69 8.13 7 8.13 2.31 0 7-4.53 7-8.14 0-2.2-1.74-3.99-3.88-3.99-1.24 0-2.4.6-3.12 1.61z"></path></svg>
+			    </button>
+
+			    <?php if($sm['plugins']['profile']['showSendCredits'] == 'Yes'){ 
+			    	$buttonMarginRight = 80;
+			    	?>
+				    <button class="button-circular vivify popIn" onclick="showSendCredit()" style="opacity: 1; transform: translateY(0px);background: <?=$sm['theme']['icon_sendcredit_bg_profile']['val']; ?>;position:absolute;right: <?=$buttonMarginRight;?>px;top: 18px;">
+				    	<img src="<?= $sm['config']['theme_url']; ?>/images/icon-coins.png"
+							                style="position:absolute;width: 40px;margin-top: -18px;margin-left: -20px;">
+				    </button>
+			    <?php } ?>							    
+	    	<?php } ?>
+
+	    			    					    
+	    <?php } ?>
+		</div>
+	</div>	
+       
+
+    <div class="profile-content" style="overflow-y: hidden">
+    <?php if($me){ ?>
+    <div class="profile-photos" style="position:relative;height: 180px">                
+        <div class="photo-list__action <?= $sm['theme']['add_media_btn_bg']['val']; ?>" id="addPhotos" style="cursor:pointer;width: 140px;height: 180px;display: inline-block;background: <?= $sm['theme']['add_media_btn_bg']['val']; ?>">
+            <div class="inline">
+            	<i class="icon icon--lg icon--white">
+<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(2 3)"><path d="M20 16a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3l2-3h6l2 3h3a2 2 0 0 1 2 2v11z"/><circle cx="10" cy="10" r="4"/></g></svg>            		
+            	</i>
+           		<b class="photo-list__action-title"><?= $sm['lang'][74]['text']; ?></b>
+           	</div>
+           	<span class="middle"></span>
+         </div>                
+        <div style="margin-left: 140px;" id="profile-photos">                    
+		<?= getUserPhotosHeader($sm['profile']['id']); ?>  
+		</div>
+    </div> 
+    <?php } else { ?>
+    <div class="profile-photos" id="profile-photos">                  
+		<?= getUserPhotosHeader($sm['profile']['id']); ?>  
+    </div>
+    <?php } ?>
+		<div class="profile-info-v2">
+		    <section class="profile-info-v2__left <?= $sm['theme']['wall_bg_profile_left']['val']; ?>"  style="background: <?= $sm['theme']['wall_bg_profile_left']['val']; ?>">
+				<?php if($me){ ?>
+
+				    <div class="section section--profile" >
+				        <div class="entry-points"  style="padding-bottom: 25px;">
+
+				            <div class="entry-point" style="cursor: pointer;" onclick="goTo('popularity');">
+				                <div class="entry-point__icon">
+				                	<img src="<?= $sm['theme']['image_popularity']['val']; ?>" style="width: 70px;margin-top: 10px;border-radius: 5px">
+				                </div>
+				                <div class="grey" style="font-size: 13px;color:<?= $sm['theme']['primary_color_profile_left']['val']; ?> !important;"><?= $sm['lang'][398]['text']; ?></div>
+				                <b class="inline" style="font-size: 13px;margin-top: 10px;color:<?= $sm['theme']['primary_color_profile_left']['val']; ?> !important;"><?= $sm['lang'][473]['text']; ?></b>
+				            </div>
+
+				            <div class="entry-point" style="cursor: pointer;" onclick="goTo('credits');">
+				                <div class="entry-point__icon">
+				                	<img src="<?= $sm['theme']['image_credits']['val']; ?>" style="width: 55px;margin-top: 15px;border-radius: 5px">
+				            	</div>
+				                <div class="grey" style="font-size: 14px;margin-top: 7px">
+				                	<b style="color:<?= $sm['theme']['primary_color_profile_left']['val']; ?> !important;"><?= $sm['user']['credits']; ?></b>
+				                	<?= $sm['lang'][285]['text']; ?>
+				                </div>
+				                <b class="inline" style="font-size: 14px;margin-top: 7px;color:<?= $sm['theme']['primary_color_profile_left']['val']; ?> !important;">
+				                	<?= $sm['lang'][83]['text']; ?>
+				                </b>
+				            </div>
+
+				            <div class="entry-point" style="cursor: pointer;" onclick="goTo('premium');">
+				                <div class="entry-point__icon"><img src="<?= $sm['theme']['image_spp']['val']; ?>"
+				                style="width: 105px;margin-top: -5px;border-radius: 5px"></div>
+				                <?php if($sm['user']['premium'] == 1){
+				                	echo '<b class="inline" style="font-size: 13px;margin-top: 10px;color:'.$sm['theme']['primary_color_profile_left']['val'].'!important">
+				                	'.$sm['lang'][698]['text'].'</b>';
+				                } else {
+				                	echo '<b class="inline" style="font-size: 13px;margin-top: 10px;color:'.$sm['theme']['primary_color_profile_left']['val'].'!important">
+				                	'.$sm['lang'][699]['text'].'</b>';
+				                }
+				                ?>
+				            </div>
+				        </div>
+				    </div>
+
+					<?php } ?>
+					<?php if ($checkConv == 0 && $sm['user']['guest'] == 0 && $enableFastMessage == true && $sm['theme']['profile_fast_message']['val'] == 'Yes'){ ?>
+						<div class="profile-menu__fast-message vivify fadeIn" style="margin-top: 60px;display: none" >
+						    <div class="fast-message fast-message--header" style="background: none">
+						        <div class="fast-message__inner">
+						            <div class="fast-message__close js-close" onclick="closeFastMessage();">
+						                <i class="icon ion-close-round"></i>
+						            </div>
+									<div class="fast-message__state" id="fast-ok" style="display: none">
+									    <div class="fast-message__state-icon">
+									    	<img src="<?= $sm['config']['theme_url']; ?>/images/message-sent.jpg">
+									    </div>
+									    <div class="fast-message__state-title comforta"><?= $sm['lang'][467]['text']; ?>
+									    </div>
+									</div>								            
+						            <div class="fast-message__content">
+						                <div class="fast-message__screen">
+						                    <div class="fast-message__screen-icon">
+						                        <i class="icon icon--lg ion-chatbubble-working" style="font-size: 44px"></i>
+						                    </div>
+						                    <p class="fast-message__screen-text comforta"><?= $sm['lang'][475]['text']; ?> <?= $sm['profile']['first_name'];?>.
+						                    </p>
+						                </div>
+						            </div>
+						            <div class="fast-message__footer" >
+						                <div class="fast-message__field-wrapper" >
+						                    <div class="fast-message__field">
+						                        <div class="text-field text-field--sm">
+						                            <input class="text-field__input js-message-input comfortaa" type="text" placeholder="<?= $sm['lang'][89]['text']; ?>" id="fastMessageVal" style="margin-left:10px;outline:none">
+						                        </div>
+						                    </div>
+						                    <div class="fast-message__send">
+						                        <button class="btn btn--sm" onclick="fastMessage(<?=$sm['profile']['id'];?>)" style="background: none">
+						                            <div class="btn__icon " ><i class="icon ion-android-send" style="font-size: 20px;color:#2B65F8"></i>
+						                            </div>
+						                        </button>
+						                    </div>
+						                </div>
+						            </div>
+						        </div>
+						    </div>
+						</div>
+					<?php } ?>	
+		        
+				<?php if($sm['plugins']['profile']['showBio'] == 'Yes'){ ?>
+
+			        <?php if(isset($sm['profile']['bio'])){ ?> 
+			            <div class="section section--profile" style="margin-top:-20px;margin-bottom:-20px;border-bottom: none">
+			            	<h2 class="profile-h"><?= $sm['lang'][117]['text']; ?></h2>
+							<?php if($sm['profile']['id'] == $sm['user']['id']){ ?>
+								<div class="edit-right-profile" style="margin-right: 25px;top:35px">
+								    <a href="#" onclick="showProfileBio(this)" data-profileBio="0">
+										<svg id="profileBioPencile" class="vivify popIn" data-svg="profileBioPencile" viewBox="0 0 36 36" width="28px" fill="<?= $sm['theme']['primary_color_profile_left']['val']; ?>"><path d="M18 0a18 18 0 1 0 18 18A18 18 0 0 0 18 0zm0 34a16 16 0 1 1 16-16 16 16 0 0 1-16 16zm7.92-23.91a4 4 0 0 0-5.65 0l-.09.11q-5.05 5-10.09 10.08A42 42 0 0 0 8.93 27c.22.22 6.37-.66 6.8-1.1q5.09-5.13 10.22-10.22a4 4 0 0 0-.03-5.59zm-4.27 7.1q-3.54 3.53-7.07 7.07a34.18 34.18 0 0 1-3.39.61c.21-1.29.5-2.81.67-3.53q3.85-3.86 7.71-7.71l2.82 2.82zm2.86-2.87l-.12.13-.59.55-2.8-2.78.61-.61.05-.05.1-.12a2 2 0 0 1 2.76 2.88z"></path></svg>
+										<svg data-svg="profileBioCheck" class="vivify popIn" style="display: none" xmlns="http://www.w3.org/2000/svg" width="28px" viewBox="0 0 24 24" fill="none" stroke="<?= $sm['theme']['primary_color_profile_left']['val']; ?>" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+									</a>					
+								</div>
+							<?php } ?>		        		             	
+				                <div data-user-bio="visible" class="montserratRegular profile-section-editable" style="line-height:24px;">
+				                	<?= html_entity_decode($sm['profile']['bio']); ?>
+				                	<?php if($sm['plugins']['profile']['customBioUrl'] == 'Yes'){ 
+				                		$editBioUrl = '';
+				                		$editBioUrlMessage = '';
+				                	?>
+										<?php if(isset($sm['profile']['bio_url'])){ 
+											$bioUrl = explode('**message**',$sm['profile']['bio_url']);
+											$editBioUrl = $bioUrl[0];
+											$editBioUrlMessage = $bioUrl[1];
+											$bioUrlMessage = $bioUrl[0];
+											if(!empty($bioUrl[1])){ 
+												$bioUrlMessage = $bioUrl[1];
+											} 
+											echo '<br><br>
+											<a href="'.$bioUrl[0].$sm['plugins']['profile']['customBioUrlRef'].'" target="_blank">
+												'.$bioUrlMessage.'
+											</a>';
+										 } ?>
+									 <?php } ?>		                		
+				                </div>
+			                <?php if($sm['profile']['id'] == $sm['user']['id']){ ?>
+								<div contenteditable="true" data-user-bio="edit" class="input clever montserrat" id="userBio" style="font-size:1.1rem;height: 240px;line-height:24px;display: none;overflow-y: scroll">
+									<?= html_entity_decode($sm['profile']['bio']); ?>
+								</div>
+								<?php if($sm['plugins']['profile']['customBioUrl'] == 'Yes'){ ?>
+									<input data-user-bio="edit" id="userBioUrl" class="input clever" value="<?=$editBioUrl; ?>" placeholder="<?= $sm['lang'][702]['text']; ?>"  style="margin-top:10px;display:none;font-size:1.0rem" />
+									<input data-user-bio="edit" id="userBioUrlLink" class="input clever" value="<?=$editBioUrlMessage; ?>" placeholder="<?= $sm['lang'][703]['text']; ?>"  style="margin-top:10px;display:none;font-size:1.0rem" />										
+								<?php } ?>								
+							<?php } ?>				                
+			            </div>
+			        <?php } ?>
+
+				<?php } ?>
+
+				<?php if($sm['plugins']['story']['storyAlbum'] == 'Yes'){ ?>
+		        <?php 
+		        	$albums = array();
+				    $query = 'where uid = '.$sm['profile']['id'];
+				    $order = 'id desc';
+				    $albums = getArray('users_story_albums',$query,$order); 
+				    if (!empty($albums)) { ?>	        
+						<div class="section section--profile" id="highlightedStories" style="opacity: 0">		        
+							<h2 class="profile-h"><?= $sm['lang'][679]['text']; ?></h2>	 
+							<div class="overlayScroller"></div>
+							<div class="stories-wrap">
+
+							<?php if($me){ ?>
+								<div class="story-album vivify popInRight" id="addNewAlbum" style="background-image: url('<?= $sm['user']['profile_photo']; ?>');" onclick="openWidget('userCreateStoryAlbum')">
+								    <div class="story-album__overlay <?= $sm['theme']['add_album_btn_bg']['val']; ?>" style="opacity: .6;background: <?= $sm['theme']['add_album_btn_bg']['val']; ?>" ></div>
+								    <div class="story-album__info uploadStoryAlbum">
+								      <div class="story-album__title" style="padding-top: 25px">
+											<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="<?= $sm['theme']['add_album_btn_color']['val']; ?>" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+											<br><br>
+											<?= $sm['lang'][677]['text']; ?>		      	
+								      </div>
+								    </div>
+								</div>	
+							<?php } ?>							
+			            	<?php $delay = 0; foreach ($albums as $val) { 
+			            		$stories = json_encode(getAlbumStories($val['id'],$val['name'],$val['photo']));
+			            		$storyCount = explode(',', $val['stories']);
+			            		$storyCount = count($storyCount);
+			            		$delay = $delay+50 ?>	
+								<script>var stories<?=$val['id']; ?> = <?= $stories;?>;</script>
+								<div class="story-album vivify popInRight delay-<?= $delay; ?>" style="background-image: url('<?= $val['photo']; ?>');" data-story-album="<?= $val['id']; ?>">
+
+									<?php if($me){ ?>
+									<div class="story-album__edit" data-story-edit-album-btn="<?= $val['id']; ?>" onclick="editAlbumStories(<?= $val['id']; ?>,'<?= $val['stories']; ?>','<?= $val['name']; ?>','<?= $val['photo']; ?>')"><span><?= $sm['lang'][681]['text']; ?></span></div>
+									<?php } ?>
+									<?php if(!$me){ ?>
+									<div class="story-album__count"><span><?= $storyCount; ?> stories</span></div>
+									<?php } ?>									
+								    <div class="story-album__overlay"  onclick="openStoryAlbum(stories<?=$val['id']; ?>)"></div>
+								    <div class="story-album__title"><?= $val['name']; ?></div>
+								</div>
+							<?php } ?>		
+							</div>
+						</div>
+					<?php } else { ?>
+						<?php if($me){ ?>
+							<div class="section section--profile" id="highlightedStories" style="opacity: 0">   
+								<h2 class="profile-h"><?= $sm['lang'][679]['text']; ?></h2>	 
+								<div class="overlayScroller"></div>
+								<div class="stories-wrap">
+									<div class="story-album vivify popInRight" id="addNewAlbum" style="background-image: url('<?= $sm['user']['profile_photo']; ?>');" onclick="openWidget('userCreateStoryAlbum')">
+									    <div class="story-album__overlay <?= $sm['theme']['add_album_btn_bg']['val']; ?>" style="opacity: .6;background: <?= $sm['theme']['add_album_btn_bg']['val']; ?>" ></div>
+									    <div class="story-album__info uploadStoryAlbum">
+									      <div class="story-album__title" style="padding-top: 25px">
+												<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="<?= $sm['theme']['add_album_btn_color']['val']; ?>" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+												<br><br>
+												<?= $sm['lang'][677]['text']; ?>		      	
+									      </div>
+									    </div>
+									</div>										
+								</div>
+							</div>
+						<?php } ?>
+					<?php } ?>
+				<?php } ?>
+
+				<?php if($sm['plugins']['profile']['showProfileVideos'] == 'Yes'){ ?>	
+			        <?php 
+			        	$videos = array();
+					    $query = 'where u_id = '.$sm['profile']['id'].' and video = 1 and approved = 1 and story = 0';
+					    $order = 'id desc limit 20';
+					    $videos = getArray('users_photos',$query,$order); ?>
+					    <?php if (!empty($videos)) { 
+					    	$view = unblockedUser($sm['user']['id'],$sm['profile']['id']);
+					    ?>				        
+			            <div class="section section--profile" style="">
+			                <h2 class="profile-h"><?= $sm['lang'][684]['text']; ?></h2>
+							<?php if($sm['profile']['id'] == $sm['user']['id']){ ?>
+							<div class="edit-right-profile" style="margin-right: 25px;top:35px">
+							    <a href="javascript:;" data-url="photos">
+									<svg id="pencile" viewBox="0 0 36 36" width="28px" fill="<?= $sm['theme']['primary_color_profile_left']['val']; ?>"><path d="M18 0a18 18 0 1 0 18 18A18 18 0 0 0 18 0zm0 34a16 16 0 1 1 16-16 16 16 0 0 1-16 16zm7.92-23.91a4 4 0 0 0-5.65 0l-.09.11q-5.05 5-10.09 10.08A42 42 0 0 0 8.93 27c.22.22 6.37-.66 6.8-1.1q5.09-5.13 10.22-10.22a4 4 0 0 0-.03-5.59zm-4.27 7.1q-3.54 3.53-7.07 7.07a34.18 34.18 0 0 1-3.39.61c.21-1.29.5-2.81.67-3.53q3.85-3.86 7.71-7.71l2.82 2.82zm2.86-2.87l-.12.13-.59.55-2.8-2.78.61-.61.05-.05.1-.12a2 2 0 0 1 2.76 2.88z"></path></svg>					    	
+								</a>					
+							</div>
+							<?php } ?>		                
+			                <div class="profile-videos">
+			                	<?php 
+			                		$i = 0;
+								    foreach ($videos as $val) { $i++; ?>
+								    <div class="card-container video--card " data-my-photo-id="<?= $val['id']; ?>" style="<?php if($i == 1){echo 'margin-left: 0;';} ?>">
+								        <div class="card-container__img  <?php if($val['private'] == 1 && $view == 0){ echo 'blurview';} ?>" >
+											<video class="profileVideo" class=" " id="video<?= $val['id']; ?>" data-private="<?= $val['private']; ?>" data-profile-video data-view="<?= $view; ?>">
+											  <source src="<?=$val['photo'];?>" type="video/mp4">
+											  <source src="<?=$val['photo'];?>" type="video/ogg">
+											</video>
+								        </div>
+										<?php if($val['private'] == 1){ ?>
+								            <div class="category cat--private">
+								              <?= $sm['lang'][281]['text']; ?>
+								            </div>
+							        	<?php } ?>
+								        <div style="position:absolute;top: 10px;right: 24px;color: #fff;text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.15);font-size: 12px;" data-video-time="video<?= $val['id']; ?>"></div>						        	
+								        <div class="card-container__meta">
+								          <div class="meta__video-name" style="position: relative;padding-left: 30px">
+								          	<div style="position:absolute;top: 3px;left: 5px"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 12l-4-4-4 4M12 16V9"/></svg></div>
+								          	<span style="line-height: 25px"><?= time_elapsed_string($val['time']);?></span>
+								           </div>
+								        </div>
+									</div>
+
+								<?php } ?>
+			           		</div>
+			       		</div>
+			       		<?php } ?>
+		       		<?php } ?>
+
+		       		<?php if($sm['plugins']['profile']['showUbication'] == 'Yes'){ ?>
+		            <div class="section section--profile">
+		                <h2 class="profile-h"><?= $sm['lang'][454]['text']; ?></h2>
+						<?php if($sm['profile']['id'] == $sm['user']['id']){ ?>
+						<div class="edit-right-profile" style="margin-right: 25px;top:35px">
+						    <a href="javascript:;" onclick="openWidget('userProfileBasicInfo');">
+								<svg id="pencile"  viewBox="0 0 36 36" width="28px" fill="<?= $sm['theme']['primary_color_profile_left']['val']; ?>"><path d="M18 0a18 18 0 1 0 18 18A18 18 0 0 0 18 0zm0 34a16 16 0 1 1 16-16 16 16 0 0 1-16 16zm7.92-23.91a4 4 0 0 0-5.65 0l-.09.11q-5.05 5-10.09 10.08A42 42 0 0 0 8.93 27c.22.22 6.37-.66 6.8-1.1q5.09-5.13 10.22-10.22a4 4 0 0 0-.03-5.59zm-4.27 7.1q-3.54 3.53-7.07 7.07a34.18 34.18 0 0 1-3.39.61c.21-1.29.5-2.81.67-3.53q3.85-3.86 7.71-7.71l2.82 2.82zm2.86-2.87l-.12.13-.59.55-2.8-2.78.61-.61.05-.05.1-.12a2 2 0 0 1 2.76 2.88z"></path></svg>					    	
+							</a>					
+						</div>
+						<?php } ?>			                
+		                <div class="profile-section-editable">
+		                    <div class="js-wrap"> <span class="js-location-label montserrat">
+		                    	<?= $sm['profile']['city']; ?> , <?= $sm['profile']['country']; ?> </span>
+		                </div>
+		            </div>
+		        </div>
+		    	<?php } ?>
+
+		    	<?php if($sm['plugins']['profile']['showQuestions'] == 'Yes'){ ?>
+		        <?php //PROFILE QUESTIONS SECTION ?>
+		        <div class="js-profile-personal-info-container">
+		            <div class="section section--profile">
+		                <h2 class="profile-h"><?= $sm['lang'][132]['text']; ?></h2>
+						<?php if($sm['profile']['id'] == $sm['user']['id']){ ?>
+						<div class="edit-right-profile" style="margin-right: 25px;top:35px">
+						    <a href="#" onclick="showProfileQuestions(this)" data-profileEdit="0">
+								<svg id="profileQuestionPencile" class="vivify popIn" data-svg="profileQuestionPencile" viewBox="0 0 36 36" width="28px" fill="<?= $sm['theme']['primary_color_profile_left']['val']; ?>"><path d="M18 0a18 18 0 1 0 18 18A18 18 0 0 0 18 0zm0 34a16 16 0 1 1 16-16 16 16 0 0 1-16 16zm7.92-23.91a4 4 0 0 0-5.65 0l-.09.11q-5.05 5-10.09 10.08A42 42 0 0 0 8.93 27c.22.22 6.37-.66 6.8-1.1q5.09-5.13 10.22-10.22a4 4 0 0 0-.03-5.59zm-4.27 7.1q-3.54 3.53-7.07 7.07a34.18 34.18 0 0 1-3.39.61c.21-1.29.5-2.81.67-3.53q3.85-3.86 7.71-7.71l2.82 2.82zm2.86-2.87l-.12.13-.59.55-2.8-2.78.61-.61.05-.05.1-.12a2 2 0 0 1 2.76 2.88z"></path></svg>
+								<svg data-svg="profileQuestionCheck" class="vivify popIn" style="display: none" xmlns="http://www.w3.org/2000/svg" width="28px" viewBox="0 0 24 24" fill="none" stroke="<?= $sm['theme']['primary_color_profile_left']['val']; ?>" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>												    	
+							</a>					
+						</div>
+						<?php } ?>			                
+		                <div class="profile-section-editable">
+		                    <div class="form">
+				                <?php
+				                  $arr = array();
+				                  $arr = profileQuestion($sm['user']['lang'],$sm['profile']['gender']);
+				                  foreach($arr as $entry){ $q = $entry['question']; ?>
+				                  <?php $a = userProfileAnswer($sm['profile']['id'],$entry['id'],$sm['user']['lang']); ?>
+				                    <div class="form-row" style="margin-bottom: 5px;">
+		                            	<div class="form-label b" style="width: 35%;padding-right: 30px"><b><?= $entry['question'];?></b></div>
+			                            <div class="form-field" > 
+											<?php
+												if($entry['method'] == 'text'){
+													echo '<input onchange="updateProfileQuestionAnswer(this)" data-answer="edit" data-profile-question-answer="'.$entry['id'].'" data-question-method="text"  type="" class="input clever" value="'.$a.'"  style="top:-10px;display:none;font-size:1.0rem" />';											
+												} else {
+													$answer = array();
+          											$answer = profileQuestionAnswer($entry['id'],$sm['user']['lang']);
+          											$aSelect = '';
+								                  	foreach($answer as $an){
+								                  		$selected = '';
+								                  		if($an['answer'] == $a){$selected='selected';}
+								                  		$aSelect.='<option value="'.$an['id'].'" '.$selected.'>'.$an['answer'].'</option>';
+								                  	}        											
+													echo '
+														<select data-answer="edit" onchange="updateProfileQuestionAnswer(this)" data-profile-question-answer="'.$entry['id'].'" data-question-method="select" class="input clever" style="top:-10px;display:none;font-size:1.0rem">
+															<option value="">'.$sm['lang'][712]['text'].'</option>
+															'.$aSelect.'
+														</select>
+													';
+												}
+												if($a == ''){
+													$a = $sm['lang'][279]['text'];
+													echo '<span data-answer="visible" data-question-answer="'.$entry['id'].'" style="color: #888">'.$a.'</span>';
+												} else { 
+													echo '<span data-answer="visible" data-question-answer="'.$entry['id'].'">'.$a.'</span>';
+												} ?> 
+			                            </div>
+		                            </div>				                            
+				                <?php } ?>					                 					     		                  
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+
+
+		    	<?php } ?>
+
+		    	<?php if($sm['plugins']['profile']['showInterests'] == 'Yes'){ ?>
+
+		        <?php
+		        // INTEREST SECTION
+		        if($sm['plugins']['interests']['enabled'] == 'Yes') { ?>
+		        <?php 
+		        	$interests = array();
+				    $order = 'id desc';
+				    $allInterests = getArray('interest','',$order);	
+				    $hasInterest = false;
+				    foreach ($allInterests as $val) {  
+				    	if(isset($sm['profile']['interest'][$val['id']])){
+				    		$hasInterest = true;
+				    	}
+				    }	
+				    if($sm['profile']['id'] == $sm['user']['id']){
+				    	$hasInterest = true;
+				    }	    
+				?>	
+
+				<?php if($hasInterest){ ?>	        	
+		        <div class="js-profile-interests-container">
+		            <div class="section section--profile">
+		                <h2 class="profile-h"><?= $sm['lang'][276]['text']; ?></h2>
+		                <div class="interests" >
+							<?php if($sm['profile']['id'] == $sm['user']['id']){ ?>								
+								<div class="edit-right-profile" style="margin-right: 25px;top:35px">
+								    <a href="#" onclick="showInterests()">
+										<svg data-svg="profileInterestPencile" class="vivify popIn" viewBox="0 0 36 36" width="28px" fill="<?= $sm['theme']['primary_color_profile_left']['val']; ?>"><path d="M18 0a18 18 0 1 0 18 18A18 18 0 0 0 18 0zm0 34a16 16 0 1 1 16-16 16 16 0 0 1-16 16zm7.92-23.91a4 4 0 0 0-5.65 0l-.09.11q-5.05 5-10.09 10.08A42 42 0 0 0 8.93 27c.22.22 6.37-.66 6.8-1.1q5.09-5.13 10.22-10.22a4 4 0 0 0-.03-5.59zm-4.27 7.1q-3.54 3.53-7.07 7.07a34.18 34.18 0 0 1-3.39.61c.21-1.29.5-2.81.67-3.53q3.85-3.86 7.71-7.71l2.82 2.82zm2.86-2.87l-.12.13-.59.55-2.8-2.78.61-.61.05-.05.1-.12a2 2 0 0 1 2.76 2.88z"></path></svg>		
+										<svg data-svg="profileInterestCheck" class="vivify popIn" style="display: none" xmlns="http://www.w3.org/2000/svg" width="28px" viewBox="0 0 24 24" fill="none" stroke="<?= $sm['theme']['primary_color_profile_left']['val']; ?>" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>			    	
+									</a>					
+								</div>
+							<?php } ?>
+							<div id="allInterests" style="display: none;position:relative;min-height: 100px;height: auto" >
+						        <?php 
+									foreach ($allInterests as $val) {  ?>
+										<?php if(!isset($sm['profile']['interest'][$val['id']])){ 
+											$expanded='';$visible = 'none';
+											$select = 0;
+										} else {
+											$interests[] = $val;
+											$select = 1;
+											$expanded='expand'; $visible = 'block';
+										} ?>										
+										<div class="container-grid-interest box-shadow allInterests interestsBorderRadius" onclick="selectInterest(this);" data-select-interest-id="<?= $val['id']; ?>" style="background-image:url('<?= $val['icon']; ?>')" data-select="<?= $select; ?>" data-icon="<?= $val['icon']; ?>" data-name="<?= $val['name']; ?>" data-checked="<?= $select; ?>" data-id="<?= $val['id']; ?>">                            
+											<div class="interestName">
+												<span class="text-shadow"><?= $val['name']; ?></span>
+											</div>
+											<div class="interestChecked" data-interest-checked="<?= $val['id']; ?>" style="display:<?= $visible; ?>">
+												<i class="icon ion-checkmark"></i>
+											</div>
+
+											<div class="circle-grid-stories <?= $expanded; ?>" data-interest-selected="<?= $val['id']; ?>"></div>
+										</div>
+									<?php } ?>												                
+							</div>
+
+							<?php if($sm['profile']['id'] == $sm['user']['id']){ ?>	
+								<div style="display: inline-block;">
+									<div class="container-grid-interest interestsBorderRadius box-shadow <?= $sm['theme']['add_album_btn_bg']['val']; ?>" id="addInterestBtn" style="background: <?= $sm['theme']['add_album_btn_bg']['val']; ?>" onclick="showInterests()">                            
+										<div class="interestName interestAdd">
+											<span class="text-shadow" style="color: <?= $sm['theme']['add_album_btn_color']['val']; ?>"><?= $sm['lang'][701]['text']; ?></span>
+										</div>
+									</div>
+								</div>	
+							<?php } ?>
+							<div id="myInterests" style="position:relative;display: inline-block;width: auto;min-height: 100px;height: auto">
+								<?php foreach ($allInterests as $val) {  
+									if(isset($sm['profile']['interest'][$val['id']])){ ?>
+									<div class="container-grid-interest interestsBorderRadius box-shadow" style="background-image:url('<?= $val['icon']; ?>')">                            
+										<div class="interestName">
+											<span class="text-shadow"><?= $val['name']; ?></span>
+										</div>
+									</div>
+								<?php }
+								} ?>								
+							</div>
+						</div>
+		            </div>
+		        </div>
+		    	<?php } //if has interest ?>
+		    	<?php } //if interest enabled ?>
+		    	<?php } //if profile interest is enabled ?>
+
+
+		    	
+
+		    	
+			    <div class="js-profile-languages-container">
+		        	<?php if($sm['plugins']['profile']['showLanguage'] == 'Yes'){ ?>
+		            <div class="section section--profile">
+		                <h2 class="profile-h"><?= $sm['lang'][459]['text']; ?></h2>
+						<?php if($sm['profile']['id'] == $sm['user']['id']){ ?>
+						<div class="edit-right-profile" style="margin-right: 25px;top:35px">
+						    <a href="javascript:;" onclick="openWidget('userProfileBasicInfo');">
+								<svg id="pencile" viewBox="0 0 36 36" width="28px" fill="<?= $sm['theme']['primary_color_profile_left']['val']; ?>"><path d="M18 0a18 18 0 1 0 18 18A18 18 0 0 0 18 0zm0 34a16 16 0 1 1 16-16 16 16 0 0 1-16 16zm7.92-23.91a4 4 0 0 0-5.65 0l-.09.11q-5.05 5-10.09 10.08A42 42 0 0 0 8.93 27c.22.22 6.37-.66 6.8-1.1q5.09-5.13 10.22-10.22a4 4 0 0 0-.03-5.59zm-4.27 7.1q-3.54 3.53-7.07 7.07a34.18 34.18 0 0 1-3.39.61c.21-1.29.5-2.81.67-3.53q3.85-3.86 7.71-7.71l2.82 2.82zm2.86-2.87l-.12.13-.59.55-2.8-2.78.61-.61.05-.05.1-.12a2 2 0 0 1 2.76 2.88z"></path></svg>					    	
+							</a>					
+						</div>
+						<?php } ?>			                
+		                <div class="profile-section-editable"> <?= getLangName($sm['profile']['lang']); ?></div>
+		            </div>
+		           	<?php } ?>
+
+		           	<?php if($sm['plugins']['reportProfile']['enabled'] == 'Yes' && !$me){ ?>
+			           	<a href="javascript:;" style="float: right;" onclick="reportUser(<?= $sm['profile']['id']; ?>,'<?= $sm['profile']['first_name']; ?>','<?= $sm['profile']['profile_photo']; ?>');">
+			           		<?= $sm['lang'][326]['text']; ?>
+			           	</a>
+		           	<?php } ?>
+
+		           	<?php if($me){ ?>
+			           	<a href="javascript:;" style="float: right;margin-top: 25px;color: #dc3545" onclick="deleteProfile()">
+			           		<?= $sm['lang'][150]['text']; ?>
+			           	</a>
+		           	<?php } ?>		           	
+		        </div>
+
+		    </section>
+		    <section class="profile-info-v2__right <?= $sm['theme']['wall_bg_profile_right']['val']; ?>" style="background: <?= $sm['theme']['wall_bg_profile_right']['val']; ?>">
+				<?php
+				  if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_200x200'] == "Yes"){
+				    echo '<div>'.$sm['plugins']['adsWeb']['200x200'].'</div>';
+				} ?>
+		    	<?php if($sm['plugins']['profile']['showScore'] == 'Yes'){ ?>
+		        <div class="">
+		            <div id="profile_score" class="profile-widget">
+		                <h2 class="profile-h profileRightSection"><?= $sm['lang'][460]['text']; ?></h2>
+		                <div class="score-user" style="height: 100px;">
+		                    <div class="inline ">
+		                         <div class="safari chart" data-percent="<?= $sm['profile']['likes_percentage']; ?>">
+		                         	<div class="tag profile-section-editable profileRightSection"></div>
+		                         </div>
+		                    </div>
+		                    <div class="inline score-user__txt montserrat profile-section-editable profileRightSection" style="font-size: 12px;margin-left: 95px;margin-top: 30px;">
+		                     <?= $sm['profile']['first_name']; ?> <?= $sm['lang'][462]['text']; ?> <b><?= $sm['profile']['total_likers']; ?></b> <?= $sm['lang'][339]['text']; ?>
+		                     <b> <?= $sm['profile']['totalLikes']; ?></b> <?= $sm['lang'][461]['text']; ?>!</div>
+		                </div>
+		            </div>
+		        </div>
+		        <?php } ?>
+		        <?php if($sm['plugins']['profile']['showLeaderBoard'] == 'Yes'){
+		        	$leaderboard = array();
+		        	$leaderboardArray = getArray('chat','WHERE r_id = "'.$sm['profile']['id'].'" and credits > 0','ID DESC');
+		        	foreach ($leaderboardArray as $l) {
+		        		$keys = array($l['s_id']);
+						$data = array_fill_keys($keys, $l['credits']);
+						if (array_key_exists($l['s_id'],$leaderboard)){
+		        			$prev = $leaderboard[$l['s_id']];
+		        			$leaderboard[$l['s_id']] = $prev + $l['credits'];
+						} else {
+							$leaderboard = $leaderboard + $data;
+						}	        				
+		        	}
+		        	arsort($leaderboard);
+		        ?>
+		        <?php if(count($leaderboard) > 0){$keys = array_keys($leaderboard);  ?>
+		            <div id="leaderboard" class="profile-widget hide">
+		                <h2 class="profile-h profileRightSection center"><?= $sm['lang'][704]['text']; ?></h2>
+	                    <div class="bricks-line bricks-line--lg center" style="margin-top: 15px">
+
+	                    	<?php if(isset($keys[1])){ ?>
+		                        <div class="brick  brick--lg  brick--white vivify delay-350 popIn" >
+		                            <div class="brick-img profile-photo" data-src="<?= profilePhoto($keys[1]); ?>"></div>
+									<mark class="brick brick--sm mark-center <?= $sm['theme']['leaderboard_bg']['val']; ?>" style="background:<?= $sm['theme']['leaderboard_bg']['val']; ?>;color:<?= $sm['theme']['leaderboard_color']['val']; ?>;width: 16px;height: 16px;font-size: 10px;line-height: 16px;font-weight: bold;top: 48px;right:15px">
+									2
+									</mark> 	                            	                            
+		                        </div>
+	                    	<?php } ?>
+
+	                        <?php if(isset($leaderboard)){ ?>
+		                        <div class="brick brick--xlg  brick--white  brick--stroke vivify delay-200 popIn" style="top:-25px">
+		                           <div class="brick-img profile-photo" data-src="<?= profilePhoto($keys[0]); ?>"></div> 
+								<mark class="brick brick--sm mark-center <?= $sm['theme']['leaderboard_bg']['val']; ?>" style="background:<?= $sm['theme']['leaderboard_bg']['val']; ?>;color:<?= $sm['theme']['leaderboard_color']['val']; ?>;width: 32px;height: 32px;font-size: 20px;line-height: 32px;font-weight: bold;top: 75px;right: 30px">
+								1
+								</mark> 	                            
+		                        </div>
+	                        <?php } ?>
+
+	                    	<?php if(isset($keys[2])){ ?>
+		                        <div class="brick  brick--lg  brick--white vivify delay-500 popIn">
+		                            <div class="brick-img profile-photo" data-src="<?= profilePhoto($keys[2]); ?>"></div>
+									<mark class="brick brick--sm mark-center <?= $sm['theme']['leaderboard_bg']['val']; ?>" style="background:<?= $sm['theme']['leaderboard_bg']['val']; ?>;color:<?= $sm['theme']['leaderboard_color']['val']; ?>;width: 16px;height: 16px;font-size: 10px;line-height: 16px;font-weight: bold;top: 48px;right:15px">
+									3
+									</mark> 			                            	                            
+		                        </div>
+	                    	<?php } ?>
+
+	                    </div>
+
+							<?php $i=0; foreach ($leaderboard as $key => $value) { 
+								$name = getData('users','name','WHERE id ='.$key);
+								$username = getData('users','username','WHERE id ='.$key);
+								if($sm['plugins']['settings']['onlyUsername'] == 'Yes'){
+									if(empty($u->username)){	
+										$name = $key;
+									} else {
+										$name = $username;
+									}
+								} else {
+									$first_name = explode(' ',trim($name));	
+									$name = $first_name[0];
+								}								
+								$i++;
+
+								$delay = $i * 100;
+							?>
+
+							<div class="profile-widget__items gifts-list vivify delay-<?= $delay; ?> fadeIn" onclick="goToProfile(<?=$key;?>);" style="cursor: pointer;">
+						    <div class="profile-widget__item gift gift--border gift--hover" style="width: 30px;height: 30px;">
+						    	<div class="brick-img profile-photo" style="border-radius: 50%" data-src="<?= profilePhoto($key); ?>"></div>
+						    	
+								<mark class="brick brick--sm mark-center <?= $sm['theme']['leaderboard_bg']['val']; ?>" style="background:<?= $sm['theme']['leaderboard_bg']['val']; ?>;color:<?= $sm['theme']['leaderboard_color']['val']; ?>;width: 16px;height: 16px;font-size: 10px;line-height: 16px;font-weight: bold;top: 3px;right:-15px;">
+								<?= $i; ?>
+								</mark> 						    	
+						    </div>
+						    <span class="montserratRegular profileRightSectionFontStyle" style="position: absolute;margin-top:10px;left: 50px;font-weight: bold"><?= $name; ?></span>
+						    <span class="montserratBold profileRightSectionFontStyle" style="position: absolute;margin-top:10px;right: 10px;line-height: 24px;font-weight: bold">
+						    	<?= $value; ?> 
+						    		
+						    	<img src="<?= $sm['theme']['image_credits_leaderboard']['val']; ?>" style="width:24px;position: absolute;right: -30px;top: 3px" />
+						    </span>	
+
+						    </div>								
+							<?php
+								if($i >= $sm['plugins']['profile']['leaderBoardCount']){
+									break;
+								}
+							 } ?>                 
+	                </div>
+			        <?php } ?>
+            	<?php } ?>
+
+		        
+
+		        <?php if($sm['plugins']['profile']['showSendGift'] == 'Yes' && !$me){ ?>
+		        	<?php if($sm['plugins']['gifts']['enabled'] == 'Yes'){ ?>
+	            <div id="gifts" class="profile-widget js-wrap js-gifts-container hide">
+	                <h2 class="profile-h profileRightSection"><?= $sm['lang'][463]['text']; ?></h2>
+	                <div class="gift-add" style="cursor: pointer;" data-url="chat" data-gift="Yes" data-uid="<?= $sm['profile']['id']; ?>">
+	                    <div class="inline gift" style="left: -10px;top:-5px;">
+	                    	<img src="<?= $sm['theme']['image_gift']['val']; ?>" width="85px" height="auto" alt="">
+	                    </div>
+	                    <b class="inline gift-add__txt montserrat profileRightSectionFontStyle" style="position:absolute;top:10px;left:75px;width:180px;color:#666;font-size: 14px;margin-top:15px;margin-left: 15px;display: inline-table;">
+	                     <?= $sm['lang'][464]['text']; ?> <?= $sm['profile']['first_name']; ?> <?= $sm['lang'][447]['text']; ?></b>
+	                </div>
+	            </div>
+	             <?php } ?>
+		       <?php } ?>
+
+		        <?php if($me){ ?>
+		        	<?php if($sm['user']['verified'] == 0){ ?> 
+		        		<?php if($sm['plugins']['verification']['enabled'] == 'Yes'){ ?>
+						<div class="profile__widget">
+						    <div class="profile-widget js-wrap">
+								<h2 class="profile-h profileRightSection"><?= $sm['lang'][606]['text']; ?></h2>
+						        <div class="profile-widget__content">
+						            <div class="verification-widget">
+						                <p class="verification-widget__message profileRightSectionFontStyle" style="color: #777;font-size: 12px">
+						                	<?= $sm['lang'][607]['text']; ?>
+						                </p>
+						                <div class="verification-widget__footer">
+						                    <div class="btn btn--sm btn--verify btn--block" id="verifyAccount">
+						                        <div class="btn__content">
+						                            <div class="btn__icon" style="position: absolute;">
+						                            	<i class="icon icon--xsm">
+															<svg id="icon-verification-m" viewBox="0 0 22 22" width="100%" height="100%"><path d="M11 21a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm4.3-12.98l-5.2 5.16-2.48-2.46a.69.69 0 0 0-.97 0 .67.67 0 0 0 0 .96l3.44 3.41 6.16-6.12a.67.67 0 0 0 0-.95.69.69 0 0 0-.96 0z"></path></svg>
+														</i>
+						                    		</div>
+						                    		<span class="btn__text"><?= $sm['lang'][608]['text']; ?></span>
+						                		</div>
+						                    </div>
+						                </div>
+						            </div>
+						        </div>
+						    </div>
+						</div>
+					<?php }
+					} 
+				} ?>
+
+				<?php
+				  if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_200x200'] == "Yes"){
+				    echo '<div>'.$sm['plugins']['adsWeb']['200x200'].'</div>';
+				  } ?>
+		    </section>
+		</div>	
+		<?php if($sm['theme']['design_style']['val'] == 'Top-Menu'){ ?>
+			<div style="position: relative;width: 100%;height: 320px">
+		<?php } else { ?> 
+			<div style="position: relative;width: 100%;height: 260px">
+		<?php } ?>
+			<?= getAbsolutePage('footer'); ?>			
+		</div>
+	</div>
+</div>
+
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+	<div class="col s2 real" style="padding-right: 0px;" >
+	<?php 
+		if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+			echo '<div class="ad-zone-vertical" style="margin-left:50px">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+		}
+	?>		
+	</div>
+<?php } ?>            

@@ -1,0 +1,93 @@
+<div class="modal profile-modal transparent scroll" style="overflow-y: scroll">
+
+    <div class="floating-action vivify fadeInBottom delay-1600" ng-if="proceedToWithdraw" id="proceedToWithdraw" style="z-index: 10">
+        <div class="cta-box">
+            <div class="cta-box__content comforta">
+                <b>{{lang[564].text}}</b><br>
+                {{lang[586].text}} {{me.payout}} {{currency}} {{lang[587].text}} {{me.paypal}}
+            .</div>
+            <div class="cta-box__buttons">
+                <div class="button-wrapper">
+                    <input ng-model="paypal" class="comforta" name="paypal" type="text" value="{{me.paypal}}"  autocapitalize="off" style="background: #fafafa;border-radius: 8px;padding-left: 10px;width: 100%;height: 40px;margin-bottom: 10px">                    
+                    <button class="button button--primary" ng-click="withdrawNow(paypal)">
+                        <div class="button__content"><span class="button__text">{{lang[564].text}}</span></div>
+                    </button>
+                    <button class="inline-button inline-button--primary inline-button--sm" ng-click="hideWithdraw()"><span class="inline-button__text">{{alang[191].text}}</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="overlay" ng-if="proceedToWithdraw" style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,0.4);z-index: 9"></div>
+
+    <div class="layout layout--centered-content">
+        <div class="layout__content" style="margin: 0;max-height: 350px">
+        <div class="wallet-iphone">
+          <div class="wallet-header gradient32" style="width: 100%;margin-left: 0;">
+            <div class="wallet-header-summary">
+              <div class="wallet-summary-text" style="color: #fff">
+                {{lang[700].text}}
+              </div>
+              <div class="wallet-summary-text-2" style="color: #fff">
+                {{me.credits}} {{lang[73].text}}
+              </div>          
+              <div class="wallet-summary-balance" style="margin-top:10px;letter-spacing: 0px;color: #fff">
+                {{currency}} {{me.payout}}
+              </div>
+            </div>
+            <div class="wallet-user-profile ">
+              <div class="wallet-user-photo box-shadow-left-profile profile-photo" style="background-image: url({{me.profile_photo}});"></div>
+            </div>
+          </div>
+          <div class="wallet-content" style="height: 180px;position: relative;margin-left: 0;width: 100%;top:0">
+
+            <div class="wallet-transactions" style="margin-right: 0;"><span class="wallet-t-desc" style="text-align: center;color: {{theme.btn_color.val}}">{{lang[699].text}}</span>
+
+              <div class="wallet-transaction" ng-if="me.pendingPayout == 1" >
+                <div class="wallet-t-details" style="text-align: center;width: 100%">
+                  <div class="wallet-t-title" style="text-align: center;">{{lang[537].text}}</div>
+                  <div class="wallet-t-time">{{lang[538].text}} paypal <strong>{{me.paypal}}</strong></div>
+                </div>
+              </div>      
+                                  
+              <div class="wallet-transaction" ng-if="me.pendingPayout == 0" style="cursor: pointer;margin-left: 5%;margin-right: 5%;padding: 10px;" ng-click="showWithdraw();">
+                <div class="wallet-t-icon-container"><img src="https://www.paypalobjects.com/webstatic/icon/pp144.png" class="wallet-t-icon"></div>
+                <div class="wallet-t-details">
+                  <div class="wallet-t-title">Paypal</div>
+                </div>
+                <div class="wallet-t-amount">{{currency}} {{me.payout}}</div>
+              </div>
+
+            </div>        
+          </div>
+
+        </div>
+        </div>
+        <div class="layout__content">            
+            <div class="cta-box">                
+                <div class="cta-box__header comforta" style="font-size: 18px;color: #000">{{lang[554].text}}</div>                    
+                <div class="cta-box__content comforta">
+                <center>            
+                <p class="payment-promo__txt" style="text-align: left;color:#333;font-size: 14px; ">
+                    {{lang[555].text}} <b>PayPal</b> {{lang[556].text}} <b>{{site_name}}</b>.<br><br>
+                    {{lang[550].text}} <b>Paypal</b> {{lang[557].text}} <b>{{site_name}}</b> {{lang[558].text}} 
+                    <b>{{days}}</b> {{lang[559].text}}.
+                    <br><br>
+                    {{lang[560].text}} <b>{{currency}} {{payoutMin}}</b>.<br><br>
+                    {{lang[561].text}} <b>{{payoutMin}} {{currency}}</b> {{lang[562].text}} {{site_name}} {{lang[563].text}}.<br>
+                </p>
+                </center>
+                <div class="cta-box__content cta-box__content--vpadded cta-box__content--hpadded">
+                    <div class="cta-box__buttons" style="margin-top: 20px">
+                        <div class="button-wrapper">                         
+                            <div class="button-wrapper__item">
+                                <button class="inline-button" ng-click="closeWithdrwal();">
+                                    <span class="inline-button__text comforta" style="color: #000"><strong>{{alang[264].text}}</strong></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>                    
+            </div>
+        </div>
+</div>

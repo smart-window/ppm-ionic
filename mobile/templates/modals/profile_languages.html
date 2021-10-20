@@ -1,0 +1,16 @@
+<ion-modal-view>
+  <ion-header-bar style="background:#fff">
+  </ion-header-bar> 
+  <ion-content class="profile">    
+    <center>
+    <button class="button button-clear comforta box-shadow" ng-if="!loading" style="font-size:14px" ng-click="closeLanguagesModal()"><center><i class="icon"><svg viewBox="0 0 64 64" id="navigation-bar-close" width="100%" height="100%"><path d="M8.68 10.49l44.83 44.83a1.28 1.28 0 0 0 1.81-1.81L10.49 8.68a1.28 1.28 0 0 0-1.81 1.81z"></path><path d="M53.44 8.75l-44.7 44.7a1.28 1.28 0 0 0 1.82 1.8l44.7-44.7a1.28 1.28 0 0 0-1.82-1.8z"></path></svg></i></center></button></center>      
+    <div class="list m-n">
+      <div class="item item-divider b-none" style="background:#fff"></div>
+	 
+      <div class="item" ng-repeat="l in languages" ng-click="selectLanguage(l.id,'test')" >
+	     <span>{{l.text}}</span>
+      </div>
+	  </div>
+ <div class="item item-divider b-none" style="background:#fff"></div>
+  </ion-content>
+</ion-modal-view>

@@ -1,0 +1,101 @@
+<?php
+  if($sm['admin_ajax'] == false){
+    header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=plugins');
+  }
+?>
+<script>
+  aurl = 'pricing';
+  currentMenu = 'plugins';
+  currentMenuCollapse = 'credits';  
+</script>
+
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px;min-height: 800px ">
+  <div class="page__heading d-flex align-items-center">
+      <div class="flex">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','')">Plugins</a></li>
+                <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','Software')">Software</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Account types settings</li>
+            </ol> 
+          </nav>
+      </div>
+      <a href="#" class="btn btn-light ml-3" onclick="goTo('plugins','','')"><i class="material-icons mr-1">arrow_back</i></a>
+  </div>
+
+  <div class="card card-form">
+      <div class="card-header card-header-large bg-white d-flex align-items-center">
+        <h4 class="card-header__title flex m-0">Credits functions pricing</h4>
+        <div></div>
+      </div>    
+      <div class="row no-gutters">
+          <?= getAdminFunctionsPrices(); ?>   
+      </div>
+    <div class="card-footer bg-success" data-footer="feature" style="display: none">
+        <span style="color:#fff">Changes saved</span>
+    </div>       
+  </div> 
+
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="card card-form">
+          <div class="card-header card-header-large bg-white d-flex align-items-center">
+            <h4 class="card-header__title flex m-0">Price in <?= $sm['plugins']['settings']['currency']; ?> to buy credits</h4>
+            <div></div>
+          </div>    
+          <div class="row no-gutters">
+              <?= getAdminCreditsPackages(); ?>   
+          </div>
+        <div class="card-footer bg-success" data-footer="credits" style="display: none">
+            <span style="color:#fff">Changes saved</span>
+        </div>       
+      </div> 
+  </div>
+  <div class="col-lg-6">
+  <div class="card card-form">
+      <div class="card-header card-header-large bg-white d-flex align-items-center">
+        <h4 class="card-header__title flex m-0">Price in <?= $sm['plugins']['settings']['currency']; ?> to buy premium</h4>
+        <div></div>
+      </div>    
+      <div class="row no-gutters">
+          <?= getAdminPremiumPackages(); ?>   
+      </div>
+    <div class="card-footer bg-success" data-footer="premium" style="display: none">
+        <span style="color:#fff">Changes saved</span>
+    </div>       
+  </div>   
+</div>
+</div>
+
+
+</div>
+
+
+<script>
+$('[data-pricing-id]').change(function(){
+  var id = $(this).attr('data-pricing-id');
+  var type = $(this).attr('data-pricing-type');
+  var col = $(this).attr('data-pricing-col');
+  var val = $(this).val();
+
+  $.ajax({
+      url: request_source()+'/admin.php', 
+      data: {
+          action: 'updatePricing',
+          val: val,
+          id: id,
+          type: type,
+          col: col,
+          globalKey: globalKey
+      },  
+      type: "post",
+      dataType: 'JSON',           
+      success: function(response) {
+      },
+  });      
+  $('[data-footer]').fadeOut('fast');
+  $('[data-footer='+type+']').fadeIn();
+
+});
+</script>

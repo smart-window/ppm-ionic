@@ -1,0 +1,194 @@
+<div class="col-lg-9" data-full-height>
+    <div class="card-header card-header-large bg-white d-flex align-items-center">
+      <h4 class="card-header__title" style="color: #444">Account credits movements</h4>
+    </div>                                
+    <div class="card dashboard-area-tabs" id="dashboard-area-tabs">
+      <div class="card-header p-0  nav">
+          <div class="row no-gutters flex" role="tablist">
+              <div class="col bg-white">
+                  <a href="#" data-toggle="tab" role="tab" aria-selected="true" class="dashboard-area-tabs__tab card-body text-center active">
+                      <span class="card-header__title m-0"  style="color: #444">Credits</span>
+                      <span class="text-amount"><?= $sm['edit']['credits']; ?></span>
+                  </a>
+              </div>
+
+              <?php if($sm['plugins']['withdrawal']['enabled'] == 'Yes'){ ?>
+                <div class="col border-left" >
+                    <a href="#" data-toggle="tab" role="tab" aria-selected="true" class="dashboard-area-tabs__tab card-body text-center active show">
+                        <span class="card-header__title m-0">Withdrawal</span>
+                        <span class="text-amount">$<?= $sm['edit']['payout']; ?></span>
+                    </a>
+                </div>
+              <?php } ?>
+          </div>
+      </div>
+      <div class="card-header p-0 bg-light nav">
+          <div class="row no-gutters flex" role="tablist">
+              <div class="col bg-white" data-credits-filter="all" onclick="filterCreditsHistory(this)">
+                  <a href="#" data-toggle="tab" role="tab" aria-selected="true" class="dashboard-area-tabs__tab card-body text-center active">
+                      <span class="card-header__title m-0"  style="color: #444">ALL</span>
+                  </a>
+              </div>
+
+            <div class="col border-left" data-credits-filter="added" onclick="filterCreditsHistory(this)">
+              <a href="#" data-toggle="tab" role="tab" aria-selected="true" class="dashboard-area-tabs__tab card-body text-center active">
+                  <span class="card-header__title m-0"  style="color: #444">ADDED</span>
+              </a>
+            </div>
+            <div class="col border-left" data-credits-filter="spent" onclick="filterCreditsHistory(this)">
+              <a href="#" data-toggle="tab" role="tab" aria-selected="true" class="dashboard-area-tabs__tab card-body text-center active">
+                  <span class="card-header__title m-0"  style="color: #444">SPENT</span>
+              </a>
+            </div>            
+          </div>
+      </div>      
+      <div class="card-body text-muted" data-full-height-credits style="overflow-y: auto;">
+        <?php 
+        //latest activity all
+
+        $creditsActivityChat = getArray('chat','where r_id = '.$sm['edit']['id'].' and credits > 0 OR s_id = '.$sm['edit']['id'].' and credits > 0','time desc','limit 0,500'); 
+
+
+        $creditsActivity = getArray('users_credits','where uid = '.$sm['edit']['id'].' AND type = "spend"','time desc','limit 0,500');
+
+        $creditsActivityAdded = getArray('users_credits','where uid = '.$sm['edit']['id'].' AND type = "added"','time desc','limit 0,500');  
+
+        $creditsPurchased = getArray('sales','where u_id = '.$sm['edit']['id'].' ','time desc','limit 0,500');       
+
+        $creditsActivityAll = array_merge($creditsActivity, $creditsActivityChat);
+        $creditsActivityAll = array_merge($creditsActivityAll, $creditsPurchased); 
+        $creditsActivityAll = array_merge($creditsActivityAll, $creditsActivityAdded);  
+
+        $sort = array();
+        foreach ($creditsActivityAll as $key => $part) {
+           $sort[$key] = $part['time'];
+        }
+        array_multisort($sort, SORT_DESC, $creditsActivityAll);   
+        if(empty($creditsActivityAll)){ ?>
+            <div class="list-group-item list-group-item-action d-flex align-items-center">
+                <div class="avatar avatar-xs mr-3">
+                    <span class="avatar-title rounded-circle bg-white">
+                        <img src="<?= $sm['edit']['profile_photo']; ?>" class="avatar-img rounded-circle">
+                    </span>
+                </div>
+                <div class="flex">
+                    <div class="d-flex align-items-middle">                                  
+                        <strong class="text-15pt mr-1">No credits movements recorded</strong>
+                    </div>
+                </div>
+                <i class="material-icons icon-muted ml-3">monetization_on</i>
+            </div>                      
+        <?php } else { ?>
+        <?php foreach ($creditsActivityAll as $value) {
+
+          if(isset($value['uid']) && $value['type'] == 'spend'){ //users_credits ?>
+              <div class="list-group-item list-group-item-action d-flex align-items-center" data-credits-filter-val='spent'>
+                  <div class="avatar avatar-xs mr-3">
+                      <span class="avatar-title rounded-circle bg-white">
+                          <img src="<?= $sm['edit']['profile_photo']; ?>" class="avatar-img rounded-circle">
+                      </span>
+                  </div>
+
+                  <div class="flex">
+                      <div class="d-flex align-items-middle">                                  
+                          <strong class="text-15pt mr-1"><?= $value['credits']; ?> credits</strong>
+                      </div>
+                      <small><a href="#"><?= $value['reason']; ?></a></small>
+                  </div>
+                  <small class="text-muted"><?= time_elapsed_string($value['time']); ?></small>
+                  <i class="material-icons icon-muted ml-3">money_off</i>
+              </div>
+         <?php } ?>
+
+        <?php if(isset($value['uid']) && $value['type'] == 'added'){ //users_credits ?>
+              <div class="list-group-item list-group-item-action d-flex align-items-center" data-credits-filter-val='added'>
+                  <div class="avatar avatar-xs mr-3">
+                      <span class="avatar-title rounded-circle bg-white">
+                          <img src="<?= $sm['edit']['profile_photo']; ?>" class="avatar-img rounded-circle">
+                      </span>
+                  </div>
+
+                  <div class="flex">
+                      <div class="d-flex align-items-middle">                                  
+                          <strong class="text-15pt mr-1"><?= $value['credits']; ?> credits</strong>
+                      </div>
+                      <small><a href="#"><?= $value['reason']; ?></a></small>
+                  </div>
+                  <small class="text-muted"><?= time_elapsed_string($value['time']); ?></small>
+                  <i class="material-icons icon-muted ml-3" style="color: #48BA16!important">monetization_on</i>
+              </div>
+         <?php } ?>         
+
+        <?php if(isset($value['gateway'])){ //sales 
+              $filter = 'where name = "'.$value['gateway'].'"';$gateway = getData('plugins','image',$filter); ?>
+              <div class="list-group-item list-group-item-action d-flex align-items-center" data-credits-filter-val='added'>
+                  <div class="avatar avatar-xs mr-3">
+                      <span class="avatar-title rounded-circle bg-white">
+                          <img src="<?= $gateway; ?>" class="avatar-img rounded-circle">
+                      </span>
+                  </div>
+
+                  <div class="flex">
+                      <div class="d-flex align-items-middle">                                  
+                          <strong class="text-15pt mr-1"><?= $value['quantity']; ?> credits</strong>
+                      </div>
+                      <small><a href="#">Purchased via <br><?= $value['gateway']; ?> for <?= $value['amount']; ?> <?= $sm['plugins']['settings']['currency']; ?></a></small>
+                  </div>
+                  <small class="text-muted"><?= time_elapsed_string($value['time']); ?></small>
+                  <i class="material-icons icon-muted ml-3" style="color: #48BA16!important">monetization_on</i>
+              </div>
+         <?php } ?>
+
+         <?php if(isset($value['s_id'])){ //chat
+              $reason = 'Sent '.$value['credits'].' credits';
+              if($value['story'] > 0) {
+                $reason = 'Purchase a story for '.$value['credits'].' credits';
+              }
+              if($value['gift'] > 0) {
+                $reason = 'Sent a gift for '.$value['credits'].' credits';
+              }                      
+
+              if($value['s_id'] == $sm['edit']['id']){ ?> 
+              <div class="list-group-item list-group-item-action d-flex align-items-center" data-credits-filter-val='spent'>
+                  <div class="avatar avatar-xs mr-3">
+                      <span class="avatar-title rounded-circle bg-white">
+                          <img src="<?= profilePhoto($value['r_id']); ?>" class="avatar-img rounded-circle">
+                      </span>
+                  </div>
+
+                  <div class="flex">
+                      <div class="d-flex align-items-middle">                                  
+                          <strong class="text-15pt mr-1"><?= $value['credits']; ?> credits</strong>
+
+                      </div>
+                      <small><a href="<?= $sm['config']['site_url']; ?>index.php?page=admin&p=user&id=<?= $value['r_id'];?>" target="_blank"><?= $reason; ?></a></small>
+                  </div>
+                  <small class="text-muted"><?= time_elapsed_string($value['time']); ?></small>
+                  <i class="material-icons icon-muted ml-3">money_off</i>
+              </div>
+            <?php } else { ?> 
+              <div class="list-group-item list-group-item-action d-flex align-items-center" data-credits-filter-val='added'>
+                  <div class="avatar avatar-xs mr-3">
+                      <span class="avatar-title rounded-circle bg-white">
+                          <img src="<?= profilePhoto($value['s_id']); ?>" class="avatar-img rounded-circle">
+                      </span>
+                  </div>
+
+                  <div class="flex">
+                      <div class="d-flex align-items-middle">                                  
+                          <strong class="text-15pt mr-1"><?= $value['credits']; ?> credits</strong>
+
+                      </div>
+                      <small><a href="<?= $sm['config']['site_url']; ?>index.php?page=admin&p=user&id=<?= $value['s_id'];?>" target="_blank"><?= $reason; ?></a></small>
+                  </div>
+                  <small class="text-muted"><?= time_elapsed_string($value['time']); ?></small>
+                  <i class="material-icons icon-muted ml-3" style="color: #48BA16!important">monetization_on</i>
+              </div>
+            <?php } ?>            
+        <?php } ?>
+      <?php } ?>   
+    <?php } ?>
+
+      </div>
+    </div>
+</div>

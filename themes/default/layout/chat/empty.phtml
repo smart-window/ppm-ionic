@@ -1,0 +1,35 @@
+<script> noChat = true; </script>
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+	<div class="col s2 real" style="padding-right: 0px;border:none" >
+		<?php 
+			if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+				echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+			}
+		?>		
+	</div>
+	<div class="col s8 real mainContentBorderColor"  id="site-content"  style="background: <?=$sm['theme']['wall_bg_default']['val']; ?>;">
+<?php } else { ?>
+	<div class="col s8 real fix-width-content mainContentBorderColor" style="padding-right: 0px;background: <?=$sm['theme']['wall_bg_default']['val']; ?>;" id="site-content">
+<?php } ?>
+
+	<center data-chat-result="0" style="margin-bottom: 50px;padding-top: 50px">
+		<br>
+        <div class="brick  brick--xxlg vivify" style="width: 240px;height: 240px;border-radius:<?= $sm['theme']['discover_no_result_border']['val']; ?>px">
+            <div class="brick-img profile-photo box-shadow-credits" data-src="<?= $sm['theme']['default_no_result']['val']; ?>"></div>
+        </div>
+		<br><br>
+		<strong>
+			<h5 style="color:<?= $sm['theme']['wall_font_color_default']['val']; ?>"><?=$sm['lang'][153]['text'];?></h5>
+		</strong>
+		<h5 style="color:<?= $sm['theme']['wall_font_color_default']['val']; ?>;opacity: .5">
+			<?=$sm['lang'][597]['text'];?>
+		</h5>
+	</center>		  				  				  
+
+	<?= getAbsolutePage('footer'); ?>
+	<script>profilePhoto();</script>
+</div> 
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    <div class="col s2 real" style="padding-right: 0px;" >   
+    </div>
+<?php } ?>

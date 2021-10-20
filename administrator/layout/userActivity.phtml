@@ -1,0 +1,184 @@
+<?php if($sm['plugins']['logActivity']['enabled'] == 'Yes'){ ?>
+<div class="col-lg-12" >        
+    <div class="card">
+        <div class="card-header card-header-large d-flex align-items-center">
+            <h4 class="card-header__title flex m-0" style="color: #444">Recent Activity</h4>
+        </div>
+        <div class="list-group tab-content list-group-flush" data-full-height-activity style="overflow-y: auto;">
+            <div class="tab-pane active show fade">
+
+            <?php 
+            $latestActivityAll = getArray('activity','where uid = '.$sm['userId'],'time desc','limit 0,500'); 
+            $visits = array();
+
+            if(empty($latestActivityAll)){ ?>
+              <div class="list-group-item list-group-item-action d-flex align-items-center" >
+                  <div class="avatar avatar-xs mr-3">
+                      <span class="avatar-title rounded-circle  bg-purple">
+                          <img src="<?= $sm['edit']['profile_photo']; ?>" class="avatar-img rounded-circle">
+                      </span>
+                  </div>
+
+                  <div class="flex">
+                      <div class="d-flex align-items-middle">                               
+                          <strong class="text-15pt mr-1">No activity found</strong>
+                      </div>
+                  </div>
+              </div> 
+            <?php } ?>
+            <?php foreach ($latestActivityAll as $value) { ?>
+                <?php if($value['a_type'] == 'system'){ ?>
+                <div class="list-group-item list-group-item-action d-flex align-items-center" data-latest-activity="system">
+                    <div class="avatar avatar-xs mr-3">
+                        <span class="avatar-title rounded-circle  bg-dark">
+                            <i class="material-icons">settings</i>
+                        </span>
+                    </div>
+
+                    <div class="flex">
+                        <div class="d-flex align-items-middle">                                    
+                            <strong class="text-15pt mr-1"><?= $value['title']; ?></strong>
+                        </div>
+                        <small><?= $value['message']; ?></small>
+                    </div>
+                    <small class="text-muted"><?= time_elapsed_string($value['time']); ?></small>
+                    <i class="material-icons icon-muted ml-3">arrow_forward</i>
+                </div>                            
+                <?php } ?>
+
+                <?php if($value['a_type'] == 'visit'){ ?>
+                <?php $info = json_decode($value['message'], true); ?>
+                <div class="list-group-item list-group-item-action d-flex align-items-center" data-latest-activity="visit">
+                    <div class="avatar avatar-xs mr-3">
+                        <span class="avatar-title rounded-circle bg-white">
+                            <img src="<?= $info['u2']['photo']; ?>" class="avatar-img rounded-circle">
+                        </span>
+                    </div>
+
+                    <div class="flex">
+                        <div class="d-flex align-items-middle">                                  
+                            <strong class="text-15pt mr-1"><?= $value['title']; ?></strong>
+
+                        </div>
+                        <small><a href="#"><?= $info['u1']['name']; ?></a> visited <a href="#"><?= $info['u2']['name']; ?></a></small>
+                    </div>
+                    <small class="text-muted"><?= time_elapsed_string($value['time']); ?></small>
+                    <i class="material-icons icon-muted ml-3">remove_red_eye</i>
+                </div>                            
+                <?php } ?>
+
+                <?php if($value['a_type'] == 'message'){ ?>
+
+                    <?php $info = json_decode($value['message'], true); ?>
+                    <div class="list-group-item list-group-item-action d-flex align-items-center" data-latest-activity="message">
+                        <div class="avatar avatar-xs mr-3">
+                            <span class="avatar-title rounded-circle  bg-info">
+                                <i class="material-icons">message</i>
+                            </span>
+                        </div>
+
+                        <div class="flex">
+                            <div class="d-flex align-items-middle">
+                                <div class="avatar avatar-xxs mr-1">
+                                    <img src="<?= $info['u1']['photo']; ?>" class="avatar-img rounded-circle">
+                                </div>
+                                <div class="avatar avatar-xxs mr-1">
+                                    <img src="<?= $info['u2']['photo']; ?>" class="avatar-img rounded-circle">
+                                </div>                                    
+                                <strong class="text-15pt mr-1"><?= $value['title']; ?></strong>
+
+                            </div>
+                            <small><?= $info['message']; ?></small>
+                        </div>
+                        <small class="text-muted"><?= time_elapsed_string($value['time']); ?></small>
+                        <i class="material-icons icon-muted ml-3">arrow_forward</i>
+                    </div>                           
+
+                <?php } ?> 
+
+                <?php if($value['a_type'] == 'sale'){ ?>
+                    <?php $info = json_decode($value['message'], true); ?>
+                    <div class="list-group-item list-group-item-action d-flex align-items-center">
+                        <div class="avatar avatar-xs mr-3">
+                            <span class="avatar-title rounded-circle  bg-warning">
+                                <i class="material-icons">attach_money</i>
+                            </span>
+                        </div>
+
+                        <div class="flex">
+                            <div class="d-flex align-items-middle">
+                                <div class="avatar avatar-xxs mr-1">
+                                    <img src="<?= $info['sale']['photo']; ?>" class="avatar-img rounded-circle">
+                                </div>                                  
+                                <strong class="text-15pt mr-1"><?= $value['title']; ?></strong>
+
+                            </div>
+                            <small><a href="#"><?= $info['sale']['name']; ?></a> purchased <?= $info['sale']['amount']; ?> credits with <?= $info['sale']['method']; ?></small>
+                        </div>
+                        <small class="text-muted"><?= time_elapsed_string($value['time']); ?></small>
+                        <i class="material-icons icon-muted ml-3">arrow_forward</i>
+                    </div> 
+                <?php } ?> 
+
+                <?php if($value['a_type'] == 'like'){ ?>                                       
+                    <?php $info = json_decode($value['message'], true); ?>
+                    <div class="list-group-item list-group-item-action d-flex align-items-center">
+                        <div class="avatar avatar-xs mr-3">
+                            <span class="avatar-title rounded-circle bg-white">
+                                <img src="<?= $info['u2']['photo']; ?>" class="avatar-img rounded-circle">
+                            </span>
+                        </div>
+
+                        <div class="flex">
+                            <div class="d-flex align-items-middle">                                  
+                                <strong class="text-15pt mr-1"><?= $value['title']; ?></strong>
+                            </div>
+                            <small><a href="#"><?= $info['u1']['name']; ?></a> liked <a href="#"><?= $info['u2']['name']; ?></a></small>
+                        </div>
+                        <small class="text-muted"><?= time_elapsed_string($value['time']); ?></small>
+                        <i class="material-icons icon-muted ml-3">favorite</i>
+                    </div>                                                    
+                <?php } ?>                                                     
+
+           <?php } ?>
+            </div>                                                              
+        </div>
+    </div>
+  </div>
+ 
+<?php } else { ?>
+<div class="col-lg-6">    
+        <div class="card">
+            <div class="card-header card-header-large bg-white d-flex align-items-center">
+                <h4 class="card-header__title flex m-0" style="color: #444">Recent Activity</h4>
+            </div>
+            <div class="card-header card-header-tabs-basic nav" role="tablist">
+                <a href="#activity_all" class="active" data-toggle="tab" role="tab" aria-controls="activity_all" aria-selected="true">All</a>
+                <a href="#activity_system" data-toggle="tab" role="tab" aria-controls="activity_system" aria-selected="false">System</a>                    
+                <a href="#activity_purchases" data-toggle="tab" role="tab" aria-controls="activity_purchases" aria-selected="false">Purchases</a>
+                <a href="#activity_messages" data-toggle="tab" role="tab" aria-controls="activity_messages" aria-selected="false">Chat</a>
+                <a href="#activity_likes" data-toggle="tab" role="tab" aria-controls="activity_likes" aria-selected="false">Likes</a>
+                <a href="#activity_visits" data-toggle="tab" role="tab" aria-controls="activity_visits" aria-selected="false">Visits</a>                                        
+            </div>
+            <div class="list-group tab-content list-group-flush" style="overflow-y: auto;height: 515px">
+                <div class="tab-pane active show fade" id="activity_all">
+                    <div class="list-group-item list-group-item-action d-flex align-items-center">
+                        <div class="avatar avatar-xs mr-3">
+                            <span class="avatar-title rounded-circle  bg-dark">
+                                <i class="material-icons">settings</i>
+                            </span>
+                        </div>
+
+                        <div class="flex">
+                            <div class="d-flex align-items-middle">                                    
+                                <strong class="text-15pt mr-1">Activity log disabled</strong>
+                            </div>
+                            <small>Enable the activity log from the plugin manager</small>
+                        </div>
+                        <i class="material-icons icon-muted ml-3">arrow_forward</i>
+                    </div>                            
+                </div>
+            </div>
+        </div>
+</div>
+<?php } ?>  

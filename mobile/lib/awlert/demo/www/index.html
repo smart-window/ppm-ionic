@@ -1,0 +1,79 @@
+!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <link href="lib/awlert/css/awlert.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <script src="lib/awlert/js/awlert.min.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="js/app.js"></script>
+  </head>
+  <body ng-app="starter">
+
+    <ion-pane ng-controller="AppCtrl as vm">
+      <ion-header-bar class="bar-royal">
+        <h1 class="title">Awlert Demo <i class="icon ion-ios-heart assertive"></i></h1>
+      </ion-header-bar>
+      <ion-content>
+        <div class="padding">
+
+          <div class="card">
+            <div class="item item-divider">
+              Awlert Types
+            </div>
+            <div class="item item-text-wrap">
+              <span>Awlert will be removed in 3000ms</span>
+              <button ng-click="vm.openSuccess()" class="button button-block button-balanced">Open Success!</button>
+              <span>Awlert will be removed in 5000ms</span>
+              <button ng-click="vm.openError()" class="button button-block button-assertive">Open Error!</button>
+              <span>You need to click to remove!</span>
+              <button ng-click="vm.openNeutral()" class="button button-block button-positive">Open Neutral!</button>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="item item-divider">
+              Dynamic Awlert
+            </div>
+            <div class="item item-text-wrap">
+              
+              <div class="padding-vertical">
+                <h3>Choose duration</h3>
+                <select ng-model="vm.duration" ng-options="duration for duration in vm.durationValues" class="demo-input" type="text"></select>
+              </div>
+              <div class="padding-vertical">
+                <h3>Choose message</h3>
+                <input class="demo-input" type="text" ng-model="vm.message">            
+              </div>
+
+              <button ng-click="vm.openCustomAwlert(vm.message, vm.duration)" class="button button-block button-positive">
+                Open Custom Awlert
+              </button>
+
+
+            </div>
+          </div>
+
+          <!-- <button ng-click="vm.open()" class="button button-balanced">Hit me!</button> -->
+        </div>
+      </ion-content>
+    </ion-pane>
+  </body>
+</html>

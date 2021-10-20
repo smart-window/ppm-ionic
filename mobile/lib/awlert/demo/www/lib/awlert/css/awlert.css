@@ -1,0 +1,1 @@
+.awlert{position:absolute;width:100%;transform:translateY(-100%);transition:.6s cubic-bezier(.6,-.28,.735,.045);z-index:99;top:0}.awlert .space{height:20px}.awlert.enter{transition:.6s cubic-bezier(.175,.885,.32,1.275);transform:translateY(0)}.content{color:#fff;padding:10px}

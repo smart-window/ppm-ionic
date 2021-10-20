@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><?= $sm['config']['name']; ?> Control Panel</title>
+    <meta name="robots" content="noindex">
+    <link type="text/css" href="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/simplebar.min.css" rel="stylesheet">
+
+    <link type="text/css" href="<?php echo $sm['config']['admin_url']; ?>/assets/css/app.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">      
+    <link type="text/css" href="<?php echo $sm['config']['admin_url']; ?>/assets/css/vendor-flatpickr.css" rel="stylesheet">
+    <link type="text/css" href="<?php echo $sm['config']['admin_url']; ?>/assets/css/vendor-flatpickr.rtl.css" rel="stylesheet">
+    <link type="text/css" href="<?php echo $sm['config']['admin_url']; ?>/assets/css/vendor-flatpickr-airbnb.css" rel="stylesheet">
+    <link type="text/css" href="<?php echo $sm['config']['admin_url']; ?>/assets/css/vendor-flatpickr-airbnb.rtl.css" rel="stylesheet">
+    <link type="text/css" href="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/jqvmap/jqvmap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="<?php echo $sm['config']['site_url']; ?>themes/default/css/vendor/sweetalert.css">
+    <link type="text/css" href="<?php echo $sm['config']['admin_url']; ?>/assets/css/vendor-select2.css" rel="stylesheet">
+    <link type="text/css" href="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/select2/select2.min.css" rel="stylesheet">
+    <link type="text/css" href="<?php echo $sm['config']['admin_url']; ?>/assets/css/filemanager.css" rel="stylesheet">
+    <link type="text/css" href="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/toastr.min.css" rel="stylesheet">    
+    <link href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/autocomplete.css" rel="stylesheet" type="text/css" />  
+    <link rel="stylesheet" href="<?php echo $sm['config']['site_url']; ?>themes/default/css/crossplatform.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php echo $sm['config']['site_url']; ?>themes/default/css/vendor/little-widgets.css"/> 
+    <link rel="stylesheet" href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/slim-lightbox.min.css">        
+    <link rel="icon" type="image/png" href="<?= $sm['theme']['favicon']['val']; ?>" sizes="32x32">
+    <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
+    <script>
+        var siteUrl = '<?= $sm['config']['site_url']; ?>';
+    </script>
+    <?php
+        $site_config = json_encode($sm['config']);
+        $site_plugins = json_encode($sm['plugins']);
+        $site_lang = json_encode($sm['lang']);
+        $site_prices = json_encode($sm['price']);
+        $account_basic = json_encode($sm['basic']);
+        $account_premium = json_encode($sm['premium']);        
+        $pk = $sm['plugins']['pusher']['key'];
+        $user_info = json_encode($sm['user']);
+        $sm['genders'] = siteGenders($sm['config']['lang']);
+
+        $l = $sm['settings']['license'];
+        echo 
+        '
+        <script>        
+        var aurl;
+        var plugin;
+        var page;
+        var category;
+        var mobileSite = false;
+        var c = '.json_encode($sm['client']).';
+        var rt = new Pusher("'. $pk  . '", {
+          encrypted: true,
+          cluster: "'.$sm['plugins']['pusher']['cluster'].'"
+        });
+        var channel = rt.subscribe("'. $pk  . '");
+        var site_config = '. $site_config  . ';
+        var plugins = '. $site_plugins  . ';
+        var site_lang = '. $site_lang  . ';
+        var user_info = '. $user_info  . ';
+        var edit_info;
+        var l = "'. $l  . '";
+        var currentMenu;
+        var currentMenuCollapse;
+        function request_source(){
+            return \'' . $sm['config']['ajax_path'] . '\';
+        }
+        function site_title(){
+            return \'' . $sm['config']['title'] . '\';
+        }   
+        function theme_source(){
+            return \'' . $sm['config']['theme_url'] . '\';
+        }
+        function site_url(){
+            return \'' . $sm['config']['site_url'] . '\';
+        }
+        var sUrl = "'.$sm['config']['site_url'].'";
+        var verifingLicense = true; 
+        </script>';
+    ?>    
+    <style>
+        .v-wrapper{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 700px;
+            z-index: 999;
+            background: rgba(0,0,0,0.8);
+            display: none;
+        }
+        .v-wrapper video{
+          position: relative;
+          left: 50%;
+          transform: translateX(-50%);
+           width: 100%;
+           height: 700px;
+        }
+        .v-wrapper a{
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            z-index: 2;
+        }
+        .hidden{
+            display: none!important;
+        }
+        .lw-overlay{
+            position: fixed;
+            left: -250px;
+            width: 150%;
+            height: 150% !important;
+        }        
+    </style>    
+</head>
+
+<body class="layout-default">
+    <div class="preloader"><div class="loader loader-light"></div></div>
+    <!-- Header Layout -->
+    <div class="mdk-header-layout js-mdk-header-layout">
+        <!-- Header -->
+        <div id="header" class="mdk-header js-mdk-header m-0" data-fixed>
+            <div class="mdk-header__content">
+                <div class="navbar navbar-expand-sm navbar-main navbar-dark  pr-0" id="navbar" style="background: #19171c" data-primary>
+                    <div class="container-fluid p-0">
+                        <button class="navbar-toggler navbar-toggler-right d-block" type="button" data-toggle="sidebar" style="position: absolute;left: 25px">
+                            <span class="navbar-toggler-icon" style="color: #fafafa"></span>
+                        </button>
+                        <a href="<?=$sm['config']['site_url']; ?>admin" class="navbar-brand" style="margin-left: 80px">
+                            <span style="color: #fafafa"><?= $sm['config']['name']; ?> Control Panel</span>
+                        </a>
+                        <?php if($sm['user']['admin'] == 1){ ?>
+                            <ul class="nav navbar-nav ml-auto d-none d-md-flex">
+                                <li class="nav-item">
+                                    <a href="https://premiumdatingscript.com/support" target="_blank" class="nav-link">
+                                        <i class="material-icons">help_outline</i> Get Help
+                                    </a>
+                                </li>
+
+                            </ul>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- // END Header -->
+        <!-- Header Layout Content -->
+        <div class="mdk-header-layout__content">
+            <div class="mdk-drawer-layout js-mdk-drawer-layout" data-push data-responsive-width="992px">
+                <div class="mdk-drawer-layout__content page" id="admin-content">
+                    <?= $sm['content']; ?>
+                </div>
+                <div class="mdk-drawer  js-mdk-drawer" id="default-drawer" data-align="start">
+                    <div class="mdk-drawer__content">
+                        <div class="sidebar sidebar-light sidebar-left simplebar" data-simplebar>
+                            <div class="d-flex align-items-center sidebar-p-a border-bottom sidebar-account">
+                                <a href="#" class="flex d-flex align-items-center text-underline-0 text-body">
+                                    <span class="avatar mr-3">
+                                        <img src="<?= $sm['user']['profile_photo']; ?>" alt="avatar" class="avatar-img rounded-circle">
+                                    </span>
+                                    <span class="flex d-flex flex-column">
+                                        <strong><?= $sm['user']['name']; ?></strong>
+                                        <?php if($sm['user']['admin'] == 1){ ?>
+                                            <small class="text-muted text-uppercase">Administrator</small>
+                                        <?php } else { ?>
+                                            <small class="text-muted text-uppercase"><?= $sm['user']['moderator']; ?></small>
+                                        <?php } ?>
+                                    </span>
+                                </a>
+                                <div class="dropdown ml-auto">
+                                    <a href="#" data-toggle="dropdown" data-caret="false" class="text-muted"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item active" href="<?=$sm['config']['site_url']; ?>admin">Dashboard</a>
+                                        <a class="dropdown-item" href="<?=$sm['config']['site_url']; ?>profile/<?=$sm['user']['id']; ?>/<?=$sm['user']['link'];?>" target="_blank">Webiste profile</a>
+                                        <?php if($sm['user']['admin'] == 1){ ?>
+                                        <a class="dropdown-item" href="<?=$sm['config']['site_url']; ?>index.php?page=admin&p=user&id=<?=$sm['user']['id']; ?>">Edit account</a>
+                                        <?php } ?>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="<?=$sm['config']['site_url']; ?>logout">Logout</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sidebar-p-a sidebar-b-y" id="bulkAdminContainer" style="display: none">
+                                <div class="d-flex align-items-top mb-2">
+                                    <div class="sidebar-heading m-0 p-0 flex text-body js-text-body">
+                                        Bulk Progress
+                                    </div>
+                                    <div class="font-weight-bold text-success" id="bulkAdminPercent">0%</div>
+                                </div>
+                                <div class="d-flex align-items-top">
+                                    <div class="sidebar-heading m-0 p-0 text-body js-text-body" 
+                                    style="color:#333!important" id="bulkAdminText"></div>
+                                </div>                                    
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" id="bulkAdminProgress" role="progressbar" style="width: 0%" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+
+                            <div class="sidebar-heading sidebar-m-t">Menu</div>
+                            <ul class="sidebar-menu">      
+
+                                <li class="sidebar-menu-item" data-current-menu-collapse="dashboard">
+                                    <a class="sidebar-menu-button" data-toggle="collapse" href="#dashboards_menu">
+                                        <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">dvr</i>
+                                        <span class="sidebar-menu-text">Dashboards</span>
+                                        <span class="ml-auto sidebar-menu-toggle-icon"></span>
+                                    </a>
+                                    <ul class="sidebar-submenu collapse" data-current-menu-collapse-ul="dashboard" id="dashboards_menu">
+                                        <li class="sidebar-menu-item" data-current-menu="main">
+                                            <a class="sidebar-menu-button" href="#" onclick="goTo('main_dashboard')">
+                                                <span class="sidebar-menu-text">Main dashboard</span>
+                                            </a>
+                                        </li>                                    
+                                    </ul>
+                                </li>
+
+                                <?php if($sm['moderator']['Users'] == 'Yes' || $sm['moderator']['Media'] == 'Yes' || $sm['moderator']['Verification'] == 'Yes' || $sm['moderator']['Reports'] == 'Yes'){ ?>
+                                <li class="sidebar-menu-item" data-current-menu-collapse="users">
+                                    <a class="sidebar-menu-button" data-toggle="collapse" href="#users_menu">
+                                        <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">people</i>
+                                        <span class="sidebar-menu-text">Manage Users</span>
+                                        <span class="ml-auto sidebar-menu-toggle-icon"></span>
+                                    </a>
+                                    <ul class="sidebar-submenu collapse" data-current-menu-collapse-ul="users" id="users_menu">
+
+                                        <?php if($sm['moderator']['Users'] == 'Yes'){ ?>
+                                        <li class="sidebar-menu-item" data-current-menu="all-users">
+                                            <a class="sidebar-menu-button" href="#" onclick="goTo('users')">
+                                                <span class="sidebar-menu-text">All users</span>
+                                                <span class="ml-auto d-flex align-items-center">
+                                                    <span class="badge badge-light"><?= selectC('users',''); ?></span>
+                                                </span>                                                
+                                            </a>
+                                        </li>
+                                        <?php } ?>
+
+                                        <?php if($sm['moderator']['Media'] == 'Yes'){ ?>
+                                        <li class="sidebar-menu-item ">
+                                            <a class="sidebar-menu-button" data-toggle="collapse" href="#users_media">
+                                                <span class="sidebar-menu-text">Users Media</span>
+                                                <span class="ml-auto d-flex align-items-center">
+                                                    <span class="sidebar-menu-toggle-icon"></span>
+                                                </span>
+                                            </a>
+                                            <ul class="sidebar-submenu collapse " id="users_media">
+                                                <li class="sidebar-menu-item ">
+                                                    <a class="sidebar-menu-button" href="javascript:;" 
+                                                    onclick="goTo('mediaPhotos','All')">
+                                                        <span class="sidebar-menu-text">All Media</span>
+                                                        <span class="ml-auto d-flex align-items-center">
+                                                            <span class="badge badge-light" id="totalMediaAll"><?= selectC('users_photos',''); ?></span>
+                                                        </span>                                                        
+                                                    </a>
+                                                </li>                                                
+                                                <li class="sidebar-menu-item ">
+                                                    <a class="sidebar-menu-button" href="javascript:;" 
+                                                    onclick="goTo('mediaPhotos','photo')">
+                                                        <span class="sidebar-menu-text">Photos</span>
+                                                        <span class="ml-auto d-flex align-items-center">
+                                                            <span class="badge badge-light" id="totalMediaPotos"><?= selectC('users_photos','where video = 0 and story = 0'); ?></span>
+                                                        </span>                                                        
+                                                    </a>
+                                                </li>
+                                                <li class="sidebar-menu-item ">
+                                                    <a class="sidebar-menu-button" href="javascript:;" 
+                                                    onclick="goTo('mediaPhotos','video')">
+                                                        <span class="sidebar-menu-text" id="totalMediaVideos">Videos</span>
+                                                        <span class="ml-auto d-flex align-items-center">
+                                                            <span class="badge badge-light"><?= selectC('users_photos','where video = 1 and story = 0'); ?></span>
+                                                        </span>                                                        
+                                                    </a>
+                                                </li>
+                                                <li class="sidebar-menu-item ">
+                                                    <a class="sidebar-menu-button" href="javascript:;" 
+                                                    onclick="goTo('mediaPhotos','story')">
+                                                        <span class="sidebar-menu-text" id="totalMediaStories">Stories</span>
+                                                        <span class="ml-auto d-flex align-items-center">
+                                                            <span class="badge badge-light"><?= selectC('users_photos','where story > 0'); ?></span>
+                                                        </span>                                                        
+                                                    </a>
+                                                </li>                                                
+                                                <li class="sidebar-menu-item ">
+                                                    <a class="sidebar-menu-button" href="javascript:;" 
+                                                    onclick="goTo('mediaPhotos','Pending',0)">
+                                                        <span class="sidebar-menu-text">Pending review</span>
+                                                        <span class="ml-auto d-flex align-items-center">
+                                                            <span class="badge badge-light"><?= selectC('users_photos','where approved = 0'); ?></span>
+                                                        </span>                                                        
+                                                    </a>
+                                                </li>                                                
+                                            </ul>
+                                        </li>
+                                        <?php } ?>
+
+                                        <?php if($sm['moderator']['Verification'] == 'Yes'){ ?>           
+                                        <li class="sidebar-menu-item">
+                                            <a class="sidebar-menu-button" onclick="goTo('verifyUsers')" style="cursor: pointer;">
+                                                <span class="sidebar-menu-text">Pending Verification</span>
+                                                <?php 
+                                                $checkVerifications = selectC('users_verification','WHERE status = "No"');
+
+                                                if($checkVerifications > 0){ ?>
+                                                    <span class="ml-auto d-flex align-items-center">
+                                                        <span class="badge badge-light"  id="pendingUsersVerificationLabel"><?= $checkVerifications; ?></span>
+                                                    </span>
+                                                <?php } ?>                                                 
+                                            </a>
+                                        </li>
+                                        <?php } ?>
+
+                                        <?php if($sm['moderator']['Users'] == 'Yes'){ ?>                         
+                                        <li class="sidebar-menu-item">
+                                            <a class="sidebar-menu-button" href="javascript:;" onclick="goTo('bannedUsers')">
+                                                <span class="sidebar-menu-text">Banned users</span>
+                                                <span class="ml-auto d-flex align-items-center">
+                                                    <span class="badge badge-light" id="bannedUsersCount"><?= selectC('blocked_users',''); ?></span>
+                                                </span>                                                  
+                                            </a>
+                                        </li>
+                                        <li class="sidebar-menu-item">
+                                            <a class="sidebar-menu-button" href="javascript:;" onclick="goTo('bannedIP')">
+                                                <span class="sidebar-menu-text">Banned IP</span>
+                                                <span class="ml-auto d-flex align-items-center">
+                                                    <span class="badge badge-light" id="bannedIPCount"><?= selectC('blocked_ips',''); ?></span>
+                                                </span>                                                  
+                                            </a>
+                                        </li>
+                                        <?php } ?>
+
+                                        <?php if($sm['user']['admin'] == 1){ ?>
+                                        <li class="sidebar-menu-item">
+                                            <a class="sidebar-menu-button" data-current-menu="videocall" href="#" onclick="goTo('videocall')">
+                                                <span class="sidebar-menu-text">Videochats records</span>
+                                                <span class="ml-auto d-flex align-items-center">
+                                                    <span class="badge badge-light" id="videocallsCount"><?= selectC('videocall',''); ?></span>
+                                                </span>                                                  
+                                            </a>
+                                        </li>                                        
+                                        <?php } ?>
+
+                                        <?php
+                                        $checkLivePlugin = getData('plugins','settings','where name = "live"');
+                                        if($sm['user']['admin'] == 1 && $checkLivePlugin == 1){ ?>
+                                        <li class="sidebar-menu-item">
+                                            <a class="sidebar-menu-button" data-current-menu="live" href="#" onclick="goTo('live')">
+                                                <span class="sidebar-menu-text">Live Streams</span>
+                                                <span class="ml-auto d-flex align-items-center">
+                                                    <span class="badge badge-light" id="livesCount"><?= selectC('live',''); ?></span>
+                                                </span>                                                  
+                                            </a>
+                                        </li>                                        
+                                        <?php } ?>                                        
+
+                                        <?php if($sm['plugins']['reportProfile']['enabled'] == 'Yes'){ ?>
+                                            <?php if($sm['moderator']['Reports'] == 'Yes'){ ?>
+                                            <li class="sidebar-menu-item">
+                                                <a class="sidebar-menu-button" href="javascript:;" onclick="goTo('reportedUsers')">
+                                                    <span class="sidebar-menu-text">Reported users</span>
+                                                    <span class="ml-auto d-flex align-items-center">
+                                                        <span class="badge badge-light" id="reportedUsersCount"><?= selectC('reports','where viewed = 0'); ?></span>
+                                                    </span>                                                  
+                                                </a>
+                                            </li> 
+                                            <?php } ?>
+                                        <?php } ?>
+
+                                        <?php if($sm['user']['admin'] == 1){ ?>
+                                        <li class="sidebar-menu-item">
+                                            <a class="sidebar-menu-button" href="javascript:;" onclick="goTo('withdrawal')">
+                                                <span class="sidebar-menu-text">Withdrawal requests</span>
+                                                <span class="ml-auto d-flex align-items-center">
+                                                    <span class="badge badge-light" id="reportedUsersCount"><?= selectC('users_withdraw',''); ?></span>
+                                                </span>                                                  
+                                            </a>
+                                        </li>
+
+                                        <li class="sidebar-menu-item">
+                                            <a class="sidebar-menu-button" href="javascript:;" onclick="goTo('orders')">
+                                                <span class="sidebar-menu-text">Users orders</span>
+                                                <span class="ml-auto d-flex align-items-center">
+                                                    <span class="badge badge-light" id="reportedUsersCount"><?= selectC('orders','where order_status = "success"'); ?></span>
+                                                </span>                                                  
+                                            </a>
+                                        </li>                                         
+
+                                        <li class="sidebar-menu-item">
+                                            <a class="sidebar-menu-button" href="javascript:;" onclick="goTo('questions','','')">
+                                                <span class="sidebar-menu-text">Profile questions</span>                                                
+                                            </a>
+                                        </li>
+                                        <li class="sidebar-menu-item">
+                                            <a class="sidebar-menu-button" href="javascript:;" onclick="goTo('accounts','','')">
+                                                <span class="sidebar-menu-text">Account types</span>                                                
+                                            </a>
+                                        </li>                                         
+                                        <li class="sidebar-menu-item">
+                                            <a class="sidebar-menu-button" href="javascript:;" onclick="goTo('genders','','')">
+                                                <span class="sidebar-menu-text">Genders settings</span>                                                
+                                            </a>
+                                        </li>  
+                                        <?php } ?>
+
+                                    </ul>
+                                </li>
+                                <?php } ?>
+
+                                <?php if($sm['moderator']['Editor'] == 'Yes'){ ?>
+                                <li class="sidebar-menu-item" data-current-menu-collapse="themes">
+                                    <a class="sidebar-menu-button" data-toggle="collapse" href="#themes_menu">
+                                        <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">view_compact</i>
+                                        <span class="sidebar-menu-text">Theme Editor</span>
+                                        <span class="ml-auto sidebar-menu-toggle-icon"></span>
+                                    </a>
+                                    <ul class="sidebar-submenu collapse" data-current-menu-collapse-ul="themes" id="themes_menu">
+                                        <li class="sidebar-menu-item" data-current-menu="themes">
+                                            <a class="sidebar-menu-button" href="#" onclick="goTo('themes','Desktop')">
+                                                <span class="sidebar-menu-text">Website presets</span>                                             
+                                            </a>
+                                        </li>
+                                        <li class="sidebar-menu-item" data-current-menu="themes">
+                                            <a class="sidebar-menu-button" href="#" onclick="goTo('themesLanding','Landing')">
+                                                <span class="sidebar-menu-text">Landing themes</span>                                        
+                                            </a>
+                                        </li>
+                                        <li class="sidebar-menu-item" data-current-menu="themes">
+                                            <a class="sidebar-menu-button" href="#" onclick="goTo('themesMobile','Mobile')">
+                                                <span class="sidebar-menu-text">Mobile presets</span>                                             
+                                            </a>
+                                        </li>                                                    
+                                    </ul>                                
+                                </li>
+
+                                <?php } ?>
+
+                                <?php if($sm['user']['admin'] == 1 || $sm['moderator']['Plugins'] == 'Yes'){ ?>
+                                <li class="sidebar-menu-item open" data-current-menu-collapse="plugins">
+                                    <a class="sidebar-menu-button" data-toggle="collapse" href="#plugins_menu" aria-expanded="true">
+                                        <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">apps</i>
+                                        <span class="sidebar-menu-text">Plugins</span>
+                                        <span class="ml-auto sidebar-menu-toggle-icon"></span>
+                                    </a>
+                                    <ul class="sidebar-submenu collapse show" data-current-menu-collapse-ul="plugins" id="plugins_menu">
+                                        <li class="sidebar-menu-item" data-current-menu="all-plugins">
+                                            <a class="sidebar-menu-button" href="#" onclick="goTo('plugins')">
+                                                <span class="sidebar-menu-text">All plugins</span>
+                                                    <span class="ml-auto d-flex align-items-center">
+                                                    <span class="badge badge-success"><?= selectC('plugins','where visible = 1'); ?></span>
+                                                </span>                                               
+                                            </a>
+                                        </li>                                        
+                                        <?php
+                                        $plugins = getArrayDSelected('category','plugins','where visible = 1'); 
+                                        foreach ($plugins as $p) { ?>
+                                            <li class="sidebar-menu-item" data-current-menu="all-plugins">
+                                                <a class="sidebar-menu-button" href="javascript:;" onclick="goTo('plugins','','<?= $p['category']; ?>')">
+                                                    <span class="sidebar-menu-text"><?= $p['category']; ?></span>
+                                                    <span class="ml-auto d-flex align-items-center">
+                                                        <span class="badge badge-light-gray"><?= selectC('plugins','where category = "'.$p['category'].'" and visible = 1'); ?></span>
+                                                    </span>                                                     
+                                                </a>
+                                            </li>
+                                        <?php } ?>                                        
+                                    
+                                    </ul>
+                                </li>
+                                <?php } ?>  
+                                <?php if($sm['user']['admin'] == 1 || $sm['moderator']['Plugins'] == 'Yes'){ ?>
+                                <li class="sidebar-menu-item">
+                                    <a class="sidebar-menu-button" href="javascript:;" onclick="goTo('plugins','','Software')" >
+                                        <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">settings</i>
+                                        <span class="sidebar-menu-text">Settings</span>
+                                    </a>
+                                </li>
+                                <?php } ?>       
+                                <?php if($sm['moderator']['Language'] == 'Yes'){ ?>
+                                <li class="sidebar-menu-item">
+                                    <a class="sidebar-menu-button" href="javascript:;" 
+                                        onclick="goTo('languages')">
+                                        <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">language</i>
+                                        <span class="sidebar-menu-text">Languages</span>
+                                    </a>
+                                </li>
+                                <?php } ?>                                                                       
+                            </ul>
+
+                            <?php if($sm['moderator']['ChatFake'] == 'Yes'){ ?>
+                                <div class="sidebar-heading" style="margin-top: 25px">Fake Users</div>
+                                <div class="sidebar-block p-0">
+                                    <ul class="sidebar-menu" id="components_menu">
+                                        <li class="sidebar-menu-item">
+                                            <a class="sidebar-menu-button" href="#" onclick="goTo('chats')">
+                                                <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">message</i>
+                                                <span class="sidebar-menu-text">Fake Users Chat</span>                                             
+                                            </a>
+                                        </li> 
+                                    </ul>
+                                </div>
+                            <?php } ?>
+
+                            <?php if($sm['user']['admin'] == 1){ ?> 
+                            <div class="sidebar-heading" style="margin-top: 25px">Premium Dating Script</div>
+                            <div class="sidebar-block p-0">
+                                <ul class="sidebar-menu" id="components_menu">
+                                    <li class="sidebar-menu-item">
+                                        <a class="sidebar-menu-button" href="#" onclick="goTo('plugin','license','')">
+                                            <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">security</i>
+                                            <span class="sidebar-menu-text">License</span>
+                                            <span class="ml-auto d-flex align-items-center"><span class="badge badge-success">Active</span></span>
+                                             
+                                        </a>
+                                    </li> 
+                                    <li class="sidebar-menu-item">
+                                        <a class="sidebar-menu-button" href="#" onclick="goTo('update')">
+                                            <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">update</i>
+                                            <span class="sidebar-menu-text">Update</span>
+                                        </a>
+                                    </li>                                                                        
+                                    <li class="sidebar-menu-item">
+                                        <a class="sidebar-menu-button" href="https://premiumdatingscript.com/support" target="_blank">
+                                            <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">help_outline</i>
+                                            <span class="sidebar-menu-text">Support</span>
+                                        </a>
+                                    </li>                                                                        
+                                </ul>
+                            </div>
+                            
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- // END drawer-layout -->
+        </div>
+        <!-- // END header-layout__content -->
+    </div>
+    <!-- // END header-layout -->
+    <div id="modalPresets" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="px-3">
+                        
+                        <h3 style="text-align: center;margin:10px;margin-bottom: 20px">Preset <b id="newPresetName"></b></h3>                        
+                        <div class="d-flex justify-content-center mt-2 mb-4 navbar-light">
+                            <img class="avatar-img rounded" style="width: 440px;" id="newPresetScreenshot"><br>
+                            
+                        </div>
+
+                        <form action="#" id="newPresetForm">
+                            <div class="form-group">
+                                <label for="email_2">New custom preset name identifer</label>
+                                <input class="form-control" type="text" id="newPresetAlias" required>
+                                <input class="form-control" type="hidden" style="display: none" id="newPreset" required>
+                                <input class="form-control" type="hidden" style="display: none" required id="newPresetData">
+                                <input class="form-control" type="hidden" style="display: none" required id="newPresetTheme">                                
+                            </div>
+                            <div class="form-group text-center">
+                                <button class="btn btn-primary" type="submit">Create preset</button>
+                            </div>
+                        </form>
+                    </div>
+                </div> <!-- // END .modal-body -->
+            </div> <!-- // END .modal-content -->
+        </div> <!-- // END .modal-dialog -->
+    </div> <!-- // END .modal -->    
+    <div  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-center-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-center-title">Explore free theme presets</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div> <!-- // END .modal-header -->
+                <div class="modal-body" data-content-presets>
+                    
+                </div> <!-- // END .modal-body -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" style="display:none" data-add-preset></button>
+                </div> <!-- // END .modal-footer -->
+            </div> <!-- // END .modal-content -->
+        </div> <!-- // END .modal-dialog -->
+    </div> <!-- // END .modal -->
+
+
+    <div class="lw-widget lw-widget_fullscreen"  data-widget="addLanguage" data-widget-close="addLanguage">
+        <div class="lw-overlay" data-lw-close></div>    
+        <div class="lw-container lw-container_width_auto" style="min-width: 500px;width:500px!important;">
+            <div class="lw-item" style="background: #fafafa;">
+                <button class="lw-close" data-widget-close="addLanguage" id="closeAddLanguage" data-lw-close>
+                    <i class="icon icon--white ion-close-round"></i>
+                </button>            
+                <div class="lw-wrap lw-p-lg" style="padding: 0;overflow-y: auto;">
+                    <div style="padding: 45px;text-align: center;">
+                        <div class="lw-title lw-title_lg" id="giftModalTitle"  style="padding-bottom: 25px">
+                            Add new language
+                        </div>
+<?php 
+$possibleLanguages = 'Amharic;am,Arabic;ar,Basque;eu,Bengali;bn,English (UK);en-GB,Portuguese (Brazil);pt-BR,Bulgarian;bg,Catalan;ca,Croatian;hr,Czech;cs,Danish;da,Dutch;nl,English (US);en,Estonian;et,Filipino;fil,Finnish;fi,French;fr,German;de,Greek;el,Gujarati;gu,Hebrew;iw,Hindi;hi,Hungarian;hu,Icelandic;is,Indonesian;id,Italian;it,Japanese;ja,Kannada;kn,Korean;ko,Latvian;lv,Lithuanian;lt,Malay;ms,Malayalam;ml,Marathi;mr,Norwegian;no,Polish;pl,Portuguese (Portugal);pt-PT,Romanian;ro,Russian;ru,Serbian;sr,Chinese (PRC);zh-CN,Slovak;sk,Slovenian;sl,Spanish;es,Swahili;sw,Swedish;sv,Tamil;ta,Telugu;te,Thai;th,Chinese (Taiwan);zh-TW,Turkish;tr,Urdu;ur,Ukrainian;uk,Vietnamese;vi,Welsh;cy';
+$possibleLanguagesArr = explode(',',$possibleLanguages);
+?>                                                       
+                        <div class="lw-mb-md">
+                            <div class="lw-field">
+                                <input class="lw-input" type="text" style="margin-left:10px;width: 55%;display: inline-block;" id="langName" placeholder="Language name">
+                                <select class="lw-input" style="margin-left:10px;width: 35%;display: inline-block;" id="langPrefix" placeholder="Prefix">
+                                    <?php
+                                    foreach ($possibleLanguagesArr as $value) {
+                                        $langData = explode(';',$value); ?>
+                                        <option value="<?= $langData[1]; ?>"><?= $langData[0]; ?>
+                                    <?php } ?>
+                                </select> 
+                                
+                            </div>
+                        </div>
+                        <button class="lw-btn btn-success" onclick="addLanguage('addLanguage',this)">
+                            Add language
+                        </button>                      
+                        <br><br>
+                        <div class="lw-content lw-mb-md slight" style="font-size: 13px">
+                            By default when you add a new language all the texts comes in <strong>English</strong><br>You will be able to edit it manually or use automatic text translation by <strong>Google</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lw-widget lw-widget_fullscreen"  data-widget="manageGift" data-widget-close="manageGift">
+        <div class="lw-overlay" data-lw-close></div>    
+        <div class="lw-container lw-container_width_auto" style="min-width: 400px;width:400px!important;">
+            <div class="lw-item" style="background: #fafafa;">
+                <button class="lw-close" data-widget-close="manageGift" id="closeManageGift" data-lw-close>
+                    <i class="icon icon--white ion-close-round"></i>
+                </button>            
+                <div class="lw-wrap lw-p-lg" style="padding: 0;overflow-y: auto;">
+                    <div style="padding: 45px;text-align: center;" data-manage-gift="1">
+                        <div class="lw-title lw-title_lg" id="giftModalTitle"  style="padding-bottom: 25px">
+                            Add new gift
+                        </div>
+
+                        <div class="simple-promo__img"  style="padding-bottom: 25px">         
+                            <div class="brick brick--xxlg" style="background: none;cursor: pointer;border-radius: 25%;background: #eee;width: 130px;height:130px;margin:0 auto;" >
+                                <div class="brick-img profile-photo" onclick="uploadImage(this)" data-uptype="gift" data-gift-uploaded data-src="" style="cursor: pointer;width: 100%;height: 100%"></div>                                             
+                            </div>
+                        </div>                               
+                        <div class="lw-mb-md">
+                            <div class="lw-field">
+                                <input class="lw-input" type="text" style="margin-left:10px;width: 60%;display: inline-block;" id="giftName" placeholder="Gift name">
+                                <input class="lw-input" type="number" style="margin-left:10px;width: 28%;display: inline-block;" id="giftPrice" placeholder="Gift price">
+                                <input class="lw-input" type="hidden" style="display: none;" id="giftIcon">
+                                <input class="lw-input" type="hidden" value="0" style="display: none;" id="giftId">                                
+                            </div>
+                        </div>
+                        <button class="lw-btn btn-primary" onclick="manageGift('manageGift')">
+                            Done
+                        </button>
+                        <button class="lw-btn btn-danger" id="removeGift" onclick="manageGift('removeGift')">
+                            Remove
+                        </button>                        
+                        <br><br>
+                        <div class="lw-content lw-mb-md slight" style="font-size: 13px">Gift size recommended is 250x250<br>1:1 aspect ratio<br><br>Allowed file types: PNG,JPG,GIF</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lw-widget lw-widget_fullscreen"  data-widget="manageInterest" data-widget-close="manageInterest">
+        <div class="lw-overlay" data-lw-close></div>    
+        <div class="lw-container lw-container_width_auto" style="min-width: 400px;width:400px!important;">
+            <div class="lw-item" style="background: #fafafa;">
+                <button class="lw-close" data-widget-close="manageInterest" id="closeManageInterest" data-lw-close>
+                    <i class="icon icon--white ion-close-round"></i>
+                </button>            
+                <div class="lw-wrap lw-p-lg" style="padding: 0;overflow-y: auto;">
+                    <div style="padding: 45px;text-align: center;" data-manage-interest="1">
+                        <div class="lw-title lw-title_lg" id="interestModalTitle"  style="padding-bottom: 25px">
+                            Add new interest
+                        </div>
+                        <div class="simple-promo__img"  style="padding-bottom: 25px">         
+                            <div class="brick brick--xxlg" style="background: none;cursor: pointer;border-radius: 25%;background: #eee;width: 130px;height:130px;margin:0 auto;" >
+                                <div class="brick-img profile-photo" onclick="uploadImage(this)" data-uptype="interest" data-gift-uploaded data-src="" style="cursor: pointer;width: 100%;height: 100%"></div>                                             
+                            </div>
+                        </div>                               
+                        <div class="lw-mb-md">
+                            <div class="lw-field">
+                                <input class="lw-input" type="text" style="margin-left:10px;width: 80%;display: inline-block;" id="interestName" placeholder="Interest name">
+                                <input class="lw-input" type="hidden" value='' style="display: none;" id="interestIcon">
+                                <input class="lw-input" type="hidden" value="0" style="display: none;" id="interestId">                                
+                            </div>
+                        </div>
+                        <button class="lw-btn btn-primary" onclick="manageInterest('manageInterest')">
+                            Done
+                        </button>
+                        <button class="lw-btn btn-danger" id="removeInterest" onclick="manageInterest('removeInterest')">
+                            Remove
+                        </button>                        
+                        <br><br>
+                        <div class="lw-content lw-mb-md slight" style="font-size: 13px">Interest size recommended is 250x250<br>1:1 aspect ratio<br><br>Allowed file types: PNG,JPG,GIF</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lw-widget lw-widget_fullscreen" data-widget="createNewUserModal">
+        <div class="lw-overlay" onclick="sendUpdateProfile()" data-lw-close></div>
+        <div class="lw-container lw-container_lg">
+            <form class="lw-item lw-item_bg" method="post" id="register">
+                <button class="lw-close" data-widget-close="createNewUserModal" data-lw-close>
+                    <i class="icon icon--white ion-close-round"></i>
+                </button>
+
+                <div class="lw-wrap lw-bb">
+                    <div class="lw-panel lw-panel_lg">
+                        <div class="lw-preview lw-pic profile-photo" style="height: 80px;border-radius: 5px"
+                        data-src="<?= $sm['config']['theme_url']."/images/no_user.png"; ?>">
+                        </div>
+                        <div class="lw-group">
+                            <div class="lw-title">
+                                Create new user<br>
+                                <small></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lw-wrap" style="background: #F7F8F9">
+                    <div class="lw-inline">
+                        <div class="lw-field profileSettingField">
+                            <div class="lw-label"><?= $sm['lang'][26]['text']; ?></div>
+                            <div class="lw-group">                        
+                                <input class="lw-input" placeholder="Add name" data-create-profile-info type="text" name="name"  required>
+                            </div>
+                        </div>                         
+                        <div class="lw-field profileSettingField">
+                            <div class="lw-label"><?= $sm['lang'][331]['text']; ?></div>
+                            <div class="lw-group">
+                                <input class="lw-input" autocomplete="new-password" data-create-profile-info type="text" name="username"
+                                 id="createUsername" placeholder="Add username" required>
+                            </div>
+                        </div>                    
+                        <div class="lw-field profileSettingField">
+                            <div class="lw-label"><?= $sm['lang'][28]['text']; ?></div>
+                            <div class="lw-group">
+                                <input class="lw-input" autocomplete="new-password" data-create-profile-info type="email" name="email" value="" id="createEmail" placeholder="Add email" required>
+                            </div>
+                        </div>
+                        <div class="lw-field profileSettingField">
+                            <div class="lw-label">Password</div>
+                            <div class="lw-group">                        
+                                <input class="lw-input" autocomplete="new-password" placeholder="Add password" data-create-profile-info type="password" name="pass"  required>
+                            </div>
+                        </div>                                            
+                        <div class="lw-field profileSettingField">
+                            <div class="lw-label"><?= $sm['lang'][30]['text']; ?></div>
+                            <div class="lw-group">
+                                <select class="lw-select" id="createDay" data-create-profile-info name="day" style="width: 25%;display: inline-table;">
+                                    <?= date_dropdown_landing(1); ?>
+                                </select>
+                                <select class="lw-select" id="createMonth"  data-create-profile-info name="month" style="width: 42%;display: inline-table;">
+                                    <?= date_dropdown_landing(0,1); ?>
+                                </select> 
+                                <select class="lw-select" id="createYear"  data-create-profile-info name="year" style="width: 30.9%;display: inline-table;">
+                                    <?= date_dropdown_landing(0,0,1); ?>
+                                </select>                                                        
+                            </div>
+                        </div>
+
+                        <div class="lw-field profileSettingField">
+                            <div class="lw-label"><?= $sm['lang'][32]['text']; ?></div>
+                            <div class="lw-group">
+                                <input class="lw-input" type="text" autocomplete="new-password" id="createUserLoc" placeholder="Add location" required value="">
+                            </div>
+                        </div>
+
+                        <div class="lw-field profileSettingField">
+                            <div class="lw-label"><?= $sm['lang'][34]['text']; ?></div>
+                            <div class="lw-group">
+                                <select class="lw-select" data-create-profile-info name="gender">
+                                <?php
+                                    foreach($sm['genders'] as $entry){
+                                        echo '<option value="'.$entry['id'].'" style="color:#000;">'.$entry['text'].'</option>'; 
+                                    }
+                                ?>
+                                </select> 
+                            </div>
+                        </div>
+
+                        <div class="lw-field profileSettingField">
+                            <div class="lw-label">Looking for</div>
+                            <div class="lw-group">
+                                <select class="lw-select" data-create-profile-info name="looking">             
+                                <?php
+                                    foreach($sm['genders'] as $entry){
+                                        echo '<option value="'.$entry['id'].'" style="color:#000;">'.$entry['text'].'</option>';
+                                    }
+                                ?>
+                                </select> 
+                            </div>
+                        </div>                    
+
+                        <div class="lw-field profileSettingField">
+                            <div class="lw-label">Looking age</div>
+                            <div class="lw-group">
+                                
+                                <input type="number" class="lw-input" data-create-profile-info name="age1" value="18" style="width: 49%;display: inline-table;"> 
+                                <input type="number" class="lw-input" data-create-profile-info name="age2" value="30" style="width: 49.9%;display: inline-table;">                                                                         
+                            </div>
+                        </div>
+
+                        <div class="lw-field profileSettingField">
+                            <div class="lw-label"><?= $sm['lang'][134]['text']; ?></div>
+                            <div class="lw-group">
+                                <select class="lw-select" data-create-profile-info name="lang">
+                                    <?= getSiteLangs(0); ?>
+                                </select> 
+                            </div>
+                        </div>
+
+                       
+                        <input type="hidden" name="checkbox" id="checkbox" value="OK"/>
+                        <input type="hidden" value="register" name="action" />
+                        <input type="hidden" name="city" data-create-profile-info id="locality" value="" />
+                        <input type="hidden" name="country" id="country" value=""  />
+                        <input type="hidden" name="lat" id="lat" value=""  />
+                        <input type="hidden" name="lng" id="lng" value=""  /> 
+                        <div class="lw-field" style="border: none;margin-top: 15px">                       
+                            <button type="submit" id="createNewUserBtn" class="lw-btn btn-success text-center" style="margin:0 auto" >
+                                Create new user
+                            </button> 
+                        </div>
+                    </div>                
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-update-onlineDay" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-center-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">              
+                    <div class="row no-gutters" style="margin-left: 10%;margin-right: 10%">               
+                      <div class="col-lg-12 card-body" style="padding-bottom: 0">
+                        <p>The online day system works based on the days of the week, so you can set which days the user will be displayed as online in the site</p>
+                      </div>
+                      <div class="col-lg-3 card-body d-flex align-items-center">
+                        <div class="flex">
+                          <label for="onlineDayMonday">Monday</label><br>
+                          <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1">
+                            <input type="checkbox" id="onlineDayMonday" data-online-day="monday"  class="custom-control-input">
+                            <label class="custom-control-label" for="onlineDayMonday">Yes</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 card-body d-flex align-items-center">
+                        <div class="flex">
+                          <label for="onlineDayTuesday">Tuesday</label><br>
+                          <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1">
+                            <input type="checkbox" id="onlineDayTuesday" data-online-day="tuesday" class="custom-control-input">
+                            <label class="custom-control-label" for="onlineDayTuesday">Yes</label>
+                          </div>
+                        </div>
+                      </div> 
+                      <div class="col-lg-3 card-body d-flex align-items-center">
+                        <div class="flex">
+                          <label for="onlineDayWednesday">Wednesday</label><br>
+                          <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1">
+                            <input type="checkbox" id="onlineDayWednesday" data-online-day="wednesday" class="custom-control-input">
+                            <label class="custom-control-label" for="onlineDayWednesday">Yes</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 card-body d-flex align-items-center">
+                        <div class="flex">
+                          <label for="onlineDayThursday">Thursday</label><br>
+                          <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1">
+                            <input  type="checkbox" id="onlineDayThursday" data-online-day="thursday" class="custom-control-input">
+                            <label class="custom-control-label" for="onlineDayThursday">Yes</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 card-body d-flex align-items-center">
+                        <div class="flex">
+                          <label for="onlineDayFriday">Friday</label><br>
+                          <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1">
+                            <input type="checkbox" id="onlineDayFriday" data-online-day="friday" class="custom-control-input">
+                            <label class="custom-control-label" for="onlineDayFriday">Yes</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 card-body d-flex align-items-center">
+                        <div class="flex">
+                          <label for="onlineDaySaturday">Saturday</label><br>
+                          <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1">
+                            <input type="checkbox" id="onlineDaySaturday" data-online-day="saturday" class="custom-control-input">
+                            <label class="custom-control-label" for="onlineDaySaturday">Yes</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 card-body d-flex align-items-center">
+                        <div class="flex">
+                          <label for="onlineDaySunday">Sunday</label><br>
+                          <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1">
+                            <input type="checkbox" id="onlineDaySunday" data-online-day="sunday" class="custom-control-input">
+                            <label class="custom-control-label" for="onlineDaySunday">Yes</label>
+                          </div>
+                        </div>
+                      </div>                                                                                                                                   
+                    </div>                
+                </div> <!-- // END .modal-body -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-btn="onlineDay" onclick="adminBulkAction('onlineDay');">Save changes</button>
+                </div> <!-- // END .modal-footer -->
+            </div> <!-- // END .modal-content -->
+        </div> <!-- // END .modal-dialog -->
+    </div> <!-- // END .modal -->
+
+
+    <div id="modal-update-moderator-permission" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-center-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="width: 550px">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                <div class="col-lg-12 card-body" style="padding-bottom: 0">
+                    <span style="font-size: 17px">
+                        Setting moderation permission for <strong id="modTag"></strong>
+                    </span>
+                </div>
+                </div>
+                <div class="modal-body " style="width: 550px"> 
+
+                    <div class="row no-gutters" style="margin-left: 10%;margin-right: 10%">
+                      <?php 
+                        $moderationList = getArray('moderation_list','','moderation ASC');
+                        foreach ($moderationList as $data) { ?>
+                          <div class="col-lg-6 card-body d-flex align-items-center">
+                            <div class="flex">
+                              <label for="moderationPermission<?= $data['moderation']; ?>"><?= $data['title']; ?></label><br>
+                              <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1">
+                                <input type="checkbox" id="moderationPermission<?= $data['moderation']; ?>"
+                                 onchange="updateModerationPermission(this.checked,'<?= $data['moderation']; ?>');" class="custom-control-input">
+                                <label class="custom-control-label" for="moderationPermission<?= $data['moderation']; ?>">Yes</label>
+                              </div>
+                            </div>
+                          </div>
+                      <?php } ?>
+                                                                                                                             
+                    </div> 
+
+                </div> <!-- // END .modal-body -->
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn="moderatorPermission" 
+                    onclick="goTo('plugin','moderator','Software');">Save changes</button>
+                </div> <!-- // END .modal-footer -->
+            </div> <!-- // END .modal-content -->
+        </div> <!-- // END .modal-dialog -->
+    </div> <!-- // END .modal -->    
+
+    <div id="storytime" data-story="0"></div>
+    <div id="upload-area" style="display: none">
+      <input type='file' id="uploadContent">
+    </div> 
+
+    <div id="uploadJSON" style="display: none">
+        <input type='file' id="uploadContentJSON">
+    </div>
+
+    <div id="modal-upload-media" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-center-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <div class="modal-body" id="modalBodyUploadMediaInstagram" style="min-height:680px;max-height: 680px;overflow-y: auto;display: none">
+
+                    <div class="row no-gutters" id="instagramForm">
+                        <div class="col-lg-12 card-body text-center">
+                            <center>
+                                <div class="avatar" style="width:70px;height:70px;margin-right: 5px;margin-top: -5px;margin-bottom: 10px">
+                                    <img src="https://premiumdatingscript.com/plugins/icons/instagramImporter.jpg" class="avatar-img rounded box-shadow" style="border-radius:25px !important">
+                                </div>                                 
+                            </center>                                
+                            <h3><strong class="headings-color">Upload media from Instagram</strong></h3>
+                            <p class="text-muted">Get up to 60 media from any instagram account only with the username, but the instagram account must be public.</p>
+                            <div class="flex" id="instagramNoData" style="margin-top: 10px;display: none">
+                                <div class="alert alert-success" role="alert">
+                                    <strong>No new media for the selected filters</strong>
+                                </div>                                
+                            </div>                            
+                        </div>
+                        <div class="col-lg-12 card-form__body card-body" style="padding: 15px;border-radius: 5px">
+                            <div class="form-group">
+                                <label for="">Username</label>
+                                <input type="search" class="form-control" id="instagramUsername" placeholder="Instagram username">
+                                <small style="font-size: 11px">HINT! - You can paste the instagram url too</small>
+                            </div>
+                            <div class="form-group" style="width: 49%;display: inline-table;">
+                                <label for="">Limit media</label>
+                                <input type="number" min="1" value="60" max="60" class="form-control" id="instagramLimit" placeholder="Limit media" >
+                            </div>
+                            <div class="form-group" style="width: 50%;display: inline-table;">
+                                <label for="">Order media</label>
+                                <select class="form-control" id="instagramOrder">
+                                    <option value="likes">Most liked</option>
+                                    <option value="ig_id">Last Published</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="width: 49%;display: inline-table;">
+                                <label for="">Media type</label>
+                                <select class="form-control" id="instagramType">
+                                    <option value="All">Photos and Videos</option>
+                                    <option value="photos">Only Photos</option>
+                                    <option value="videos">Only Videos</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="width: 49%;display: inline-table;">
+                                <label for="">Upload to</label>
+                                <select class="form-control" id="instagramUploadTo">
+                                    <option value="All">Profile and Story</option>
+                                    <option value="profile">Only Profile</option>
+                                    <option value="story">Only Story</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="width: 49%;display: inline-table;">
+                                <label for="">Story Price - Photos</label>
+                                <input type="number" min="0" max="50000" value="0" class="form-control" id="instagramPricePhotos">
+                                <small style="font-size: 11px">0 means Free</small>
+                            </div> 
+                            <div class="form-group" style="width: 49%;display: inline-table;">
+                                <label for="">Story Price - Videos</label>
+                                <input type="number" min="0" max="50000" value="0" class="form-control" id="instagramPriceVideos" >
+                            </div>                                                                                    
+
+                            <div class="flex">
+                                <small class="text-muted" style="font-size: 13px">If the media object is already in the database, not be uploaded again</small>
+                            </div>                                                      
+                        </div>
+                    </div>                    
+                    <ul class="dz-preview dz-preview-multiple list-group list-group-flush">
+
+                    </ul>
+                </div>
+
+                <div class="modal-body" id="modalBodyUploadMedia" style="min-height:680px;max-height: 680px;overflow-y: auto;display: none">
+                    <ul class="dz-preview dz-preview-multiple list-group list-group-flush">
+
+                    </ul>
+                </div> 
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal" onclick="closeUploadMediaAdmin()">Close</button>
+                    <button type="button" class="btn btn-primary" data-uploadUserMedia="media">Upload more</button>
+                    <button type="button" class="btn btn-primary" data-current-media-user style="display: none" onclick="openModalUploadInstagram(this)" id="uploadMoreInstagram">Upload more</button>
+
+                    <button type="button" class="btn btn-primary" id="uploadDataInstagram" onclick="uploadFromInstagram()" style="display: none">Import Data</button>                                        
+                    <button type="button" class="btn btn-primary" data-uploadUserStory="story">Upload more</button>
+                </div>                
+            </div>             
+        </div> <!-- // END .modal-dialog -->
+    </div> <!-- // END .modal -->
+
+
+
+
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/jquery.min.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/popper.min.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/bootstrap.min.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/simplebar.min.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/dom-factory.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/material-design-kit.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/toggle-check-all.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/check-selected-row.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/dropdown.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/updater.js"></script>    
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/sidebar-mini.js"></script>
+    
+    <script>
+        var gUrl = request_source()+'/admin.php';
+        var upType;
+        var globalKey = '<?= siteConfig('client'); ?>';
+        var admin_url = '<?= $sm['config']['admin_url']; ?>/';
+        var site_url = '<?= $sm['config']['site_url']; ?>';
+        var sVersion = '<?= $sm['settings']['currentVersion']; ?>';
+        var selectedPreset = 0;
+        var w = window,
+            d = document,
+            e = d.documentElement,
+            g = d.getElementsByTagName('body')[0],
+            x = w.innerWidth || e.clientWidth || g.clientWidth,
+            h = w.innerHeight|| e.clientHeight|| g.clientHeight;
+        (function() {
+            'use strict';
+            // Self Initialize DOM Factory Components
+            domFactory.handler.autoInit()
+            // Connect button(s) to drawer(s)
+            var sidebarToggle = document.querySelectorAll('[data-toggle="sidebar"]')
+            sidebarToggle = Array.prototype.slice.call(sidebarToggle)
+            sidebarToggle.forEach(function(toggle) {
+                toggle.addEventListener('click', function(e) {
+                    var selector = e.currentTarget.getAttribute('data-target') || '#default-drawer'
+                    var drawer = document.querySelector(selector)
+                    if (drawer) {
+                        drawer.mdkDrawer.toggle()
+                    }
+                })
+            })
+            let drawers = document.querySelectorAll('.mdk-drawer')
+            drawers = Array.prototype.slice.call(drawers)
+            drawers.forEach((drawer) => {
+                drawer.addEventListener('mdk-drawer-change', (e) => {
+                    if (!e.target.mdkDrawer) {
+                        return
+                    }
+                    document.querySelector('body').classList[e.target.mdkDrawer.opened ? 'add' : 'remove']('has-drawer-opened')
+                    let button = document.querySelector('[data-target="#' + e.target.id + '"]')
+                    if (button) {
+                        button.classList[e.target.mdkDrawer.opened ? 'add' : 'remove']('active')
+                    }
+                })
+            })
+            // SIDEBAR COLLAPSE MENUS
+            $('.sidebar .collapse').on('show.bs.collapse', function(e) {
+                e.stopPropagation()
+                var parent = $(this).parents('.sidebar-submenu').get(0) || $(this).parents('.sidebar-menu').get(0)
+                $(parent).find('.open').find('.collapse').collapse('hide');
+                $(this).closest('li').addClass('open');
+            });
+            $('.sidebar .collapse').on('hidden.bs.collapse', function(e) {
+                e.stopPropagation()
+                $(this).closest('li').removeClass('open');
+            });
+    
+            $('[data-toggle="tooltip"]').tooltip();
+            window.addEventListener('load', function() {
+                $('.preloader').fadeOut();
+                domFactory.handler.upgradeAll();
+                setTimeout(function(){
+                    $('#profileEditHeader').fadeIn();
+                    $('#profileEditContainer').fadeIn();
+                },300);
+            })
+        })()
+    </script>
+    <script>
+        (function() {
+            'use strict';
+            $('[data-toggle="tab"]').on('hide.bs.tab', function(e) {
+                $(e.target).removeClass('active')
+            })
+        })()
+    </script>
+
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/flatpickr/flatpickr.min.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/flatpickr.js"></script>
+    <script src="<?php echo $sm['config']['site_url']; ?>themes/default/js/vendor/sweetalert.min.js"></script> 
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/settings.js"></script>
+
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/Chart.min.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/charts.js"></script>
+
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/select2/select2.min.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/select2.js"></script>
+    <script src="<?php echo $sm['config']['site_url']; ?>themes/default/js/vendor/little-widgets.js"></script>    
+    <script src="<?php echo $sm['config']['site_url']; ?>themes/default/js/vendor/jquery.dm-uploader.min.js"></script>
+    <script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/slim-lightbox.min.js"></script>    
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/jqvmap/jquery.vmap.min.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/jqvmap/maps/jquery.vmap.world.js"></script>
+    <script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/autocomplete.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/vector-maps.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/users.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/admin.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/list.min.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/list.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/toastr.min.js"></script>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/js/toastr.js"></script>  
+    <script src="<?= $sm['config']['site_url']; ?>themes/plugins/story.js"></script>
+    <script>
+        var nextStory = 0;
+        var storyPage = '';
+        var currentStory;
+        var socialStory = new Story({
+            playlist: currentStory
+        });         
+    </script>      
+    <script>
+    var fullscreen = (function(document, console) {
+        var methods = ["requestFullscreen", "mozRequestFullScreen", "webkitRequestFullscreen", "msRequestFullscreen"],
+            exits = ["exitFullscreen", "mozCancelFullScreen", "webkitExitFullscreen", "webkitCancelFullScreen", "msExitFullscreen"],
+            img = new Image,
+            method = methods.filter(function(m) {
+                return m in img
+            }).shift(),
+            exit = exits.filter(function(m) {
+                return m in document
+            }).shift(),
+            fun = function(el,leaveFullScreen) {
+                method && el[method]()
+                $(document).one("leftfullscreen", leaveFullScreen)
+            },
+            isFull = fun.isFull = function() {
+                return document.fullscreen || document.mozFullScreen || document.webkitIsFullScreen || document.msFullscreenElement
+            }
+        $(document).on("webkitfullscreenchange mozfullscreenchange MSFullscreenChange msfullscreenchange fullscreenchange", function() {
+            //             console.log(["fsc",e.type,fullscreen.isFull()])
+            if(!isFull())
+                $(document).trigger("leftfullscreen")
+            else
+                $(document).trigger("enterfullscreen")
+        })
+        return fun
+    })(document, console)           
+    </script>
+    <script>
+        $(document).ready(function() {
+          $("#uploadJSON").dmUploader({
+            url: site_url+'assets/sources/upload.php',
+            multiple: false,
+            extFilter: ["json","JSON"],
+            onFileExtError: function(file){
+              alert('File type invalid, only JSON files are accepted');
+            }, 
+            onNewFile: function(id, file){
+            },  
+            onUploadProgress: function(id,percent){
+            },
+            onComplete: function(){
+            },
+            onUploadSuccess: function(id, file){
+              var jsonFile = file;
+              var jsonFilePath = file.path;
+              if(jsonFile['type'] == 'language'){
+                goTo('languages');
+              }
+              if(jsonFile['type'] == 'preset'){
+                $('#newPreset').val(file['name']);
+                $('#newPresetAlias').val(file['alias']);
+                $('#newPresetData').val(file['data']);
+                $('#newPresetTheme').val(file['theme']);
+                $('#newPresetName').text(file['base']);
+                $('#newPresetForm').submit();
+              }              
+            }
+            
+          });
+        });        
+    </script>
+</body>
+
+</html>

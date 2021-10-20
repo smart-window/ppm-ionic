@@ -1,0 +1,2 @@
+[07-May-2020 22:27:25 UTC] PHP Notice:  date_default_timezone_set(): Timezone ID 'uk' is invalid in /home/evoluti1/public_html/assets/includes/connect.php on line 33
+[07-May-2020 22:27:39 UTC] PHP Notice:  date_default_timezone_set(): Timezone ID 'uk' is invalid in /home/evoluti1/public_html/assets/includes/connect.php on line 33

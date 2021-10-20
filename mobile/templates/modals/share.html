@@ -1,0 +1,66 @@
+<div class="modal profile-modal transparent">
+<div class="page overlay-page visible" style="z-index: 600;">
+    <div data-view-id="561">
+        <div class="layout layout--centered-content">
+            <div class="layout__content layout__content--vpadded layout__content--hpadded">
+                <div class="sharing-media">
+                    <div class="sharing-media__multimedia">
+                        <div class="multimedia">
+                            <div class="multimedia__image" style="background-image: url('{{shareImage}}')"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layout__content layout__content--vpadded layout__content--hpadded">
+                <div class="cta-box">
+                    <div class="cta-box__header">{{alang[236].text}}</div>
+                    <div class="cta-box__buttons cta-box__buttons--wide">
+                        <div class="external-providers-list external-providers-list--horizontal external-providers-list--centered  js-scroller">
+                            <div class="external-provider">
+                            	<a target="_blank" href="fb-messenger://share/?link={{siteUrl}}@{{cu.username}}">
+	                                <div class="external-provider__icon">
+	                                    <div class="icon icon--stretch " data-qa="icon"><svg class="icon__content icon__content--inactive"><svg viewBox="0 0 64 64" id="icon-social-circle-messenger" width="100%" height="100%"><g fill="none" fill-rule="evenodd"><path fill="#0084FF" d="M32 0a32 32 0 1 0 0 64 32 32 0 0 0 0-64"></path><path fill="#FFF" d="M21.63 43.31a14.98 14.98 0 0 1-6.09-11.94C15.54 22.88 22.91 16 32 16s16.46 6.88 16.46 15.37c0 8.5-7.37 15.38-16.46 15.38-1.73 0-3.4-.25-4.97-.72l-5.4 3.34v-6.06zm-.08-6.77l8.76-9.46 4.25 4.8 8.01-4.8-8.83 9.61-4.29-4.63-7.9 4.48z"></path></g></svg></svg></div>
+	                                </div><br>
+	                                <div class="external-provider__details">
+	                                    <div class="external-provider__details-summary">Messenger</div>
+	                                </div>
+                            	</a>
+                            </div>
+                            <div class="external-provider">
+                            	<a target="_blank" href="whatsapp://send?text={{cu.name}} {{cu.age}} {{cu.city}} - {{siteUrl}}@{{cu.username}}">
+	                                <div class="external-provider__icon">
+	                                    <div class="icon icon--stretch " data-qa="icon"><svg class="icon__content icon__content--inactive"><svg viewBox="0 0 64 64" id="icon-social-circle-whatsapp" width="100%" height="100%"><circle cx="32" cy="32" r="32" fill="#17d417"></circle><g fill="#FFF"><path d="M15.82 46.59l7.75-2.16 1.11-.3 1.02.54a14.67 14.67 0 0 0 6.98 1.75c8.17 0 14.79-6.64 14.79-14.83 0-8.2-6.62-14.84-14.79-14.84a14.81 14.81 0 0 0-12.73 22.38l.62 1.05-.33 1.19-2.08 7.56-1.66.46-1.13-1.13.45-1.67zm-.8-15c0-9.79 7.9-17.72 17.66-17.72s17.66 7.93 17.66 17.72a17.69 17.69 0 0 1-26 15.62l-9.4 2.62 2.53-9.23a17.68 17.68 0 0 1-2.45-9.01z" fill-rule="nonzero"></path><path d="M28.27 24.51l1.18 2.81s.48 1.12-.58 2c-1.05.88-.33 1.75-.33 1.75s1.31 2.39 5.07 4.66c0 0 1 .7 1.89-.23 0 0 .6-.61 1.1-1.25 0 0 .64-.88 1.6-.28 0 0 1.4.79 2.77 1.5 0 0 1.25.51.7 1.85 0 0-1.58 3.54-5.53 2.7 0 0-2.85-.29-5.36-2.12-.39-.28-.5-.35-1.39-1.07l-.55-.5a21.68 21.68 0 0 1-1.23-1.22c-2.02-2.18-2.9-4.04-2.9-4.04s-.97-1.96-1.1-3.13c0 0-.48-2.56 1.68-4.03 0 0 2.08-1.6 2.98.6z"></path></g></svg></svg></div>
+	                                </div><br>
+	                                <div class="external-provider__details">
+	                                    <div class="external-provider__details-summary">WhatsApp</div>
+	                                </div>
+                            	</a>
+                            </div>
+                            <div class="external-provider">
+                            	<a href="sms:?body={{cu.name}} {{cu.age}} {{cu.city}} - {{siteUrl}}@{{cu.username}}" target="_blank">
+	                                <div class="external-provider__icon">
+	                                    <div class="icon icon--stretch " data-qa="icon"><svg class="icon__content icon__content--inactive"><svg viewBox="0 0 64 64" id="icon-circle-message" width="100%" height="100%"><circle fill="#17D417" cx="32" cy="32" r="32"></circle><path fill="#FFF" d="M42.4 40.23a9.41 9.41 0 0 0 2.86 5.03c-1.53 0-4.68-.27-7.75-1.2a13.26 13.26 0 1 1 4.88-3.83zM32 33.28a1.28 1.28 0 1 0 0-2.56 1.28 1.28 0 0 0 0 2.56zm4.7 0a1.28 1.28 0 1 0 0-2.56 1.28 1.28 0 0 0 0 2.56zm-9.4 0a1.28 1.28 0 1 0 0-2.56 1.28 1.28 0 0 0 0 2.56z"></path></svg></svg></div>
+	                                </div><br>
+	                                <div class="external-provider__details">
+	                                    <div class="external-provider__details-summary">{{alang[96].text}}</div>
+	                                </div>
+                            	</a>
+                            </div>
+                        </div>
+                    </div><br>
+                    <div class="cta-box__content cta-box__content--vpadded cta-box__content--hpadded js-copy-link-container is-hidden"><input type="text" class="share-copy-fallback js-copy-link-input"></div>
+                    <div class="cta-box__buttons">
+                        <div class="button-wrapper">
+                            <div class="button-wrapper__item">
+                            	<button class="inline-button js-dismiss" ng-click="closeShareModal();">
+                            		<span class="inline-button__text">{{alang[2].text}}</span>
+                            	</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

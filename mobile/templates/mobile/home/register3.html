@@ -1,0 +1,31 @@
+<ion-view hide-nav-bar="true" nav-transition="none">
+<ion-content style="background: #7000E3"  nav-transition="none" scroll="true" ng-style="{height: iframeHeight + 'px'}">
+  <div class="wrapper nop-nom" fit vertical layout justified>
+	<div class="login-form animated fadeIn" style="padding-top:10%">
+		<h2 class="comforta" style="font-size:18px;margin-left:10%;margin-right:10%;padding-bottom:20px;"><strong>{{name}}</strong>, {{lang31}}<h2>	
+		<p class="comforta" style="margin-left:10%;font-size:16px;" data-alid="166"></p>			
+		<input type="text" ng-click="openChangeLocModal('register')" value="{{currentLocation}}" class="login-input" style="width:80%;display:inline-block;margin-left:10%;"/>						
+		<p class="comforta" style="margin-left:10%;font-size:16px;" data-alid="32"></p>			
+		<input type="date" max="2001-01-01" min="1940-01-01" id="birth" class="login-input" style="width:80%;display:inline-block;margin-left:10%;"/>					
+		<p class="comforta" style="margin-left:10%;font-size:16px;" data-alid="258"></p>		
+		<div style="position:relative;width:90%;margin-left:10%;padding-bottom:15px;">
+			<div class="selectGender" id="gender{{g.id}}" data-gender="g.id" ng-click="selectGender(g.id)" ng-repeat="g in genders track by $index">
+				<span class="comforta">{{g.text}}</span>
+			</div>
+		</div>
+		<p class="comforta" style="margin-left:10%;font-size:16px;" data-alid="259"></p>		
+		<div style="position:relative;width:90%;margin-left:10%;padding-bottom:15px;">
+			<div class="selectGender" id="looking{{g.id}}" data-looking="g.id" ng-click="selectLooking(g.id)" ng-repeat="g in genders track by $index">
+				<span class="comforta">{{g.text}}</span>
+			</div>
+		</div>					
+		<div class="login-btn" ng-class="{active: isActive}" ng-if="!regBtn" ng-click="send()">
+			<span class="comforta" style="font-size: 16px;line-height: 16px"><center>{{nexttext}}</center></span>
+		</div>			
+		<div class="login-loader" ng-if="regBtn">
+			<center><div class="loader02"></div></center>
+		</div>		
+	</div>
+  </div>
+  </ion-content>
+</ion-view>

@@ -1,0 +1,269 @@
+<?php 
+global $lc;
+getUserInfo($lc,1);
+
+$profile_info = json_encode($sm['profile']);
+$check = blockedUser($sm['user']['id'],$sm['profile']['id']);
+if($check == 1){
+	header('Location:'.$sm['config']['site_url']);
+}
+$me = false;
+if($sm['user']['id'] == $sm['profile']['id']) { 
+	$me = true; 
+}
+$fan = isFan($sm['user']['id'],$sm['profile']['id']);
+$me = false;
+if($sm['user']['id'] == $sm['profile']['id']){ $me = true; }	
+echo 
+'<script>
+noChat = false;
+current_user_id = ' . $sm['profile']['id'] .';
+var profile_info = '. $profile_info  . ';	
+url = "chat";
+</script>';
+?>
+<?php if($sm['theme']['chat_container_bg']['val'] == 'none'){
+	$sm['theme']['chat_container_bg']['val'] = $sm['theme']['body_background']['val'];
+} ?>
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+	<div class="col s2 real" style="padding-right: 0px;border:none" >
+		<?php 
+			if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+				echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+			}
+		?>		
+	</div>
+	<div class="col s8 real mainContentBorderColor"  id="site-content" >
+<?php } else { ?>
+	<div class="col s8 real fix-width-content mainContentBorderColor" style="padding-right: 0px;" id="site-content">
+<?php } ?>
+
+	<?php if($sm['theme']['right_user_header_gradient_chat']['val'] == 'Yes'){ ?>          
+		<div class="chat-right scroll <?= $sm['theme']['right_user_bg_chat']['val']; ?>" style="position:absolute;right:0;z-index: 22;border-left: 1px solid <?= $sm['theme']['right_user_border_left_chat']['val']; ?>;border-top: 1px solid <?= $sm['theme']['right_user_border_top_chat']['val']; ?>" >
+	<?php } else { ?> 
+		<div class="chat-right scroll" style="position:absolute;right:0;z-index: 22;background: <?= $sm['theme']['right_user_bg_chat']['val']; ?>;border-left: 1px solid <?= $sm['theme']['right_user_border_left_chat']['val']; ?>;border-top: 1px solid <?= $sm['theme']['right_user_border_top_chat']['val']; ?>" >
+	<?php } ?>	
+		<div class="page-right-sidebar_" style="margin-top: 25px;padding-bottom: 25px;" >
+	        <div class="next__users animated fadeIn" id="usersFriends" style="padding-left:10px;width: 80px" >
+				<?= getUserFriends($sm['user']['id']); ?>              
+	        </div>
+		</div>
+	</div>
+
+	<?php if($sm['theme']['top_user_header_gradient_chat']['val'] == 'Yes'){ ?>          
+		<div class="top-user-header topHeaderChatSection <?=$sm['theme']['top_user_header_bg_chat']['val']; ?>"  id="chatHeader" style="border-bottom:1px solid <?=$sm['theme']['top_user_header_border_bottom']['val']; ?>">
+	<?php } else { ?> 
+		<div class="top-user-header topHeaderChatSection" style="background: <?=$sm['theme']['top_user_header_bg_chat']['val']; ?>;border-bottom:1px solid <?=$sm['theme']['top_user_header_border_bottom']['val']; ?>">
+	<?php } ?>				
+	<div class="top-user-header-left" id="chatHeader" style="display:inline-block">	
+		<div class="story vivify" onclick="openStory(<?= $sm['profile']['story']; ?>)" >
+			<div class="profile-photo vivify popIn box-shadow" data-left-profile-photo data-src="<?=$sm['profile']['profile_photo']; ?>"></div>
+			<div class="roller" data-storyRoller data-loading-story style="display: none"></div>
+			<div class="over-roller" data-storyPath data-loading-story style="display: none">
+			</div>					
+		</div>	
+										
+		<?php if(!$me){ ?>
+		<h2 class="montserrat" style="left: 110px;font-weight: 700;cursor:pointer;" onclick="goToProfile(<?=$sm['profile']['id']; ?>)">
+				<?= $sm['profile']['name']; ?>, <?= $sm['profile']['age']; ?>
+				<?php if($sm['profile']['premium'] == 1){
+					echo '<div class="premium" data-tooltip="'.$sm['lang'][438]['text'].'"><i class="mdi-editor-attach-money"></i></div>';
+				}?>
+				<?php if($sm['profile']['verified'] == 1){
+					echo '<div class="verified" data-tooltip="'.$sm['lang'][439]['text'].'"><i class="mdi-action-verified-user"></i></div>';
+				}?>
+				<?php if($sm['profile']['popular'] > 1000){
+					echo '<div class="popular" data-tooltip="'.$sm['lang'][440]['text'].'"><i class="mdi-social-whatshot"></i></div>';
+				}?>	
+			</h2>
+			<?php  if($sm['profile']['status'] == 'y'){
+				echo '<span style="color:#17D42B!important;left:110px">'.$sm['lang'][441]['text'].'</span>';
+			} else {
+				echo '<span style="left:110px">'.$sm['lang'][465]['text'].' '.time_elapsed_string($sm['profile']['last_access']).'</span>';
+			} ?>
+		<?php } else { ?>
+			<h2 class="montserrat" style="left: 110px;font-weight: 700">
+				<?= $sm['profile']['name']; ?>, <?= $sm['profile']['age']; ?>
+				<?php if($sm['profile']['premium'] == 1){
+					echo '<div class="premium" data-tooltip="'.$sm['lang'][438]['text'].'"><i class="mdi-editor-attach-money"></i></div>';
+				}?>
+				<?php if($sm['profile']['verified'] == 1){
+					echo '<div class="verified" data-tooltip="'.$sm['lang'][439]['text'].'"><i class="mdi-action-verified-user"></i></div>';
+				}?>
+				<?php if($sm['profile']['popular'] > 1000){
+					echo '<div class="popular" data-tooltip="'.$sm['lang'][440]['text'].'"><i class="mdi-social-whatshot"></i></div>';
+				}?>
+			</h2>
+			<?php  if($sm['profile']['status'] == 'y'){
+				echo '<span style="left:110px;color:#17D42B!important;">'.$sm['lang'][441]['text'].'</span>';
+			} else {
+				echo '<span style="left:110px;">'.$sm['lang'][465]['text'].' '.time_elapsed_string($sm['profile']['last_access']).'</span>';
+			} ?>
+		<?php } ?>
+
+	</div>
+					
+	<div class="top-user-header-right" id="chatHeaderRight" style="padding-right: 25px">
+		<?php if($sm['plugins']['reportProfile']['enabled'] == 'Yes'){ ?>
+	    <div class="btn btn--white btn--ico box-shadow-low" style="float:right;margin-left: 15px;" onclick="reportUser(<?= $sm['profile']['id']; ?>,'<?= $sm['profile']['first_name']; ?>','<?= $sm['profile']['profile_photo']; ?>');" >
+		    <i class="icon" style="position: absolute;top: 11px;left:11px">
+				<svg id="icon-stop" viewBox="0 0 16 16" width="21px" fill="<?=$sm['theme']['btn_color']['val'];?>"><path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM4 8a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1 1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" fill-rule="nonzero"></path></svg>    	
+		    </i> 
+	    </div>
+	    <?php } ?>	
+	    <div class="btn btn--white btn--ico box-shadow-low" style="float:right;margin-left: 15px;" onclick="deleteConv(<?= $sm['profile']['id']; ?>,'<?= $sm['profile']['first_name']; ?>','<?= $sm['profile']['profile_photo']; ?>');">
+
+		    <i class="icon" style="position: absolute;top: 11px;left:11px">
+				<svg id="icon-trash" viewBox="0 0 16 16" width="21px" fill="<?=$sm['theme']['btn_color']['val']; ?>"><path d="M11.02 2.22v-.89C11.02.6 10.44 0 9.72 0H6.28c-.7 0-1.29.6-1.29 1.33v.9H.23v.88h1.73v10.67A2.2 2.2 0 0 0 4.12 16h7.76c1.2 0 2.16-1 2.16-2.22V3.1h1.73v-.89h-4.75zm-5.18-.89c0-.24.2-.44.43-.44h3.46c.23 0 .43.2.43.44v.9H5.84v-.9zm7.34 12.45c0 .73-.58 1.33-1.3 1.33H4.12c-.72 0-1.3-.6-1.3-1.33V3.1h10.36v10.67zm-7.2-8.8h.86v8.2h-.86v-8.2zm3 0h.86v8.2h-.86v-8.2z" fill-rule="evenodd"></path></svg>		    	
+		    </i> 
+		</div>
+
+		<?php if($sm['plugins']['gifts']['enabled'] == 'Yes'){ ?>
+		    <div class="btn btn--white btn--ico box-shadow-low" style="float:right;margin-left: 15px;" onClick="showChatGifts()">
+				<svg id="icon-messenger-gift-m" viewBox="0 0 22 22" width="50%" height="50%" fill="<?=$sm['theme']['btn_color']['val']; ?>"><path d="M3 10v8c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2v-8l1 1H2l1-1zm17 .73V18A3 3 0 0 1 17 21H5a3 3 0 0 1-3-3v-7.27A2 2 0 0 1 1 9V7c0-1.1.9-2 2-2h16a2 2 0 0 1 2 2v2a2 2 0 0 1-1 1.73zM10.5 6v4h1V6h-1zm0 14h1v-9h-1v9zM11 1.34a3 3 0 1 1 0 3.32 3 3 0 1 1 0-3.32zM2 9a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v2zm8.5-6a2 2 0 1 0-4 0 2 2 0 0 0 4 0zm5 0a2 2 0 1 0-4 0 2 2 0 0 0 4 0z"></path></svg>	    	
+			</div>				
+		<?php } ?>
+	</div>
+</div>
+
+	<?php if($sm['plugins']['gifts']['enabled'] == 'Yes'){ ?>
+		<div class="chat-gifts <?= $sm['theme']['chat_container_bg']['val']; ?>" style="bottom: 0px;z-index: 999;display:none;height: 250px;width: 88% !important;overflow: hidden;background: <?= $sm['theme']['chat_container_bg']['val']; ?>;border-top:1px solid <?= $sm['theme']['right_user_border_left_chat']['val']; ?>">
+			<p class="x-large montserrat giftContainerTextChat" style="margin-left:20px;font-size: 16px;">
+			<?= $sm['lang'][446]['text']; ?>
+			 <span id="giftUserName"><?= $sm['profile']['first_name']; ?></span> <?= $sm['lang'][447]['text']; ?>:</p>			
+	        <div class="attention-gifts">            	
+	            <div id="carousel-gifts" style="margin-top: 50px;padding-left: 25px"> 
+	                <?= getGiftsBottom(); ?>
+	            </div>
+	    	</div>
+	    </div>	
+    <?php } else { ?>
+		<div class="chat-gifts <?= $sm['theme']['chat_container_bg']['val']; ?>" style="bottom: 0px;z-index: 999;display:none;height: 100px;width: 88% !important;overflow: hidden;background: <?= $sm['theme']['chat_container_bg']['val']; ?>;border-top:1px solid <?= $sm['theme']['right_user_border_left_chat']['val']; ?>">
+			<p class="x-large montserrat giftContainerTextChat" style="margin-left:20px;font-size: 16px;">
+			<?= $sm['lang'][808]['text']; ?>
+			 <span id="giftUserName"><?= $sm['profile']['first_name']; ?></span></p>			
+	    </div>	    	
+	<?php } ?>    	
+	<div class="chat chatContainerStyle <?= $sm['theme']['chat_container_bg']['val']; ?>" id='chat-container' style="margin-left:0;padding-bottom: 45px;z-index: 99;height: 65%;">
+		<?=getChat($sm['user']['id'],$sm['profile']['id']); ?>
+	</div>
+
+	<?php
+	$chatGifEmoji = 'z-index:101;';
+	$chatGifEmojiSearch = 'z-index:101;';
+	if($sm['theme']['design_style']['val'] == 'Top-Menu'){ 
+		$chatGifEmoji = 'bottom:140px;z-index:101;';
+		$chatGifEmojiSearch = 'bottom:393px;z-index:101;';
+	} ?>
+
+	<div class="gifImages <?= $sm['theme']['gif_search_bg']['val']; ?> box-shadow-credits" data-show-send-gif="1" style="display: none;<?= $chatGifEmoji; ?>background: <?= $sm['theme']['gif_search_bg']['val']; ?>;border-radius: 5px"></div>
+	<div class="gifFilterSearch <?= $sm['theme']['gif_search_bg']['val']; ?> box-shadow-credits" data-show-send-gif="1" style="display: none;background: <?= $sm['theme']['gif_search_bg']['val']; ?>;<?= $chatGifEmojiSearch; ?>;border-radius: 5px">
+		<input  type="text" class="input clever box-shadow-credits" data-gif-input onkeyup="getGiphy('search',this.value)" onchange="getGiphy('search',this.value)"
+		 placeholder="<?= $sm['lang'][661]['text']; ?>" 
+		style="width: 50%;margin-left: 25%;" />		
+	</div>	
+
+
+	<div class="js-top-chat-banner-wrap" id="highlight" style="display: none" >
+	    <div class="connection-banner--top-chat connection-banner active js-messenger-top-chat-promo" style="margin:0;margin-left:20px;margin-top: 20px;">
+	        <div class="montserrat" style="font-size: 12px;"><b class="montserrat"><?= $sm['lang'][442]['text']; ?></b>
+	            <br><?= $sm['lang'][443]['text']; ?>!</div>
+	        <div class="btn btn--sm btn--white"><span class="btn-txt"><?= $sm['lang'][444]['text']; ?></span> </div>
+	    </div>
+	</div>
+
+	<?php 
+	
+	if($sm['theme']['design_style']['val'] == 'Top-Menu'){ 
+		$isWritingPosition = 'left: 35px;bottom: 155px;';
+	} else {
+		$isWritingPosition = 'left: 35px;bottom: 100px;';
+	} ?>
+
+	<div class="js-message-block isWriting"
+	 style="display:none;position:absolute;<?=$isWritingPosition;?>background:none;z-index: 100;" >
+		<div class="message">
+			<div class="brick brick--xsm brick--hover">
+				<div class="brick-img profile-photo" id="writingPhoto" data-src="<?= $sm['profile']['profile_photo']; ?>"></div>
+			</div>
+			<div class="message__txt" >
+				<div class="message__name lgrey" style="margin-top: 5px"><b id="writingName"><?= $sm['profile']['name']; ?></b> <?= $sm['lang'][445]['text']; ?>...</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="showEmoji" style="display: none;<?= $chatGifEmoji; ?>">
+		<div class="ms-emoji"></div>
+	</div>
+
+	<div class="wall-chat <?= $sm['theme']['chat_message_bg']['val']; ?>" style="margin-left:0;width: 88%;border: none;background: <?= $sm['theme']['chat_message_bg']['val']; ?>">
+	    <div class="flex flex--middle message-tools" style="background: none">
+	        <div class="flex__item flex message-tools__wrap" style="margin-top:-20px;margin-left: -30px">  
+	            <div class="relative flex__item message-tools__field" >
+	                <div style="width: 440px">
+						<form id="c-send" action="#">
+							<div  id="chat-message" contenteditable="true" class="input input--sm input-chat--w <?= $sm['theme']['chat_message_input_bg']['val']; ?> box-shadow-low"  autocomplete="off" placeholder="<?= $sm['lang'][89]['text']; ?>" style="scrollbar-width: none;background: <?= $sm['theme']['chat_message_input_bg']['val']; ?>;color: <?= $sm['theme']['chat_message_input_color']['val']; ?>;">
+							</div>
+							<div style="position: absolute;right: 6px;top: 8px;width: 26px;height: 26px;background: none;font-size: 18px;cursor: pointer;" onclick="showEmoji(1)">
+								😃
+							</div>							
+							<input id="r_id" value="<?= $sm['profile']['id']; ?>" type="hidden" style='display:none'>
+						</form>
+						<form action="<?php echo $sm['config']['site_url']; ?>/assets/sources/sendphoto.php" method="post" enctype="multipart/form-data" id="sendPhoto">
+							<input name="image_file" id="photo-to-send" type="file"  style="display:none;"/>
+							<input id="rid" name="rid" value="<?= $sm['profile']['id']; ?>" type="hidden" style='display:none'>
+						</form>							
+	                </div>
+	            </div>
+
+				<?php if($sm['plugins']['giphy']['enabled'] == "Yes"){ ?>	            	            
+	            <div class="flex__item flex__item"
+	             style="height:25px;margin-left:5px;" >
+	                <div class="btn btn--sm montserrat box-shadow-low <?= $sm['theme']['chat_message_btn_bg']['val']; ?>" data-gif-btn onclick="openGif(1);" style="height: 32px;text-transform: uppercase;font-weight: bold;cursor: pointer;background: <?= $sm['theme']['chat_message_btn_bg']['val']; ?>;color:<?= $sm['theme']['chat_message_btn_color']['val']; ?>">
+	                	GIF
+	                </div>
+	            </div>
+				<?php } ?>	
+
+	            <div class="flex__item flex__item" id="send-photo" style="margin-left:5px;">
+	                <div class="btn btn--sm box-shadow-low <?= $sm['theme']['chat_message_btn_bg']['val']; ?>" style="height: 32px;background: <?= $sm['theme']['chat_message_btn_bg']['val']; ?>;color:<?= $sm['theme']['chat_message_btn_color']['val']; ?>">
+						<i class="icon icon--white" style="margin-top: -2px">
+							<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="<?= $sm['theme']['chat_message_btn_color']['val']; ?>" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(2 3)"><path d="M20 16a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3l2-3h6l2 3h3a2 2 0 0 1 2 2v11z"/><circle cx="10" cy="10" r="4"/></g></svg>
+						</i>	                	
+	                </div>
+	            </div>	
+
+				<?php if($sm['plugins']['videocall']['enabled'] == "Yes"){ ?>	            	            
+	            <div class="flex__item flex__item" id="videocall"
+	             style="height:25px;margin-left:5px;padding-right: 3px;" >
+	                <div class="btn btn--sm box-shadow-low <?= $sm['theme']['chat_message_btn_bg']['val']; ?>" style="height: 32px;background: <?= $sm['theme']['chat_message_btn_bg']['val']; ?>">
+	                	<i class="icon icon--white" style="margin-top: -2px">
+							<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="<?= $sm['theme']['chat_message_btn_color']['val']; ?>" 	stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 11.6L22 7v10l-6.4-4.5v-1zM4 5h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7c0-1.1.9-2 2-2z"/></svg>	                			                		
+	                	</i>
+	                </div>
+	            </div>
+				<?php } ?>	            		                  	            
+	            <div class="flex__item flex__item--fixed message-tools__btn" id="chat-send"
+	             style="position: absolute;right: 25px">
+	                <div class="btn btn--sm box-shadow-low <?= $sm['theme']['chat_message_btn_send_bg']['val']; ?>" title="Send" style="height: 32px;width: 54px;cursor: pointer;background: <?= $sm['theme']['chat_message_btn_send_bg']['val']; ?>">
+	                	<i class="icon icon--white" style="margin-top: -4px">
+							<svg viewBox="0 0 24 24" id="send" width="26" height="26" fill="<?= $sm['theme']['chat_message_btn_send_color']['val']; ?>">
+								<polygon points="21.368 12.001 3 21.609 3 14 11 12 3 9.794 3 2.394"></polygon>
+							</svg>
+						</i>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+ </div>
+
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+	<div class="col s2 real" style="padding-right: 0px;border:none" >
+		<?php 
+			if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+				echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+			}
+		?>		
+	</div>
+<?php } ?>   

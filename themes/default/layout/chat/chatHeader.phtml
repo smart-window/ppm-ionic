@@ -1,0 +1,70 @@
+<?php 
+if(!empty($_GET['id'])){
+	$usid = secureEncode($_GET['id']);	
+	getUserInfo($usid,1);
+}
+if($sm['profile'] == ''){
+	getUserLC($sm['user']['id']);	
+}
+$profile_info = json_encode($sm['profile']);
+$check = blockedUser($sm['user']['id'],$sm['profile']['id']);
+if($check == 1){
+	header('Location:'.$sm['config']['site_url']);
+}
+
+$fan = isFan($sm['user']['id'],$sm['profile']['id']);
+$me = false;
+if($sm['user']['id'] == $sm['profile']['id']) $me = true;		
+echo 
+'<script>
+current_user_id = ' . $sm['profile']['id'] .';
+var profile_info = '. $profile_info  . ';	
+url = "chat";
+</script>';
+?>
+<?php if(!$me){ ?>
+	<div class="story vivify" onclick="openStory(<?= $sm['profile']['story']; ?>)" >
+		<div class="profile-photo vivify popIn box-shadow" data-left-profile-photo data-src="<?=$sm['profile']['profile_photo']; ?>"></div>
+		<div class="roller" data-storyRoller data-loading-story style="display: none"></div>
+		<div class="over-roller" data-storyPath data-loading-story style="display: none">
+		</div>					
+	</div>
+	<h2 class="montserrat" style="left: 110px;font-weight: 700;cursor:pointer;" onclick="goToProfile(<?=$sm['profile']['id']; ?>)">
+		<?= $sm['profile']['name']; ?>, <?= $sm['profile']['age']; ?>
+		<?php if($sm['profile']['premium'] == 1){
+			echo '<div class="premium" data-tooltip="'.$sm['lang'][438]['text'].'"><i class="mdi-editor-attach-money"></i></div>';
+		}?>
+		<?php if($sm['profile']['verified'] == 1){
+			echo '<div class="verified" data-tooltip="'.$sm['lang'][439]['text'].'"><i class="mdi-action-verified-user"></i></div>';
+		}?>
+		<?php if($sm['profile']['popular'] > 1000){
+			echo '<div class="popular" data-tooltip="'.$sm['lang'][440]['text'].'"><i class="mdi-social-whatshot"></i></div>';
+		}?>	
+	</h2>
+	<?php  if($sm['profile']['status'] == 'y'){
+		echo '<span style="color:#17D42B!important;left:110px">'.$sm['lang'][441]['text'].'</span>';
+	} else {
+		echo '<span style="left:110px">'.$sm['lang'][465]['text'].' '.time_elapsed_string($sm['profile']['last_access']).'</span>';
+	} ?>			
+
+<?php } else { ?>
+	<h2 style="left: 20px;">
+		<?= $sm['profile']['name']; ?>, <?= $sm['profile']['age']; ?>
+		
+		<?php if($sm['profile']['premium'] == 1){
+			echo '<div class="premium" data-tooltip="'.$sm['lang'][438]['text'].'"><i class="mdi-editor-attach-money"></i></div>';
+		}?>
+		<?php if($sm['profile']['verified'] == 1){
+			echo '<div class="verified" data-tooltip="'.$sm['lang'][439]['text'].'"><i class="mdi-action-verified-user"></i></div>';
+		}?>
+		<?php if($sm['profile']['popular'] >= siteConfig('popular_user')){
+			echo '<div class="popular" data-tooltip="'.$sm['lang'][440]['text'].'"><i class="mdi-social-whatshot"></i></div>';
+		}?>	
+	</h2>
+	<?  if($sm['profile']['status'] == 'y'){
+		echo '<span style="left:22px;color:#17D42B!important;">'.$sm['lang'][441]['text'].'</span>';
+	} else {
+		echo '<span style="left:22px;">Last connection '.time_elapsed_string($sm['profile']['last_access']).'</span>';
+	} ?>
+
+<?php } ?>

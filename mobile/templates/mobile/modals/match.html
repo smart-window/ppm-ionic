@@ -1,0 +1,33 @@
+<ion-modal-view class="bg-match">
+	<div class="videopb" style="background-image:url({{cu3.photo}})"></div>
+  <ion-content class="text-center" style="background:none" scroll="false" vertical layout justified>
+
+    <div class="wrapper" >
+      <div class="wrapper-xs m-t-xl" style="margin-top:80px;" >
+        <span class="text-3x mi-pollita" style="color:#fff">{{alang[142].text}}</span>
+      </div>
+      
+      <div class="wrapper mi-pollita" style="margin-bottom:35px;color:#fff">{{alang[143].text}} {{cu3.name}} {{alang[144].text}}</div>
+
+      <div class="thumb-xl rounded m-r profileP" style="width:{{width}}px;height:{{width}}px;background-image:url({{myPhoto}})">
+      </div>
+
+      <div class="thumb-xl rounded m-r profileP" style="width:{{width}}px;height:{{width}}px;background-image:url({{cu3.photo}})">
+      </div>
+    </div>
+
+    <div class="wrapper">
+      <div class="wrapper">
+        <button class="button button-block  bg-tinder" ng-click="closeMatchModal();chatUser('home.messaging','right',cu3)">
+          <i class="icon ion-chatbubbles"></i>
+          {{alang[145].text}}
+        </button>  
+        
+        <button class="button button-block button-outline" ng-click="closeMatchModal()">
+          {{alang[146].text}}
+        </button>
+      </div>
+
+    </div>
+  </div>
+</ion-modal-view>

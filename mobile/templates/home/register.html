@@ -1,0 +1,72 @@
+<ion-view hide-nav-bar="true">
+  <ion-nav-title>
+    <div class="navigation-bar"   >
+        <div class="navigation-bar__primary">
+        </div>
+        <div class="navigation-bar__title">
+            <div class="navigation-bar__logo" style="z-index: 999;">
+            </div>
+        </div>
+        <div class="navigation-bar__secondary"></div>
+    </div>
+  </ion-nav-title>
+<ion-content  scroll="false" ng-style="{height: iframeHeight + 'px'}" style="background: #fff">
+<div class="page landing visible"  style="z-index: 600;">
+    <div class="flexible-page">
+        <div class="page-content">
+            <div class="landing-wrapper">
+                <div class="landing-logo" style="margin-top: -50px;">
+                    <div class="brick box-shadow-credits" style="width: 160px;height: 160px;background: #fff;bottom: 50px;border-color:none" ng-click="pick()">
+                        <div class="brick__image" id="photo-upload" style="border-color:none;background-color:#fafafa;background-image: url('img/no_user.png')"></div>
+                    </div>                
+                </div>
+                <div class="landing-actions" style="margin-top: 80px">
+                    <div class="cta-box">
+                        <div class="cta-box__buttons">
+                        <ul class="list-view ">
+                          <li class="list-item-form" style="border:none">
+                            <label for="signin-name comforta">{{alang[158].text}}</label>
+                            <input ng-model="user.reg_name" placeholder="" name="name" type="text" autocapitalize="off" style="background: #fafafa;border-radius: 8px;padding-left: 10px;">
+                          </li>
+                          <li class="list-item-form" style="border:none;">
+                            <label for="signin-name comforta">{{lang[331].text}}</label>
+                            <input ng-model="user.reg_username" placeholder="" ng-keyup="checkUsername(user.reg_username)" name="username" type="text" autocapitalize="off" style="background: #fafafa;border-radius: 8px;padding-left: 10px;">
+                            <div style="position:relative;min-height:25px;height:auto;text-align: left !important;">
+                              <small class="comforta" style="text-align: left !important;">{{profileUrl}}@<strong>{{profileUsername}}</strong></small>
+                            </div>
+                          </li>                                                  
+                          <li class="list-item-form" style="border:none">
+                            <label for="signin-name">{{alang[149].text}}</label>
+                            <input ng-model="user.reg_email" placeholder="" name="email" type="email"  autocapitalize="off" style="background: #fafafa;border-radius: 8px;padding-left: 10px;">
+                          </li>
+                          <li class="list-item-form" style="border:none">
+                            <label for="signin-password comforta">{{alang[150].text}}</label>
+                            <input type="password" id="regpass" ng-model="user.reg_pass" ng-keyup="count = $count + 1" ng-init="count=0" ng-minlength="4" style="background: #fafafa;border-radius: 8px;padding-left: 10px;" required>
+                          </li>
+                               
+                        </ul>
+                        <div class="button-wrapper" style="margin-top: 25px">
+                            <div class="login-loader" style="margin-bottom: 40px;" ng-if="regBtn">
+                              <center><div class="loader02"></div></center>
+                            </div>                        
+                            <button class="button button--secundary a" ng-class="{active: isActive}" ng-if="!regBtn" ng-click="next(user)">
+                            <div class="button__content"><span class="button__text">{{nexttext}}</span></div></button>
+                          
+
+                        </div>                        
+                    </div>
+                </div>
+                <div class="landing-footer">
+                  <span ng-click="goTo('home.welcome','left','')">{{alang[155].text}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  <div flow-init
+       flow-name="uploader.flow"
+       flow-files-added="processFiles($files)">
+    <button flow-btn type="file" id="uploadRegPhoto" style="display: none;">Upload Images</button>
+   </div>  
+  </ion-content>
+</ion-view>

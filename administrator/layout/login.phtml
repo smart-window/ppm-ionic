@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Login | <?= $sm['config']['name']; ?></title>
+		<meta name="author" content="Premium Dating Script - Belloo Software" />
+		<link rel="shortcut icon" href="<?= $sm['theme']['favicon']['val']; ?>">
+		<link rel="stylesheet" type="text/css" href="<?php echo $sm['config']['admin_url']; ?>/login/css/base.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/sweetalert.css">
+		<style>
+			@font-face {
+			    font-family: Stolzl;
+			    src: url("<?= $sm['config']['site_url']; ?>administrator/assets/fonts/Stolzl_regular.otf") format("opentype");
+			}
+			@font-face {
+			    font-family: Stolzl-bold;
+			    src: url("<?= $sm['config']['site_url']; ?>administrator/assets/fonts/Stolzl_bold.otf") format("opentype");
+			}
+			.belloo-header__title{
+				font-family: 'Stolzl-bold' !important;
+				font-size: 38px;
+				padding-bottom: 25px;
+				padding-top: 150px;
+			}
+			body{
+				font-family: 'Stolzl' !important;
+			}
+		</style>
+		<?php
+	    echo 
+		    '<script>
+		    var url; 
+		    function request_source(){
+		        return \'' . $sm['config']['ajax_path'] . '\';
+		    }
+		    function site_title(){
+		        return \'' . $sm['config']['title'] . '\';
+		    }   
+		    function theme_source(){
+		        return \'' . $sm['config']['theme_url'] . '\';
+		    }
+		    function site_url(){
+		        return \'' . $sm['config']['site_url'] . '\';
+		    }   
+		    </script>';
+	    ?> 				
+	</head>
+	<body class="belloo-installation">
+		<main>
+			<div class="content content--side main-content" style="background: #fdfdfd">
+				<header class="belloo-header">
+					<h1 class="belloo-header__title"><?= $sm['config']['name']; ?> Control Panel</h1>
+					<p class="info" style="color: #444;font-size: 14px">Login to the control panel, enter your email address and control panel password</p>
+				</header>
+				<form class="form" id="login" action="" method="">
+					<div class="form__item">
+						<label class="form__label" for="email">Email Address</label>
+						<input class="form__input" type="email" name="login_email" required id="login_email">
+					</div>
+					<div class="form__item">
+						<label class="form__label" for="password">Password</label>
+						<div class="form__input-wrap">
+							<input class="form__input" type="password" name="login_pass" required id="login_pass">
+						</div>
+					</div>
+					<input type="hidden" style="display: none" value="login" name="action" />
+					<div class="form__item form__item--actions">
+						<span></span>
+						<button class="form__button" type="submit" id="login-now">Login now</button>
+					</div>
+				</form>
+			</div>
+			<div class="content content--side">
+				<div class="poster" style="background-image:url()"></div>
+				<nav class="support-section">
+					<a class="support support--current" href="https://premiumdatingscript.com/support" target="_blank"><span>Support</span></a>
+				</nav>
+				<a class="belloo-logo" href="https://premiumdatingscript.com/">
+					<img src="https://premiumdatingscript.com/support/images/logo-goteo.png">
+				</a>
+			</div>
+		</main>
+    <script src="<?php echo $sm['config']['admin_url']; ?>/assets/vendor/jquery.min.js"></script>
+	<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/sweetalert.min.js"></script>    
+	<script>
+	$('.poster').css({
+	  'background-image' : 'url(<?php echo $sm['config']['admin_url']; ?>/login/bg.jpg)'
+	});	
+	$('#login').submit(function(e) {
+		e.preventDefault();
+		var findme = "Error";
+		$.ajax({
+				data:  $(this).serialize(),
+				url:   request_source()+'/user.php',
+				type:  'post',
+				beforeSend: function () {
+					$("#login-now").html('Loading...');
+					$('#login-error').hide();
+				},			
+				success:  function (response) {  	
+					if ( response.indexOf(findme) > -1 ) {
+						response = response.replace('Error','');
+				        swal({
+				            title: 'uhm...',
+				            text: response,
+				            type: "error"
+				        }, function(t) { 
+				        })
+						$("#login-now").html('Login now');
+					} else {
+						 window.location.reload();
+					}
+				}
+		});					
+	});	
+	</script>		
+	</body>
+</html>

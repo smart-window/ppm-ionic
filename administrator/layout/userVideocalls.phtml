@@ -1,0 +1,237 @@
+<?php
+  if($sm['admin_ajax'] == false){
+    header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=users');
+  }
+?>
+<script>
+  aurl = 'videocalls';
+  currentMenu = 'all-users';
+  currentMenuCollapse = 'videocall';  
+</script>
+<?php 
+$currentTime = time()-300;
+
+$days = 86400 * 7;
+$days = time() - $days;
+$date1 = date('m/d/Y', $days);
+$date2 = date('m/d/Y', time());
+?>
+
+
+
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px;min-height: 800px ">
+
+
+
+  <div class="card card-form  flex-column flex-sm-row divHidden" data-search-result style="height: 60px">
+      <div class="card-form__body card-body-form-group flex">
+          <div class="row">
+              <div class="col-sm-12">
+                  <div class="form-group">
+                      <label id="searching"><i class="material-icons mr-3">search</i> Searching...</label>
+
+                      <label id="searchComplete" style="display: none">
+                        <div style="display: inline-table;width: 40px;">                       
+                          <i class="material-icons mr-3" >search</i>
+                        </div>
+                        Search result <span id="totalResult"></span> videocalls</label>              
+                  </div>
+              </div>                                                 
+          </div>
+      </div>
+  </div>  
+
+
+  <div class="card card-form  flex-column flex-sm-row divHidden" data-selected-data style="display: none">
+      <div class="card-form__body card-body-form-group flex">
+          <div class="row">
+              <div class="col-sm-12">
+                  <div class="form-group">
+                      <label for="filter_name">Selected <strong data-selected-data-total></strong> videocalls</label>                    
+                  </div>
+                  <div class="avatar-group" data-checkedData style="position: absolute;top: -7px;left: 180px">
+
+
+                  </div>
+              </div>                                                 
+          </div>
+      </div>
+
+      <div class="dropdown">
+          <button class="btn bg-white border-left border-top border-top-sm-0 rounded-top-0 rounded-top-sm rounded-left-sm-0" data-toggle="dropdown" data-caret="false" style="border-radius:0px;background: #fff;width: 100%;height: 100%">
+             <i class="material-icons icon-20pt" style="color: #000">more_horiz</i>
+           </button> 
+          <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="#" onclick="adminBulkAction('delete','videocall');" style="font-size: 13px">
+                <i class="material-icons icon-20pt" style="color: #000">delete_forever</i>
+                Delete <span data-selected-data-total></span> videocalls
+              </a>            
+          </div>
+      </div>      
+  </div>
+
+  <div class="card card-form" id="userVideocallContainer" style="display: none">
+      <div class="row no-gutters">
+          <div class="col-lg-12 card-form__body">
+
+              
+              <div class="table-responsive border-bottom" data-search data-toggle="lists" data-lists-values='["js-lists-values-employee-name"]' style="min-height: 100px">   
+
+
+                  <table class="table mb-0 thead-border-top-0" >
+                      <thead>
+                          <tr style="background: #fff">
+                              <th style="width: 18px;">
+                                  <div class="custom-control custom-checkbox">
+                                      <input type="checkbox" onclick="checkAllData(this)" class="custom-control-input" data-target="#dataTable" id="customCheckAll">
+                                      <label class="custom-control-label" style="cursor: pointer;"  for="customCheckAll"><span class="text-hide">Toggle all</span></label>
+                                  </div>
+                              </th>
+                              <th style="width: 180px;">Caller</th>
+                              <th style="width: 180px;">Receiver</th>
+                              <th style="width: 50px;">Duration</th>
+                              <th style="width: 50px;">Date</th>
+                              <th style="width: 51px;">Status</th>                                                                                 
+                              <th style="width: 24px;"></th>
+                          </tr>
+                      </thead>
+
+                      <tbody class="list" id="dataTable" style="height: 400px;overflow-y: scroll">
+                      </tbody>
+                  </table>
+              </div>
+
+              <div class="card-footer text-center">
+                <span class="text-muted">Showing </span>
+                <span data-current-view>25</span>
+                <span class="text-muted">of </span>
+                <span data-current-total-users></span> 
+                <span class="text-muted">results</span>
+                <a href="#results" data-nextPage-search>
+                  <i class="material-icons icon-muted float-right">arrow_forward</i>
+                </a>
+                <a href="#results" data-backPage-search style="display: none">
+
+                  <i class="material-icons icon-muted float-left" >arrow_backward</i>
+                </a>
+              </div> 
+
+          </div>         
+      </div>
+  </div>    
+
+  <div class="v-wrapper">
+    <a href="#" class="btn btn-light ml-3" data-close-video><i class="material-icons mr-1">close</i> Close video</a>
+    <video id="playVideo" controls >
+      <source />
+    </video>
+  </div>
+
+</div>
+
+
+<script>
+    var dataPerPage = 10;
+    var viewedData = 0;
+    var lastPageSearch = 0;
+    var search = {};
+    var searchData = [];
+    var checkedData = [];    
+    search['action'] = 'search_videocalls';
+
+
+    //load data
+    setTimeout(function(){
+        $.ajax({
+          url: request_source()+'/admin.php', 
+          data: search,  
+          type: "post",
+          dataType: 'JSON',        
+          success: function(response) {
+              $('[data-search]').show();
+              $('#searchComplete').show();
+              $('#searching').hide();
+              searchData = response['data'];
+              for (i = 0; i < dataPerPage; i++) {
+                viewedData++; 
+                $('#dataTable').append(response['data'][i]);
+              }
+              $('#totalResult').text(response.total);
+              if(response.total > 0){
+                $('#userVideocallContainer').fadeIn();
+              }
+              $('[data-search-result]').show();
+              $('[data-current-total-users]').text(response.total);
+              $('[data-current-view]').text(viewedData);
+          },
+        });
+    },1500);
+
+    //next result page
+     $('[data-nextPage-search]').click(function(e){
+    
+      $('#customCheckAll').prop("checked",false);         
+        if(searchData.length > viewedData){
+            $('#dataTable').html('');
+            var maxResult = viewedData+dataPerPage;
+
+            lastPageSearch = dataPerPage;
+            if(searchData.length <= maxResult ){
+                maxResult = searchData.length;
+                lastPageSearch = maxResult;
+            }                    
+            for (i = viewedData; i < maxResult; i++) {
+              viewedData++;
+              $('#dataTable').append(searchData[i]);
+            }
+            $('[data-current-view]').text(viewedData);  
+            $('[data-backPage-search]').fadeIn(); 
+
+            checkIfChecked();                 
+        }                
+     });  
+
+
+     //back page
+     $('[data-backPage-search]').click(function(e){
+        
+        $('#dataTable').html('');
+        $('#customCheckAll').prop("checked",false);
+        var firstBack = dataPerPage*2;
+        viewedData = viewedData-firstBack;
+        console.log(viewedData);
+        if(viewedData <= 0){
+            $('[data-backPage-search]').hide();
+            viewedData = 0;
+        } 
+        var maxResult = viewedData+dataPerPage;
+        if(searchData.length <= maxResult ){
+            maxResult = searchData.length;
+        }                                
+        for (i = viewedData; i < maxResult; i++) {
+          viewedData++;
+          $('#dataTable').append(searchData[i]);
+        }
+        $('[data-current-view]').text(viewedData);
+        checkIfChecked();                                  
+     });  
+
+    //play video
+    function playVideo(video){    
+      var $video = $('#playVideo'),
+      videoSrc = $('source', $video).attr('src', video);
+      $video[0].load();
+      $('.v-wrapper').fadeIn();
+      $video[0].play();
+    } 
+
+    //close video
+
+    $('[data-close-video]').click(function(e){
+      e.preventDefault();
+      var $video = $('#playVideo');
+      $video[0].pause();
+      $('.v-wrapper').hide();
+    });          
+</script>

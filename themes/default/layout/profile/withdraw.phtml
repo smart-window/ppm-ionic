@@ -1,0 +1,113 @@
+<?php 
+  if($sm['plugins']['withdrawal']['enabled'] == "No"){
+    header('Location:'.$sm['config']['site_url']);
+  }
+?>
+
+<script>
+url = "withdraw";
+</script>       
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    <div class="col s2 real" style="padding-right: 0px;" >
+    <?php 
+        if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+            echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+        }
+    ?>      
+    </div>
+    <div class="col s8 real mainContentBorderColor"  id="site-content" style="background: <?=$sm['theme']['wall_bg_withdraw']['val']; ?>;">
+<?php } else { ?>
+    <div class="col s8 real fix-width-content mainContentBorderColor" style="padding-right: 0px;background: <?=$sm['theme']['wall_bg_withdraw']['val']; ?>;" id="site-content">
+<?php } ?>            
+    <div class="wall meetContent mainContentBorderColor" style="background: <?= $sm['theme']['wall_bg_withdraw']['val']; ?>;">  
+
+
+    <div class="wallet-iphone" style="background: <?= $sm['theme']['wall_bg_withdraw']['val']; ?>" >
+      <div class="wallet-header <?= $sm['theme']['withdraw_header_bg']['val']; ?>" style="background: <?= $sm['theme']['withdraw_header_bg']['val']; ?>" >
+        <div class="wallet-header-summary">
+          <div class="wallet-summary-text" >
+            <?= $sm['lang'][706]['text']; ?>
+          </div>
+          <div class="wallet-summary-text-2">
+            <?= $sm['user']['credits']; ?> <?= $sm['lang'][73]['text']; ?>
+          </div>          
+          <div class="wallet-summary-balance">
+            <?= $sm['plugins']['settings']['currency']; ?> <?= $sm['user']['payout']; ?>
+          </div>
+        </div>
+        <div class="wallet-user-profile ">
+          <div class="wallet-user-photo box-shadow-left-profile profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>
+        </div>
+      </div>
+      <div class="wallet-content" style="height: 180px">
+
+        <div class="wallet-transactions"><span class="wallet-t-desc" style="text-align: center;color: <?=$sm['theme']['btn_color']['val']; ?>"><?= $sm['lang'][705]['text']; ?></span>
+       <?php if(checkWithdrawExist($sm['user']['id']) == 1){ ?>
+          <div class="wallet-transaction" >
+            <div class="wallet-t-details">
+              <div class="wallet-t-title"><?= $sm['lang'][542]['text']; ?></div>
+              <div class="wallet-t-time"><?= $sm['lang'][543]['text']; ?> paypal <strong><?= $sm['user']['paypal'];?></strong></div>
+            </div>
+          </div>      
+        <?php } else { ?>                          
+          <div class="wallet-transaction" style="cursor: pointer;margin-left: 20%;max-width: 60%;" onclick="showWithdraw();">
+            <div class="wallet-t-icon-container"><img src="https://www.paypalobjects.com/webstatic/icon/pp144.png" class="wallet-t-icon"></div>
+            <div class="wallet-t-details">
+              <div class="wallet-t-title">Paypal</div>
+            </div>
+            <div class="wallet-t-amount"><?= $sm['plugins']['settings']['currency']; ?> <?= $sm['user']['payout']; ?></div>
+          </div>
+        <?php } ?>
+        </div>        
+      </div>
+
+    </div>
+
+                       
+    <div class="payment-promo" style="margin-top: 10px;">
+    <div class="payment-promo__content" style="background:#fff;border-radius: 10px;margin:40px">
+        <center>            
+        <h5><?= $sm['lang'][559]['text']; ?></h5><br>
+        <p class="payment-promo__txt" style="margin:0 10% 0 10%;text-align: left;color:#555 ">
+            <?= $sm['lang'][560]['text']; ?> <b>PayPal</b> <?= $sm['lang'][561]['text']; ?> <b><?= $sm['config']['name']; ?></b>.<br><br>
+            <?= $sm['lang'][544]['text']; ?> <b>Paypal</b> <?= $sm['lang'][562]['text']; ?> <b><?= $sm['config']['name']; ?></b> <?= $sm['lang'][563]['text']; ?> 
+            <b><?= $sm['plugins']['withdrawal']['days']; ?></b> <?= $sm['lang'][564]['text']; ?>.<br><br>
+            <?= $sm['lang'][565]['text']; ?>. <b><?= $sm['plugins']['settings']['currency']; ?> <?= $sm['plugins']['withdrawal']['minRequired']; ?></b>.<br><br>
+            <?= $sm['lang'][566]['text']; ?> <b><?= $sm['plugins']['withdrawal']['minRequired']; ?> (<?= $sm['plugins']['settings']['currency']; ?>)</b> <?= $sm['lang'][567]['text']; ?> <?= $sm['config']['name']; ?> <?= $sm['lang'][568]['text']; ?>.<br>
+        </p>
+        <br>
+    </div>
+  
+    <div class="payment-promo__content" style="padding-bottom: 50px;background: #fff;border-radius: 10px;margin: 40px;padding-top: 25px;"><center>            
+        <h5 class="comforta">FAQ</h5><br>
+
+        <p class="payment-promo__txt" style="margin:0 10% 0 10%;text-align: left;color:#555 ">
+<b><?= $sm['lang'][570]['text']; ?></b><br>
+<b><?= $sm['config']['name']; ?></b> <?= $sm['lang'][571]['text']; ?>.<br><br>
+
+<b><?= $sm['lang'][572]['text']; ?></b><br>
+<?= $sm['lang'][573]['text']; ?>.<br><br>
+
+<b><?= $sm['lang'][574]['text']; ?></b><br>
+<?= $sm['lang'][575]['text']; ?> <b><?= $sm['config']['name']; ?></b> <?= $sm['lang'][576]['text']; ?> <?= $sm['plugins']['withdrawal']['days']; ?> <?= $sm['lang'][577]['text']; ?>.<br><br>
+
+<b><?= $sm['lang'][578]['text']; ?></b><br>
+<b><?= $sm['config']['name']; ?></b> <?= $sm['lang'][579]['text']; ?> <b><?= $sm['config']['name']; ?></b> credits-to-<?= $sm['plugins']['settings']['currency']; ?> <?= $sm['lang'][580]['text']; ?>.<br><br>
+        </p>
+        <br></center>                      
+    </div>
+
+    </div>
+        <?= getAbsolutePage('footer'); ?>                   
+    </div>
+</div>      
+
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    <div class="col s2 real" style="position: relative;">
+        <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+                echo '<div class="ad-zone-vertical" style="margin-left:79px;">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+            }
+        ?>  
+    </div>
+<?php }?>

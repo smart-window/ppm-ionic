@@ -1,0 +1,23 @@
+.awlert{
+	position: absolute;
+	width: 100%;
+	transform: translateY(-100%);
+	transition: 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+	z-index: 99;
+	top: 0px;
+
+	.space{
+		height: 20px;
+	}
+}
+
+.awlert.enter{
+	transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	transform: translateY(0%);
+}
+
+.content{
+	color: white;
+	padding: 10px;
+}
+

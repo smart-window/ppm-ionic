@@ -1,0 +1,121 @@
+<?php 
+global $lc;
+getUserInfo($lc,1);
+
+$profile_info = json_encode($sm['profile']);
+$check = blockedUser($sm['user']['id'],$sm['profile']['id']);
+if($check == 1){
+	header('Location:'.$sm['config']['site_url']);
+}
+$me = false;
+if($sm['user']['id'] == $sm['profile']['id']) { 
+	$me = true; 
+}
+$fan = isFan($sm['user']['id'],$sm['profile']['id']);
+$me = false;
+if($sm['user']['id'] == $sm['profile']['id']) { $me = true; }
+echo 
+'<script>
+noChat = false;
+current_user_id = ' . $sm['profile']['id'] .';
+var profile_info = '. $profile_info  . ';	
+url = "chat";
+</script>';
+?>
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+	<div class="col s2 real" style="padding-right: 0px;" >
+	<?php 
+		if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+			echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+		}
+	?>		
+	</div>
+	<div class="col s8 real mainContentBorderColor"  id="site-content" style="background: <?=$sm['theme']['search_card_wall']['val']; ?>;">
+<?php } else { ?>
+	<div class="col s8 real fix-width-content mainContentBorderColor" style="padding-right: 0px;background: <?=$sm['theme']['search_card_wall']['val']; ?>;" id="site-content">
+<?php } ?>
+
+    <div class="wall <?= $sm['theme']['wall_bg_premium']['val']; ?>" style="background: <?= $sm['theme']['wall_bg_premium']['val']; ?>;min-height: 550px">
+
+				<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+					<div class="banner-container banner-container--wide" style="margin: 0; width: 80%;margin-left:10%;padding-top: 20px;padding-bottom: 10px;margin-top: 40px">							
+				<?php } else { ?>
+					<div class="banner-container banner-container--wide" style="margin:0;margin-left:5%; width: 90%;padding-top: 10px;margin-top: 40px">
+				<?php } ?> 
+
+				<?php if($sm['theme']['premium_banner_gradient']['val'] == 'Yes'){ ?>
+					<div class="banner <?= $sm['theme']['premium_banner_bg']['val']; ?>" >
+				<?php } else { ?>	
+					<div class="banner" style="background:<?= $sm['theme']['premium_banner_bg']['val']; ?> ">			
+				<?php } ?>	
+			        <div class="banner-content">
+			        <span class="x-large montserratRegular" style="color: <?= $sm['theme']['premium_banner_color']['val']; ?>;padding-left: 10px">
+			        	<b><?= $sm['user']['first_name']; ?></b> <?= $sm['lang'][92]['text']; ?>
+			        </span>
+			        </div>
+			        <div class="banner-buttons">
+			            <div>
+			                <div class="btn btn--sm" style="background: <?= $sm['theme']['premium_banner_btn_bg']['val']; ?>;color:<?= $sm['theme']['premium_banner_btn_color']['val']; ?>" onCLick="dailyChat()"> <span class="btn-txt"><?= $sm['lang'][448]['text']; ?> <?= $sm['price']['chat']; ?> <?= $sm['lang'][73]['text']; ?> </span> <span class="b-link js-fans-action" ></span> </div>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+	
+		<div class="section-empty__content">
+		    <div class="promo">
+		        <div class="promo__content promo__content--low">
+		            <div class="promo__media">
+		                <div class="brick-group brick-group--promo">
+		                    <div class="brick brick--xlg disabled">
+		                        <div class="brick-img profile-photo" data-src="<?= randomPhoto($sm['profile']['id']); ?>"></div>
+		                    </div>
+		                    <div class="brick brick--xlg brick--xxxlg brick--stroke disabled">
+		                        <div class="brick-img profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>
+		                        <div class="brick brick--sm brick--spp brick--bc"><img src="<?= $sm['config']['theme_url']; ?>/images/vip_y.png" /></div>
+		                    </div>
+		                    <div class="brick brick--xlg disabled">
+		                        <div class="brick-img profile-photo" data-src="<?= randomPhoto($sm['profile']['id']); ?>"></div>
+		                    </div>
+		                </div>
+		            </div>
+		            <p class="large montserratRegular" style="font-size: 14px"><?= $sm['lang'][93]['text']; ?>
+			            <a href="#" onclick="dailyChat()"><?= $sm['lang'][94]['text']; ?>
+				            <?= $sm['basic']['chat']; ?>
+				            <?= $sm['lang'][95]['text']; ?>
+			            </a>
+		            <br>
+					<?php if($sm['user']['premium'] == 0){ ?>
+						<?= $sm['lang'][96]['text']; ?>
+						<a href="#" onclick="goTo('premium');">
+							<?= $sm['lang'][97]['text']; ?>
+						</a>
+						<?= $sm['lang'][98]['text']; ?>
+						<?= $sm['premium']['chat']; ?>
+						<?= $sm['lang'][99]['text']; ?>
+						<br>
+					<?php } ?>
+					<?= $sm['lang'][100]['text']; ?></p>
+		            <div class="btn btn--spp" style="background: <?= $sm['theme']['premium_banner_btn_bg']['val']; ?>;color:<?= $sm['theme']['premium_banner_btn_color']['val']; ?>" onClick="goTo('premium');">
+		            	<span class="btn-txt"><?= $sm['lang'][449]['text']; ?>!</span>
+		            </div>
+		        </div>
+		        <div class="promo__hint js-wrap js-service-cost js-control js-core-events-container hidden">
+		            <div class="service-cost">
+		                <p class="service-cost__text"> </p>
+		            </div>
+		        </div>
+		    </div>
+		</div>						
+		
+		<?= getAbsolutePage('footer'); ?>
+    </div>
+</div> 
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+	<div class="col s2 real" style="padding-right: 0px;border:none" >
+		<?php 
+			if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+				echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+			}
+		?>		
+	</div>
+<?php } ?>   

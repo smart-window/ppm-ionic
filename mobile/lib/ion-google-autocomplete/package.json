@@ -1,0 +1,40 @@
+{
+  "name": "ion-google-autocomplete",
+  "version": "0.1.0",
+  "description": "The simplest way to got Google Places on your app",
+  "keywords": [
+    "google",
+    "google place",
+    "AngularJS",
+    "angular",
+    "Ionic",
+    "ion",
+    "autocomplete"
+  ],
+  "homepage": "https://github.com/Hobbule/ion-google-autocomplete",
+  "bugs": "https://github.com/Hobbule/ion-google-autocomplete/issues",
+  "author": {
+    "name": "Sebastián Rojas",
+    "email": "sebastian@hobbule.com",
+    "url": "https://github.com/sebrojas14"
+  },
+  "contributors": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hobbule/ion-google-autocomplete.git"
+  },
+  "devDependencies": {
+    "bower": "~1.7.7",
+    "del": "^2.2.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0"
+  },
+  "dependencies": {},
+  "license": "MIT",
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ],
+  "main": "dist/ion-google-autocomplete.js"
+}

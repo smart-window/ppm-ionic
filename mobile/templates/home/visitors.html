@@ -1,0 +1,73 @@
+<ion-view title="">
+  <ion-nav-title >
+    <div class="navigation-bar  navigation-bar--no-shadow  has-wide-sides ">
+        <div class="navigation-bar__primary">
+            <div class="navigation-bar__icon js-goto" ng-click="goTo('home.profile','right');">
+                <div class="icon" style="left: 0px;">
+                        <svg class="icon__content icon__content--inactive">
+<svg viewBox="0 0 64 64" id="navigation-bar-back" width="100%" height="100%"><path d="M12.05 33.28l13.83 13.83-1.81 1.81L7.4 32.25l.26-.26-.23-.24 16.6-16.67 1.82 1.81-13.78 13.83h44.25v2.56H12.05z"></path></svg>
+                    </svg>
+                </div>
+            </div>
+        </div>
+       <div class="navigation-bar__main" style="margin-top: -4px">
+            <div class="navigation-bar__logo">
+                <span class="comforta">{{title}} {{visitors.length}}</span>
+            </div>
+        </div>
+        <div class="navigation-bar__secondary"></div>     
+    </div>    
+  </ion-nav-title>
+  <ion-content delegate-handle="userMessageScroll">
+		<!--MY VISITORS -->
+		<ion-list ng-if="show == 1" >	
+			  <div ng-show="noVisitors && !canSeeVisitors" >
+					<div class="credits-section text-center">
+						<h5 class="mi-pollita" style="color:#BFC5D5">{{alang[80].text}}</h5>					
+						<div class="wrapper text-center">
+						  <div class="pos-rlt">
+							<div class="thumb-xxl rounded profileP border-profile" style="background-image:url({{photo}});height:{{w}}px;width:{{w}}px;" ></div>						
+						  </div>
+						</div>						
+						<h1>{{alang[222].text}}</h1>
+						<h4>{{alang[223].text}}</h4>
+						<center><span class="spotlight-me" ng-click="openCreditsModal()" style="background:#275BDF;border:#025BDF">{{alang[224].text}}</span></center>
+						<br><h4>{{alang[208].text}} <b>{{spotlightprice}}</b> {{alang[203].text}}</h4>                    
+					</div>
+			  </div>
+			<div ng-class="!canSeeVisitors ? 'sblur' : ''">
+			<ion-item class="" style="border:none;height: 110px" ng-repeat="p in visitors track by $index" >
+            <div class="contact-list__contacts">
+                <div class="contact-list-item js-contact-list-item">
+                    <div class="brick contact-list-item__userpic" ng-class="p.story > 0 ? 'storyOn' : ''" ng-click="openStory(p.id,p.story)">
+                        <div class="brick__image"><img src="{{p.photo}}" alt=""></img></div>                                 
+                    </div>
+                    <div class="contact-list-item__preview" ng-click="openProfileStory(p)">
+                        <div class="contact-list-item__name"><b class="contact-list-item__name_">{{p.name}}</b>
+                        <i class="online-status online-status--online" ng-if="p.status == 1"></i></div>
+                        <div class="contact-list-item__message">{{p.last_m}} </div>
+                    </div>
+                    <img src="img/vote-match.png" ng-if="p.match == 1"
+                     style="margin-right:5px;width:18px;border-radius: 50%;">
+                    <img src="img/vip.png" ng-if="p.premium == 1" style="width:20px;border-radius: 50%;border:1px solid #FFE54F">                                 
+                </div>
+            </div>									  
+			</ion-item>	
+			</div>
+		</ion-list>		
+  </ion-content> 
+	<div class="only-premium" ng-show="!canSeeVisitors && !noVisitors" >			
+		<div class="credits-section text-center">					
+			<div class="wrapper text-center">
+			  <div class="pos-rlt">
+				<div class="thumb-xxl rounded profileP border-profile" style="background-image:url({{photo}});height:{{w}}px;width:{{w}}px;" ></div>
+				<i class="icon ion-flash button-edit light text-lg b b-3x b-light b-2x rounded" style="background:#8A21EF"></i>							
+			  </div>
+			</div>						
+			<h1>{{visitors.length}} {{alang[81].text}}</h1>
+			<h4>{{alang[82].text}}</h4>
+			<center><span class="spotlight-me" ng-click="openPremiumModal()" style="background:#8A21EF;border:#2821EF">{{alang[76].text}}</span></center>
+			<br>                    
+		</div>
+	</div>  
+</ion-view>

@@ -1,0 +1,165 @@
+    <?php 
+      $hideLeftSection = '';
+      $hideRightSection = '';
+      $wideMeetSection = false;
+      if($sm['theme']['design_style_wide']['val'] == 'Yes'){
+          $hideLeftSection = 'display:none';
+          $hideRightSection = 'display:none';
+          $wideMeetSection = true;
+      }
+    ?>
+
+    <div class="row" id='mainRow' style="max-width: 1440px;top:0;padding-top: 60px;">
+    <header class="header  header--white <?= $sm['theme']['menu_background']['val']; ?>" style="background: <?= $sm['theme']['menu_background']['val']; ?>;">
+        <div class="header__container">
+            <a href="<?= $sm['config']['site_url']; ?>" >
+                <img class="header__logo" src="<?= $sm['theme']['logo']['val']; ?>" style="width: auto;height: 50px">
+            </a>
+            <nav class="header__nav" style="font-size: 16px">
+                <a href="javascript:void(0);" class="nav-menu-item" style="color: <?= $sm['theme']['menu_font_color']['val']; ?>;font-weight: bold" data-menu-image="meet" data-murl="meet" class="header__nav-menu-item active">
+                        <?= $sm['lang'][49]['text']; ?>                  
+                </a>
+                
+                <a href="javascript:void(0);" class="nav-menu-item" style="color: <?= $sm['theme']['menu_font_color']['val']; ?>;font-weight: bold" data-menu-image="discover" data-murl="discover" class="header__nav-menu-item">
+                        <?= $sm['lang'][50]['text']; ?>                  
+                </a>   
+                  
+                <?php 
+                  $checkLivePlugin = getData('plugins','enabled','where name = "live"');
+                  if($checkLivePlugin == 1){ ?>
+                  <a href="javascript:void(0);" class="nav-menu-item" data-murl="live" class="header__nav-menu-item">
+                    <?= $sm['lang'][858]['text']; ?>            
+                  </a>
+                <?php } ?>
+                
+                <a href="javascript:void(0);" class="nav-menu-item" data-menu-image="chat" data-murl="chat" class="header__nav-menu-item">
+                  <?= $sm['lang'][16]['text']; ?>
+                  <div class="mark mark--red" style="position:absolute;left:auto;width:25px;display: none" id="chatCount">
+                    <?= $sm['user']['unreadMessagesCount']; ?>
+                  </div>                 
+                </a>
+
+               
+               
+                <div class="User-area" style="float:right;margin-right: -25px">
+<div class="User-Avatar relative profile-photo" data-force-profile-photo="1" data-src="<?= $sm['user']['profile_photo']; ?>" style="display: inline-block; width: 36px; height: 36px; cursor: pointer; border-radius: 50%;  box-shadow: 0px 0px 15px -5px #000;" data-profile-popup="">
+                  </div>                  
+
+                    <ul class="User-Dropdown <?=$sm['theme']['top_menu_user_dropdown_bg']['val']; ?>" style="margin-top: -12px">
+                      <?php if($sm['user']['guest'] == 1){ ?>
+                      <li><a href="<?= $sm['config']['site_url']; ?>logout" data-profile-popup>
+                         <?= $sm['lang'][8]['text']; ?></a></li>
+                      <li><a href="<?= $sm['config']['site_url']; ?>logout" data-profile-popup>
+                         <?= $sm['lang'][13]['text']; ?></a></li>
+                      <?php } else { ?>
+                      <li><a href="javascript:;" onclick="goToProfile(<?= $sm['user']['id']; ?>)" data-profile-popup><?= $sm['lang'][599]['text']; ?></a></li>
+                      <li><a href="#" data-murl="credits" data-profile-popup><?= $sm['lang'][285]['text']; ?></a>
+                        <span class="userCredits" style="color: <?=$sm['theme']['top_menu_user_dropdown_color']['val']; ?>"><?= $sm['user']['credits']; ?></span></li>
+                        <?php if($sm['plugins']['withdrawal']['enabled'] == 'Yes'){ ?>
+                        <li>
+                          <a href="#" data-murl="withdraw" data-profile-popup> <?= $sm['lang'][536]['text']; ?></a>
+                        </li>                         
+                      <?php } ?>
+                      <li>
+                        <a href="#" data-murl="popular" data-profile-popup> <?= $sm['lang'][52]['text']; ?></a>
+                      </li>                        
+                      <li>
+                        <a href="#" data-murl="matches" data-profile-popup><?= $sm['lang'][51]['text']; ?></a>
+                        <span style="background:#FF6606;display: none" data-matches-count><?= totalMatches($sm['user']['id'],0); ?></span>
+                      </li>                                                                 
+                      <li><a href="javascript:;" onclick="openWidget('userProfileBasicInfo');"><?= $sm['lang'][55]['text']; ?></a></li>
+                      <?php if($sm['user']['admin'] == 1){ ?>
+                          <li><a href="<?= $sm['config']['site_url']; ?>admin" target="_blank">
+                                 Admin Panel                
+                          </a></li> 
+                      <?php } ?>                      
+                      <li><a href="<?= $sm['config']['site_url']; ?>logout"><?= $sm['lang'][48]['text']; ?></a></li>
+                      <?php } ?> 
+                    </ul>
+                </div>
+                <?php if($sm['user']['guest'] == 0){ ?>
+                  <a href="#" data-murl="credits"  class="header__nav-menu-item btn btn--sm topHeaderCreditsBtn <?= $sm['theme']['top_header_credits_btn_bg']['val']; ?>" style="float:right;margin-right: 25px;margin-top: -2px;font-size: 12px;padding-left: 35px;background:<?= $sm['theme']['top_header_credits_btn_bg']['val']; ?>;"><img class="top-menu-credits" src="<?= $sm['config']['theme_url']; ?>/images/coin.png" style="width: 30px;position: absolute;left: 3px;top: 3px; ">
+                         <span class="userCredits montserrat top-menu-credits" style="color:<?= $sm['theme']['top_header_credits_btn_color']['val']; ?>;font-weight: 900"><?= $sm['user']['credits']; ?></span>              
+                  </a>
+                <?php if($sm['user']['premium'] == 0){ ?>
+                  <a href="#" data-murl="premium" class="header__nav-menu-item btn btn--sm montserrat" style="float:right;margin-right: 25px;margin-top: -2px;font-size: 12px;background: <?= $sm['theme']['premium_banner_btn_bg']['val']; ?>;color:<?= $sm['theme']['premium_banner_btn_color']['val']; ?>;text-transform: uppercase;">
+                         <?= $sm['lang'][452]['text']; ?>               
+                  </a>
+                <?php } } ?>                                       
+
+            </nav>             
+        </div>
+    </header>
+        <div class="col s2 real left-menu-margin" style="padding:0 10 0 10;background:<?= $sm['theme']['body_background']['val']; ?>;border:none;<?= $hideLeftSection; ?>">
+            <?php $bannerMarginTop = 20;   
+            $marginTop = 10;
+            if($sm['user']['guest'] == 0){ $marginTop = 0; ?>
+
+            <div class="tw3-box <?=$sm['theme']['top_menu_left_spotlight_bg']['val']; ?>" style="margin-top: <?= $bannerMarginTop; ?>px;background: <?=$sm['theme']['top_menu_left_spotlight_bg']['val']; ?>;border-color: <?=$sm['theme']['top_menu_left_spotlight_border']['val']; ?> !important"> 
+              <div class="spotlight-users">
+                  <div class="add-me-here add-yourself montserrat <?=$sm['theme']['top_menu_left_spotlight_addme_bg']['val']; ?>" style="position:absolute;top:-35px;cursor:pointer;background: <?=$sm['theme']['top_menu_left_spotlight_addme_bg']['val']; ?>;font-weight: 400;text-align: center;color:<?=$sm['theme']['top_menu_left_spotlight_addme_color']['val']; ?>"><?= $sm['lang'][287]['text']; ?> <span class="montserrat" style="color:<?=$sm['theme']['top_menu_left_spotlight_addme_color']['val']; ?>;font-size:10px;">- <?= $sm['lang'][288]['text']; ?></div>
+                  <div id="newSpotUsers"></div>
+                  <div data-spotlight-update="1" style="text-align: center;"><?= spotLightMobile($sm['user']['lat'],$sm['user']['lng']); ?></div>
+              </div>
+            </div>  
+
+            <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_200x200'] == "Yes"){
+              
+              echo '<div class="tw3-box" style="margin-top: 10px;background:none">'.$sm['plugins']['adsWeb']['200x200'].'</div>';
+            } else {
+              $bannerMarginTop = 10;
+            }
+            ?>
+
+            <div class="promo-banner promo-banner--bundle <?= $sm['theme']['top_menu_left_banner_bg']['val']; ?>" style="margin-top: 25px;width: 100%;background:<?= $sm['theme']['top_menu_left_banner_bg']['val']; ?>;cursor: pointer;" data-murl="credits">
+                <div class="promo-banner__user">
+                    <div class="brick-group brick-group--promo">
+                        <div class="brick   brick--lg  brick--white ">
+                            <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>" ></div>
+                        </div>
+                        <div class="brick  brick--xlg   brick--white  brick--stroke ">
+                           <div class="brick-img profile-photo " data-src="<?= $sm['user']['profile_photo']; ?>" ></div>                              
+                        </div>
+                        <div class="brick   brick--lg  brick--white ">
+                            <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>" ></div>
+                        </div>
+                    </div>
+                </div>
+                <p class="promo-banner__desc montserrat" style="color:<?= $sm['theme']['top_menu_left_banner_color']['val']; ?>"><b><?= $sm['lang'][498]['text']; ?></b><br><?= $sm['lang'][477]['text']; ?></p>
+                <?php if($sm['theme']['top_menu_left_banner_btn_gradient']['val'] == 'Yes'){ ?>          
+                  <div class="btn btn--sm <?=$sm['theme']['top_menu_left_banner_btn_bg']['val']; ?>" >
+                <?php } else { ?> 
+                  <div class="btn btn--sm" style="background: <?=$sm['theme']['top_menu_left_banner_btn_bg']['val']; ?>">
+                <?php } ?>                    
+                    <div class="btn__content">
+                        <span class="btn__text" style="color: <?=$sm['theme']['top_menu_left_banner_btn_color']['val']; ?>"><?= $sm['lang'][498]['text']; ?></span>
+                    </div>
+                </div>
+                <div class="promo-banner__cost"></div>
+            </div>  
+            <?php } ?>    
+            <?php 
+              if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_200x200'] == "Yes"){
+                echo '<div class="tw3-box" style="margin-top:20px;background:none">'.$sm['plugins']['adsWeb']['200x200'].'</div>';
+              }
+            ?>
+        </div>
+        <?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+          <div class="col s12 real" style="border:none">       
+        <?php } else { ?>
+          <div class="col sl10 real" style="margin-top: 10px;border:none">
+        <?php } ?>        
+       
+        <div class="n-wrapper" id="middleContent"></div>
+        <div id="profile-content-slider" style="display: none"></div>
+        <div id="data-content"><?php echo $sm['content']; ?></div>
+        <div class="col s2 real fix-width hide-mobile" style="padding-left: 10px;background: none;<?= $hideRightSection; ?>">
+          <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+              echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+            }
+          ?>  
+        </div>
+        </div>
+    </div>

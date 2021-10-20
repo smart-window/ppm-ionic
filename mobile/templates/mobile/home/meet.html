@@ -1,0 +1,214 @@
+<ion-view title=""  >
+  <ion-nav-title >
+            <div class="layout__header vivify fadeIn delay-100" >
+                <div class="navigation-bar  navigation-bar--static navigation-bar--no-background" style="background: #fff">
+                    <div class="navigation-bar__primary">
+                        <div class="navigation-bar__icon js-goto"  ng-click="goTo('home.explore','right');">
+                            <div class="icon" data-qa="icon" style="left: 0px;">
+                                    <svg class="icon__content icon__content--inactive">
+<svg viewBox="0 0 64 64" id="navigation-bar-back" width="100%" height="100%"><path d="M12.05 33.28l13.83 13.83-1.81 1.81L7.4 32.25l.26-.26-.23-.24 16.6-16.67 1.82 1.81-13.78 13.83h44.25v2.56H12.05z"></path></svg>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="navigation-bar__main" style="margin-top: -4px">
+                        <div class="navigation-bar__logo">
+                            <span class="comforta" style="margin-left: 10px">{{check}}</span>
+                        </div>
+                    </div>
+                    <div class="navigation-bar__secondary" style="margin-right: 20px;">
+                        <div class="navigation-bar__icon js-goto" ui-sref="home.settings">
+                            <div class="icon" data-qa="icon">
+                                <svg class="icon__content icon__content--inactive">
+<svg viewBox="0 0 64 64" id="navigation-bar-filter" width="100%" height="100%"><path d="M55.04 37.21V5.12a1.28 1.28 0 1 0-2.56 0v32.1a8.96 8.96 0 0 0 0 17.73v3.93a1.28 1.28 0 0 0 2.56 0v-3.93a8.96 8.96 0 0 0 0-17.74zM33.28 10.33v-5.2a1.28 1.28 0 1 0-2.56 0v5.2a8.96 8.96 0 0 0 0 17.74v30.8a1.28 1.28 0 0 0 2.56 0v-30.8a8.96 8.96 0 0 0 0-17.74zm-21.76 19.2V5.13a1.28 1.28 0 1 0-2.56 0v24.4a8.96 8.96 0 0 0 0 17.74v11.6a1.28 1.28 0 0 0 2.56 0v-11.6a8.96 8.96 0 0 0 0-17.74zm42.24 22.95a6.4 6.4 0 1 0 0-12.8 6.4 6.4 0 0 0 0 12.8zM32 25.6a6.4 6.4 0 1 0 0-12.8 6.4 6.4 0 0 0 0 12.8zM10.24 44.8a6.4 6.4 0 1 0 0-12.8 6.4 6.4 0 0 0 0 12.8z" fill-rule="evenodd"></path></svg>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+  </ion-nav-title>
+<div style="position:fixed;bottom:50px;left:0;width:100%;height:50px;background:none;z-index: 99 !important;pointer-events: none"><div class="section-footer-effect"></div>
+</div>  
+
+<div class="tabs tabs-top visible vivify fadeInTop delay-150 box-shadow-credits" style="border-color: #fff;z-index: 99;height: 34px;background:#fff;margin-left: 10%;width: 80%;border-radius: 5px;margin-top: 25px"> 
+    <div class="tab" style="display: inline-table; padding-left: 15px;max-width: 120px" ng-model="tabEncounter"  ng-click="showMeet('all');">
+        <div class="tab__label comforta ng-binding" id="showAll" style="font-size: 14px;color: #7000e3;text-transform: none;">{{lang[107].text}}</div>
+    </div>
+    <div class="tab" style="display: inline-table; padding-left: 15px;"  ng-model="tabStories" ng-click="showMeet('popular');">
+        <div class="tab__label comforta ng-binding" id="showPopular" style="font-size: 14px;color: #333;text-transform: none">{{lang[116].text}}</div>
+    </div>                                
+</div>
+
+<ion-content style="background:#fff;padding-bottom: 60px" scroll="true" class="vivify fadeIn">
+            <div class="page-content js-content">
+
+
+
+                <center><div class="loader02" ng-if="loading" style="top: 60px"></div></center>
+                <div class="users-folder users-folder--chess  js-content-item" >
+                    <div class="users-folder__list">
+
+                        <div class="encounters-disabled expand-filter" ng-if="noResult" >
+                            <div class="encounters-message" style="height: 100%">
+                                
+                                <div class="brick  brick--xxlg vivify" style="width: 200px;height: 200px;margin-bottom: 25px;">
+                                    <div class="brick-img profile-photo box-shadow-credits" style="background-image: url('{{noResultImage}}');height: 100%;border-radius:65px"></div>
+                                </div>
+                                <h1 class="comforta" style="font-size:24px;color:#14171b">{{alang[162].text}}</h1>
+                                <span style="color:#14171b">{{alang[163].text}}.<br>
+                                {{alang[164].text}}?</span>
+                                <div class="button-wrapper" style="z-index: 99">
+                                    <button class="button " style="margin-top: 25px;pointer-events: auto!important" ng-click="goTo('home.settings','left');">
+                                        <div class="button__content"><span class="button__text comforta">{{alang[165].text}}</span></div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="users-folder__item qa-profile-item" ng-repeat="p in meet track by $index" ng-if="p.blocked < 1" >
+                            <div class="brick-wrapper animated fadeInUp vivify popInBottom delay-400" ng-click="openProfileModal({{p.id}},'{{p.name}}','{{p.photoBig}}',{{p.age}},'{{p.city}}',{{p.status}})" >
+                                <div class="brick brick--llg " style="background: none">
+                                    <div class="brick__image meetUser meetUser-{{p.show}} box-shadow-credits"  style="background-image: url({{p.photo}})" ng-class="p.story > 0 ? 'storyOn' : ''"></div>
+                                </div>
+                                <div class="brick__name meetUser meetUser-{{p.show}}"><span class="brick__name_ comforta">{{p.name}} <div class="csms-online-status csms-online-status--online" ng-if="p.status == 1"></div></span></div>
+
+                                <i class="icon-svg icon-svg--stretch vivify popIn delay-700" ng-if="p.fan == 1" style="position: absolute;top: 80px;left: 40%;z-index: 9;width: 25px;height: 25px">
+                                    <svg viewBox="0 0 64 64" id="icon-floating-yes" width="20px" height="20px"><circle fill="#fff" cx="32" cy="32" r="32"></circle><path d="M18.5 29.7c0-4.25 3.43-7.7 7.65-7.7A7.67 7.67 0 0 1 32 24.73 7.67 7.67 0 0 1 37.85 22a7.68 7.68 0 0 1 7.65 7.7C45.5 36.57 36.46 45 32 45s-13.5-8.42-13.5-15.3z" fill="#ef5464"></path></svg>
+                                </i> 
+
+                                <i class="icon-svg icon-svg--stretch vivify popIn delay-700" ng-if="p.fan == 0"  id="meetLike{{p.id}}" style="position: absolute;top: 80px;left: 40%;z-index: 9;display: none;width: 25px;height: 25px">
+                                    <svg viewBox="0 0 64 64" id="icon-floating-yes" width="20px" height="20px"><circle fill="#fff" cx="32" cy="32" r="32"></circle><path d="M18.5 29.7c0-4.25 3.43-7.7 7.65-7.7A7.67 7.67 0 0 1 32 24.73 7.67 7.67 0 0 1 37.85 22a7.68 7.68 0 0 1 7.65 7.7C45.5 36.57 36.46 45 32 45s-13.5-8.42-13.5-15.3z" fill="#ef5464"></path></svg>
+                                </i>                                        
+                            </div>                           
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+               <div class="people-nearby-banner js-people-nearby-banner" ng-if="!noResult" ng-show="showRiseUp">
+                    <div class="people-nearby-banner__curve"></div>
+                    <div class="cta-box">
+                        <div class="cta-box__content">
+                            <div class="brick-group brick-group--promo">
+                                <div class="brick brick--sm vivify popInBottom delay-100" >
+                                    <div class="brick__image" style="background-image: url('img/gata0.jpg')"></div>
+                                </div>
+                                <div class="brick vivify popInBottom delay-100">
+                                    <div class="brick__image" style="background-image: url('{{me.profile_photo}}')"></div>
+                                </div>
+                                <div class="brick brick--sm vivify popInBottom delay-100">
+                                    <div class="brick__image" style="background-image: url('img/gata1.jpg')"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cta-box__content vivify fadeIn delay-100">{{alang[198].text}}<b> {{me.city}}</b>.</div>
+                        <div class="cta-box__buttons vivify fadeIn delay-200" style="width: 90%">
+                            <div class="button-wrapper">
+                                <button class="button button--riseup  gradient32" ng-click="openModalBoost(1)">
+                                    <div class="button__content"><span class="button__text comforta" style="color:#fff">{{alang[199].text}}</span></div></button>
+                            </div>
+                        </div>
+                        <div class="cta-box__additional hidden"></div>
+                    </div>
+                </div>
+				<ion-infinite-scroll immediate-check="false" on-infinite="loadMore()" distance="5%">
+				</ion-infinite-scroll>
+			  <div ng-show="loadMores.length == 0" vertical layout center flex >
+				<div class="text-muted text-center l-h comforta" style="margin-top:50px;">
+				  {{alang[117].text}}
+				  <br>
+				  <a href="#" ui-sref="home.settings" >{{alang[118].text}}</a>
+				</div>
+			  </div>
+        </div>
+    </div>
+</div>
+
+</ion-content>
+<!--- BOTTOM MENU -->
+<div class="tabbar">
+    <div class="tabbar__items">
+        <div class="tabbar__item">
+            <div class="tabbar-item is-active" ng-click="goTo('home.meet');">
+                <div class="tabbar-item__icon">
+                    <div class="icon icon--stretch" >
+                        <svg class="icon__content icon__content--inactive">
+                            <svg viewBox="0 0 64 64" id="menu-people-nearby" width="100%" height="100%">
+                                <path d="M2.13 32a29.86 29.86 0 1 0 59.73 0 29.86 29.86 0 0 0-59.73 0zM0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0z"></path>
+                                <path d="M42.82 4.07l-.79-1.99c-2.4.96-4.64 2.15-6.26 3.45-2.48 2-3.6 4.38-2.38 6.88.76 1.52 1.74 2.45 3.12 2.8.92.23 1.2.22 3.33-.02 1.23-.14 2.1-.18 3.17-.12 1.76.11 2.92.48 3.6.99.36.26.51.5.55.68.01.07-.05.26-.28.55-.7.85-2.13 1.42-4.06 1.42-.6 0-1.15-.11-1.9-.38l-.6-.22-.67-.26c-1.51-.57-2.65-.89-4.1-1.05-4.04-.44-6.19.22-8.63 2.75-2.12 2.2-3.1 5.27-2.95 9 .17 4.7 3.18 7.69 7.83 7.74a72.94 72.94 0 0 1 1.09.02c.69.02 1.36.05 1.99.1 1 .08 1.77.2 2.09.32 1.16.44 1.9 1.31 2.31 2.78.03.12 0 .72-.15 2.57-.1 1.16-.15 1.93-.17 2.75-.09 4.16.87 7.02 3.94 8.15 2.93 1.07 5.79-.2 8.44-2.97a32.22 32.22 0 0 0 4.99-7.37A26.73 26.73 0 0 0 58.66 35c.3-1.75.48-3.65.48-4.18 0-2.02-1-3.23-3.36-5.16-1.4-1.16-1.74-1.48-1.86-1.7-.21-.43-.21-.7-.15-.78.08-.11.22-.19.66-.19.47 0 1.1.12 2.09.37l.63.17c1.62.44 4 .68 5.33.23l-1.39-4.04a6.4 6.4 0 0 1-1.56-.09l2.25 2.1c-.97.34-3.33-.06-4.08-.26-1.12-.3-2.28-.61-3.27-.61-1.33 0-2.03.57-2.38 1.05-.58.78-.59 1.9-.03 3 .89 1.77 4.99 3.57 4.99 5.9 0 .07-.35 6.53-2.58 10.86-2.23 4.34-6.54 10.88-10.8 9.31-4.27-1.56-1.75-10.07-2.3-12.03-.58-2.1-1.8-3.52-3.62-4.2-1.53-.57-5.61-.57-5.9-.58-3.5-.04-5.58-2.11-5.72-5.69-.12-3.18.68-5.68 2.36-7.43 1.97-2.04 3.46-2.48 6.86-2.11 3.39.37 4.88 1.92 7.5 1.92 2.63 0 4.62-.87 5.71-2.2.62-.75.87-1.58.72-2.32-.2-1.06-1.38-3.1-6.1-3.38-4.73-.3-6.36 1.52-7.84-1.48-1.47-3 3.77-5.92 7.52-7.4zM.4 32.9a11.82 11.82 0 0 0 2.8 4.17l1.47 1.42A9.18 9.18 0 0 1 7 42.37a8.14 8.14 0 0 1-.35 5.32 10.56 10.56 0 0 1-.63 1.36l-.55.91 1.83 1.1.55-.9c.2-.35.5-.94.8-1.72.82-2.2 1.08-4.5.38-6.7A11.27 11.27 0 0 0 6.2 37c-.35-.36-1.46-1.41-1.5-1.45a8.13 8.13 0 0 1-.75-.83 13.57 13.57 0 0 1-1.25-1.9 4.64 4.64 0 0 1-.28-.6l-.33-1-2.03.67.34 1.01z"></path>
+                            </svg>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabbar__item">
+            <div class="tabbar-item "  ng-click="goTo('home.explore');">
+                <div class="tabbar-item__icon">
+                    <div class="icon icon--stretch" >
+                        <svg class="icon__content icon__content--inactive">
+<svg viewBox="0 0 64 64" id="menu-encounters" width="100%" height="100%"><path d="M25.62 54.16a6.4 6.4 0 0 0 6.11 4.5h21.34a6.4 6.4 0 0 0 6.4-6.4v-32a6.4 6.4 0 0 0-6.4-6.4h-11.2l6.78 25.3A8.53 8.53 0 0 1 42.6 49.6l-17 4.56zM41.3 11.73h11.77a8.53 8.53 0 0 1 8.53 8.54v32a8.53 8.53 0 0 1-8.53 8.53H31.73a8.54 8.54 0 0 1-8.18-6.09l-1.54.42a8.53 8.53 0 0 1-10.45-6.04L3.27 18.18A8.53 8.53 0 0 1 9.32 7.73l20.6-5.52a8.53 8.53 0 0 1 10.46 6.03l.93 3.49zm-35.96 5.9l8.28 30.91a6.4 6.4 0 0 0 7.84 4.52l20.6-5.52a6.4 6.4 0 0 0 4.53-7.84L38.3 8.8a6.4 6.4 0 0 0-7.84-4.53L9.86 9.79a6.4 6.4 0 0 0-4.52 7.84z" fill-rule="evenodd"></path></svg>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabbar__item">
+            <div class="tabbar-item" ng-click="goTo('home.stories');">
+                <div class="tabbar-item__icon" >
+                    <div class="icon icon--stretch" >
+                        <svg class="icon__content icon__content--inactive">
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ff1439" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"></circle><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path></svg>
+                        </svg>
+                    </div>
+                    <div class="tabbar-item__icon-indicator is-shown" ng-if="unreadMessage"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabbar__item">
+            <div class="tabbar-item" ng-click="goTo('home.matches');">
+                <div class="tabbar-item__icon">
+                    <div class="icon icon--stretch" >
+                        <svg class="icon__content icon__content--inactive">
+<svg viewBox="0 0 64 64" id="menu-connections" width="100%" height="100%"><path d="M59.73 61.87c-3.3 0-10.16-.58-16.82-2.6a28.7 28.7 0 0 1-11.98 2.6 28.8 28.8 0 1 1 28.8-28.8 28.68 28.68 0 0 1-6.21 17.87c1.04 4.26 2.9 8.03 6.21 10.93zm-8.29-10.42l-.24-1.01.64-.82a26.54 26.54 0 0 0 5.76-16.55 26.67 26.67 0 1 0-15.58 24.26l.74-.34.77.24a62.01 62.01 0 0 0 11.29 2.23 25.21 25.21 0 0 1-3.38-8z" fill-rule="evenodd"></path></svg>
+                        </svg>
+                    </div>
+                    <div class="tabbar-item__icon-indicator is-shown" ng-if="unreadMessage"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabbar__item">
+            <div class="tabbar-item" ng-click="goTo('home.profile');">
+                <div class="tabbar-item__icon">
+                    <div class="icon icon--stretch">
+                        <div class="brick-img profile-photo box-shadow-credits" 
+                        style="background-image: url('{{me.profile_photo}}');width: 30px;height:30px;border-radius: 15px"></div>                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>  
+
+<div class="wrapper-reward" ng-if="modalBoost">
+    <div class="modal-reward modal--congratulations vivify fadeIn gradient32" style="border-radius: 20px">
+        <div class="modal-reward-top boostRiseUp gradient32">
+            <div class="klose animated fadeInUp" style="background: #333" ng-click="closeModalBoost()" >
+                <i class="icon ion-close-round" style="margin-left:7px;line-height:27px;"></i>
+            </div>
+            <img class="modal-reward-icon u-imgResponsive animated fadeInUp rounded profileP"  style="width:120px;height:120px;background-image:url({{me.profile_photo}});">
+            <div class="modal-reward-header animated fadeInUp">{{boostTitle}}</div>
+            <div class="modal-reward-subheader animated fadeInUp comforta" style="font-size: 12px">{{boostDesc}}<br>{{alang[121].text}} <strong>{{boostPrice}}</strong> {{alang[48].text}}</div>
+        </div>
+        <div class="modal-reward-bottom gradient32" ng-click="boostBtn();closeModalBoost();">
+            <button class="modal-reward-btn u-btn u-btn--danger comforta" style="background:#fff;color: #333;font-size: 18px" >{{boostBtnText}}</button>
+        </div>
+    </div>
+</div>
+</ion-view>

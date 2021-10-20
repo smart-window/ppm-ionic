@@ -1,0 +1,685 @@
+<?php if($sm['plugins']['live']['enabled'] == 'No'){ 
+	header('Location:'.$sm['config']['site_url']); 
+	exit;
+} ?>
+<script>
+    url = "live";
+</script>     
+<?php 
+    $allG = count($sm['genders']);
+    $allG = $allG + 1;
+?>       
+	<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+		<div class="col s2 real padding-right-0"  >
+		<?php 
+			if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+				echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+			}
+		?>		
+		</div>
+		<div class="col s8 real mainContentBorderColor"  id="site-content" style="background: <?=$sm['theme']['search_card_wall']['val']; ?>;">
+	<?php } else { ?>
+		<div class="col s8 real fix-width-content mainContentBorderColor padding-right-0" style="background: <?=$sm['theme']['search_card_wall']['val']; ?>;" id="site-content">
+	<?php } ?>
+
+
+    <div class="wall meetContent mainContentBorderColor wall-padding" style="background: <?= $sm['theme']['search_card_wall']['val']; ?>;"> 
+
+			<div class="stream-page margin-bottom-30" >
+
+				<?php if($sm['user']['gender'] == $sm['plugins']['live']['canStreamGender'] || $sm['plugins']['live']['canStreamGender'] == $allG){ ?>
+
+					<?php 
+					$checkBanned = getData('live_streamer_banned','uid','WHERE uid = '.$sm['user']['id']); 
+					if($checkBanned != 'noData'){
+						$onclick = 'bannedStreamer()';
+					} else {
+						$onclick = 'openLive()';
+					} ?>
+				    <div class="stream-page__actions stream-actions">
+				        <div class="stream-page__actions-item">
+				            <div class="react-button react-button--sm  react-button--narrow gradient32 box-shadow" role="button" id="goLive" onclick="<?= $onclick; ?>">
+					            <span class="react-button__content">
+						            <span class="react-button__text">
+						            	<div class="action btn-padding-left">
+											<svg class="btn-svg" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"></circle><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path></svg>					            		
+						            		<strong class="color-white"><?= $sm['lang'][829]['text']; ?></strong>
+						            	</div>
+						            </span>
+					            </span>
+				        	</div>
+				    	</div>
+					</div>
+				<?php } ?>
+                <div class="stream-page__content">
+                    <div class="stream-page__section">
+                        <section class="stream-list">
+                            <div class="stream-list__header">
+                                <div class="tabs tabs--livestream border-radius-5" style="background: <?=$sm['theme']['top_menu_wall_bg']['val']; ?>;">
+                                	<a class="tabs__item live-tab is-current" data-stream-tab-link="popular" onclick="streamTab('popular')" role="menuitem" href="#popular">
+                                		<span class="tabs__item-title"><?= $sm['lang'][835]['text']; ?></span>
+                                	</a>
+                            		<a class="tabs__item live-tab" role="menuitem" data-stream-tab-link="near" onclick="streamTab('near')" href="javascript:;">
+                            			<span class="tabs__item-title"><?= $sm['lang'][836]['text']; ?></span>
+                            		</a>
+                                </div>
+                            </div>
+                            <div class="stream-list__content">
+                                <section class="stream-slider">
+                                    <div class="stream-slider__scroll">
+
+                                        <div class="stream-slider__items vivify fadeIn translate-x-0" data-stream-tab="popular">
+
+                                        <?php 
+                                            $filter = 'where is_streaming = "Yes"';
+                                            $streams = getArray('live',$filter,'id desc');
+                                            foreach ($streams as $s) { 
+                                            	$streamPhoto = profilePhoto($s['uid']);
+                                            	$streamCustomTxt = $s['custom_text'];
+                                            	$streamName = getData('users','name','WHERE id = '.$s['uid']);
+                                            	$streamAge = getData('users','age','WHERE id = '.$s['uid']);
+                                            	$streamStart = $s['start_time'];
+                                            	$streamTime = $streamStart - time();
+                                            	$streamTimeM = $s['start_time']*1000;
+                                            	$streamTimeCounter = sprintf('%02d:%02d', ($streamTime/ 60 % 60), $streamTime% 60);
+                                            	$streamTimeCounter = str_replace('-', '', $streamTimeCounter);
+                                            ?>
+                                            <div class="stream-slider__item">
+                                                <div class="stream-card">
+                                                    <figure class="user-card" data-qa="user-card" 
+                                                    	onclick="watchLive(<?= $s['uid'];?>,'<?= $streamPhoto; ?>',<?= $s['uid']; ?>,'<?= $streamName; ?>',<?= $streamAge;?>,'<?= $streamTimeCounter; ?>','<?= $streamCustomTxt; ?>',<?= $streamTimeM; ?>,<?= $s['viewers']; ?>,<?= $s['credits']; ?>,'<?= $s['in_private']; ?>',<?= $s['private_price']; ?>)">
+                                                        <div class="user-card__content">
+                                                            <div class="user-card__photo">
+                                                            	<img class="user-card__img" src="<?= $streamPhoto; ?>">
+                                                            </div>
+                                                            <?php if($s['in_private'] == 'Yes'){ ?>
+                                                            <div class="icon icon--block icon--xsm ico-svg"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                                            </div>
+                                                            <?php } ?>                                            
+                                                            <div class="user-card__slot-bottom">
+                                                                <div class="user-card-stack">                     	
+                                                                    <div class="user-card-stack__left">
+                                                                        <div class="user-card-stack__item">
+                                                                            <div class="user-card-caption">
+                                                                                <div class="user-card-caption__main">
+                                                                                    <div class="user-card-caption__account">
+                                                                                        <div class="user-card-caption__name" title="<?= $streamName; ?>" dir="auto"><?= $streamName; ?></div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="user-card-caption__additional">
+                                                                                    <div class="user-card-subcaption">
+                                                                                        <div class="user-card-subcaption__icon">
+                                                                                            <div class="icon icon--block icon--md">
+                                                                                                <svg class="icon__svg">
+                                                                                                    <svg id="icon-stream-spectators" viewBox="0 0 16 16"><path d="M13.26 5.53A6.92 6.92 0 008 3a7 7 0 00-5.27 2.54c-.76.85-1.43 1.93-1.66 2.44a11.56 11.56 0 001.7 2.48C4.22 12.06 5.97 13 8 13c2.03 0 3.78-.94 5.23-2.54a11.1 11.1 0 001.7-2.48c-.23-.51-.9-1.6-1.67-2.45zM8 14C2.66 14 .07 8.36 0 8c.07-.36 2.57-5.98 8-6 5.43-.02 7.93 5.64 8 6-.07.36-2.66 6-8 6z"></path><path d="M8 10a2 2 0 100-4 2 2 0 000 4zm0 1a3 3 0 110-6 3 3 0 010 6z"></path></svg>
+                                                                                                </svg>
+                                                                                            </div>
+                                                                                        </div><span class="user-card-subcaption__text"><?= $s['viewers']; ?></span></div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="user-card-stack__right">
+                                                                        <div class="user-card-stack__item">
+                                                                            <div class="stream-card__follow-toggle" >
+                                                                                <div class="icon icon--block icon--xsm">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </figure>
+                                                </div>
+                                            </div>
+
+                                        <?php } ?>
+
+                                        <?php if(count($streams) == 0){ ?>
+                							<section class="cta-box">
+                							    <div class="cta-box__content">
+                							        <div class="cta-box__media"><img src="<?= $sm['config']['theme_url'];?>/images/no-streams.svg" alt=""></div>
+                							        <div class="cta-box__title">
+                							            <div class="header-1 text-color-black">
+                							            	<?= $sm['lang'][827]['text']; ?>
+                							        	</div>
+                							        </div><br>
+                							        <p class="cta-box__text">
+                							            <div class="p-1 text-color-gray-dark cursor-pointer"  onclick="goToMeet()">
+                							            <?= $sm['lang'][828]['text']; ?><br><?= $sm['lang'][597]['text']; ?></div>
+                							        </p>
+                							        <div class="cta-box__actions"></div>
+                							    </div>
+                							</section>
+                                        <?php } ?>
+
+                                        </div>
+
+                                        <div class="stream-slider__items vivify fadeIn translate-x-0" style="display: none" data-stream-tab="near">
+
+                                        <?php 
+                                            $filter = 'is_streaming = "Yes"';
+                                            $nearStreams = getStreamsArrayByGeo('live',$sm['user']['lat'],$sm['user']['lng'],$filter);
+                                            foreach ($nearStreams as $s) { 
+                                            	$streamPhoto = profilePhoto($s['uid']);
+                                            	$streamName = getData('users','name','WHERE id = '.$s['uid']);
+                                            	$streamAge = getData('users','age','WHERE id = '.$s['uid']);
+                                            	$streamStart = $s['start_time'];
+                                            	$streamTime = $streamStart - time();
+                                            	$streamTimeCounter = sprintf('%02d:%02d', ($streamTime/ 60 % 60), $streamTime% 60);
+                                            	$streamTimeCounter = str_replace('-', '', $streamTimeCounter);
+                                            ?>
+                                            <div class="stream-slider__item">
+                                                <div class="stream-card">
+                                                    <figure class="user-card" data-qa="user-card" 
+                                                    	onclick="watchLive(<?= $s['uid'];?>,'<?= $streamPhoto; ?>',<?= $s['uid']; ?>,'<?= $streamName; ?>',<?= $streamAge;?>,'<?= $streamTimeCounter; ?>','<?= $streamCustomTxt; ?>',<?= $streamTimeM; ?>,<?= $s['viewers']; ?>,<?= $s['credits']; ?>,'<?= $s['in_private']; ?>',<?= $s['private_price']; ?>)">
+                                                        <div class="user-card__content">
+                                                            <div class="user-card__photo">
+                                                            	<img class="user-card__img" src="<?= $streamPhoto; ?>">
+                                                            </div>
+                                                            <?php if($s['in_private'] == 'Yes'){ ?>
+                                                            <div class="icon icon--block icon--xsm ico-svg" 
+                                                                ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                                            </div>
+                                                            <?php } ?>                                             
+                                                            <div class="user-card__slot-bottom">
+                                                                <div class="user-card-stack">
+                                                                    <div class="user-card-stack__left">
+                                                                        <div class="user-card-stack__item">
+                                                                            <div class="user-card-caption">
+                                                                                <div class="user-card-caption__main">
+                                                                                    <div class="user-card-caption__account">
+                                                                                        <div class="user-card-caption__name" title="<?= $streamName; ?>" dir="auto"><?= $streamName; ?></div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="user-card-caption__additional">
+                                                                                    <div class="user-card-subcaption">
+                                                                                        <div class="user-card-subcaption__icon">
+                                                                                            <div class="icon icon--block icon--md">
+                                                                                                <svg class="icon__svg">
+                                                                                                    <svg id="icon-stream-spectators" viewBox="0 0 16 16"><path d="M13.26 5.53A6.92 6.92 0 008 3a7 7 0 00-5.27 2.54c-.76.85-1.43 1.93-1.66 2.44a11.56 11.56 0 001.7 2.48C4.22 12.06 5.97 13 8 13c2.03 0 3.78-.94 5.23-2.54a11.1 11.1 0 001.7-2.48c-.23-.51-.9-1.6-1.67-2.45zM8 14C2.66 14 .07 8.36 0 8c.07-.36 2.57-5.98 8-6 5.43-.02 7.93 5.64 8 6-.07.36-2.66 6-8 6z"></path><path d="M8 10a2 2 0 100-4 2 2 0 000 4zm0 1a3 3 0 110-6 3 3 0 010 6z"></path></svg>
+                                                                                                </svg>
+                                                                                            </div>
+                                                                                        </div><span class="user-card-subcaption__text"><?= $s['viewers']; ?></span></div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="user-card-stack__right">
+                                                                        <div class="user-card-stack__item">
+                                                                            <div class="stream-card__follow-toggle" >
+                                                                                <div class="icon icon--block icon--xsm">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </figure>
+                                                </div>
+                                            </div>
+
+                                        <?php } ?>
+
+                                        <?php if(count($nearStreams) == 0){ ?>
+                							<section class="cta-box">
+                							    <div class="cta-box__content">
+                							        <div class="cta-box__media"><img src="<?= $sm['config']['theme_url'];?>/images/no-streams.svg" alt=""></div>
+                							        <div class="cta-box__title">
+                							            <div class="header-1 text-color-black">
+                							            	<?= $sm['lang'][827]['text']; ?>
+                							        	</div>
+                							        </div><br>
+                							        <p class="cta-box__text">
+                							            <div class="p-1 text-color-gray-dark cursor-pointer" onclick="goToMeet()">
+                							            <?= $sm['lang'][828]['text']; ?><br><?= $sm['lang'][597]['text']; ?></div>
+                							        </p>
+                							        <div class="cta-box__actions"></div>
+                							    </div>
+                							</section>
+                                        <?php } ?>                        
+                                        </div>                        
+
+                                    </div>
+                                </section>
+                            </div>
+
+                        </section>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+		<?= getAbsolutePage('footer'); ?>					
+    </div>
+</div>      
+
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+	<div class="col s2 real position-relative">
+		<?php 
+			if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+				echo '<div class="ad-zone-vertical margin-left-ad">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+			}
+		?>	
+	</div>
+<?php }?>
+
+<div class="stream-container vivify fadeIn" style="display: none">
+    <div class="stream stream-c" >
+        <div class="stream__canvas">
+            <div class="stream-media">
+                <div class="stream-media__back" id="streamBgLoader"></div>
+                <div class="stream-media__video">          	
+                    <div class="stream-video" id="streamVideoContainer">
+
+                        <video class="stream-video__video" id="streamCurrentVideo" autoplay loop>
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+    		<div class="stream__notice" id="streamEnded" style="display: none">
+    		    <div class="stream-notice">
+    		        <div class="stream-notice__content">
+    		        	<div class="stream-notice__title">
+    		        	</div>
+    		            <h2 class="stream-notice__title">
+    		            	<?= $sm['lang'][826]['text']; ?>
+    		        	</h2>
+    		        </div>
+    		    </div>
+    		</div>
+
+    		<div class="stream__notice" id="streamBanned" style="display: none">
+    		    <div class="stream-notice">
+    		        <div class="stream-notice__content">
+    		        	<div class="stream-notice__title">
+    		        		<?= $sm['lang'][850]['text']; ?>
+    		        	</div>
+    		        </div>
+    		    </div>
+    		</div>		
+
+    		<div class="stream__notice" id="streamOnlyVerified" style="display: none">
+    		    <div class="stream-notice">
+    		        <div class="stream-notice__content">
+    		        	<div class="stream-notice__title">
+    		        	</div>
+    		            <h2 class="stream-notice__title font-size-20">
+    		            	<?= $sm['lang'][846]['text']; ?><br><br>
+    		            	<a href="javascript:;" class="font-size-15" onclick="openVerifyAccount()"><?= $sm['lang'][365]['text']; ?></a>
+    		        	</h2>
+    		        </div>
+    		    </div>
+    		</div>
+
+    		<div class="stream__notice" id="streamOnlyPremium" style="display: none">
+    		    <div class="stream-notice">
+    		        <div class="stream-notice__content">
+    		        	<div class="stream-notice__title">
+    		        	</div>
+    		            <h2 class="stream-notice__title font-size-20" >
+    		            	<?= $sm['lang'][847]['text']; ?><br><br>
+    		            	<a href="javascript:;" onclick="goTo('premium')" class="font-size-15"><?= $sm['lang'][97]['text']; ?></a>
+    		        	</h2>
+    		        </div>
+    		    </div>
+    		</div>				
+
+    		<div class="stream__notice z-index-999" id="streamPrivate" style="display: none;">
+    		    <div class="stream-notice">
+    		        <div class="stream-notice__content">
+    		        	<div class="stream-notice__title">
+    		        	</div>
+    		            <h2 class="stream-notice__title">
+    		            	<?= $sm['lang'][838]['text']; ?><br>
+    		            	<?= $sm['lang'][839]['text']; ?> <span data-private-stream-credits></span> <?= $sm['lang'][73]['text']; ?>
+    		        	</h2>	
+    		        	<br>
+                        <div class="btn access-private" onclick="accessPrivateStream()">
+                                <span class="btn-txt montserrat access-private-btn" >
+                                <img src="<?= $sm['config']['theme_url']; ?>/images/icon-coins.png" class="access-private-img"> <?= $sm['lang'][837]['text']; ?> </span>
+                        </div>		        	        	
+    		        </div>
+    		    </div>
+    		</div>		 
+
+    		<div class="stream__notice" id="streamLoading" style="display: none">
+    		    <div class="stream-notice">
+    		        <div class="stream-notice__content">
+    		        	<div class="stream-notice__title">
+    		        	</div>
+    		            <h2 class="stream-notice__title">
+    						<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle class="line-loading1-a" cx="84" cy="50" r="8" fill="rgba(197,197,197,1)" stroke="rgba(197,197,197,1)" stroke-width="1.0px" class="anim-duration-14"></circle><circle class="line-loading1-b" cx="50" cy="50" r="8" fill="rgba(197,197,197,1)" stroke="rgba(197,197,197,1)" stroke-width="1.0px" class="anim-duration-14"></circle><circle class="line-loading1-c" cx="16" cy="50" r="8" fill="rgba(197,197,197,1)" stroke="rgba(197,197,197,1)" stroke-width="1.0px" class="anim-duration-14"></circle></svg>
+    		        	</h2>
+    		        </div>
+    		    </div>
+    		</div> 		
+
+            <div class="stream__meta left-120" >
+                <div class="stream-data">
+                    <div class="stream-data__item stream-data__item--sound left-75-negative" >
+                        <div class="stream-data__item-content">
+                            <div class="stream-data__item-icon">
+                                <div class="icon icon--block icon--md cursor-pointer" onclick="updateSound('disable')" id="streamVolumenON">
+                                    <svg class="icon__svg" data-stream-icon="volumen">
+    									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>		
+                                    </svg>
+                                </div>
+                                <div class="icon icon--block icon--md cursor-pointer" id="streamVolumenOFF" 
+                                style="display:none;" onclick="updateSound('enable')">
+                                    <svg class="icon__svg" data-stream-icon="volumen">
+    									<svg   xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
+                                    </svg>
+                                </div>                            
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stream-data__item stream-data__item--sound left-150-negative" >
+                        <div class="stream-data__item-content">
+                            <div class="stream-data__item-icon">
+                                <div class="icon icon--block icon--md cursor-pointer" onclick="updateLiveScreen('full')" id="screenFull">
+                                    <svg class="icon__svg" data-stream-icon="volumen">
+    									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>	
+                                    </svg>
+                                </div>
+                                <div class="icon icon--block icon--md cursor-pointer" id="screenRegular" 
+                                style="display:none;" onclick="updateLiveScreen('regular')">
+                                    <svg class="icon__svg" data-stream-icon="volumen">
+    									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+                                    </svg>
+                                </div>                            
+                            </div>
+                        </div>
+                    </div>                            	
+
+                    <div class="stream-data__item stream-data__item--spectators">
+                        <div class="stream-data__item-content">
+                            <div class="stream-data__item-icon">
+                                <div class="icon icon--block icon--md">
+                                    <svg class="icon__svg">
+                                        <svg id="icon-stream-spectators" viewBox="0 0 16 16"><path d="M13.26 5.53A6.92 6.92 0 008 3a7 7 0 00-5.27 2.54c-.76.85-1.43 1.93-1.66 2.44a11.56 11.56 0 001.7 2.48C4.22 12.06 5.97 13 8 13c2.03 0 3.78-.94 5.23-2.54a11.1 11.1 0 001.7-2.48c-.23-.51-.9-1.6-1.67-2.45zM8 14C2.66 14 .07 8.36 0 8c.07-.36 2.57-5.98 8-6 5.43-.02 7.93 5.64 8 6-.07.36-2.66 6-8 6z"></path><path d="M8 10a2 2 0 100-4 2 2 0 000 4zm0 1a3 3 0 110-6 3 3 0 010 6z"></path></svg>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="stream-data__item-text" id="streamViewers">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stream-data__item ">
+                        <div class="stream-data__item-content" id="streamTime">00:00</div>
+                    </div>
+
+                    <div class="stream-data__item" id="streamInPrivate">
+                        <div class="stream-data__item-content"><?= $sm['lang'][853]['text']; ?></div>
+                    </div>                
+
+                    <?php if($sm['plugins']['live']['privateStream'] == 'Yes'){ ?>
+    	                <div class="stream-data__item gradient60 vivify popIn" data-show-to-streamer id="privateStream" 
+    	                onclick="updateLiveStatus('private')">               	
+    	                    <div class="stream-data__item-content">
+    	                        <div class="stream-data__item-icon">
+    	                            <div class="icon icon--block icon--md">
+    	                                <svg class="icon__svg">
+    	                                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+    	                                </svg>
+    	                            </div>
+    	                        </div>
+    	                    	<div class="stream-data__item-text"><?= $sm['lang'][842]['text']; ?></div>
+    	                	</div>
+    	                </div>
+
+    	                <div class="stream-data__item vivify popIn" id="publicStream" data-show-to-streamer onclick="updateLiveStatus('public')">               	
+    	                    <div class="stream-data__item-content">
+    	                        <div class="stream-data__item-icon">
+    	                            <div class="icon icon--block icon--md">
+    	                                <svg class="icon__svg">
+    	                                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+    	                                </svg>
+    	                            </div>
+    	                        </div>
+    	                    	<div class="stream-data__item-text"><?= $sm['lang'][843]['text']; ?></div>
+    	                	</div>
+    	                </div>                   	
+                    <?php } ?>
+                    <div class="stream-data__item gradient32">
+                        <div class="stream-data__item-content">
+                            <div class="stream-data__item-icon">
+                                <div class="icon icon--block icon--md">
+                                    <svg class="icon__svg">
+                                        <svg id="icon-stream-points" viewBox="0 0 16 16"><path d="M8.93 5.83c.43.43.27 1.28-.35 1.9-1.01 1.02-3.23 1.35-3.7.9-.46-.47-.12-2.69.9-3.7.48-.49 1.12-.7 1.6-.53.46.16.66.67.47 1.26.43-.14.83-.08 1.08.17z"></path><path d="M9.63 9.62c2.41-2.4 3-5.54 1.56-6.97-1.43-1.43-4.6-.85-7 1.55-2.42 2.4-3 5.55-1.57 6.98 1.44 1.43 4.6.84 7.01-1.56zM4.4 12.93l.42.42c1.43 1.43 4.6.85 7-1.55 2.42-2.4 3-5.55 1.57-6.98l-.43-.42c.13 1.87-.8 4.12-2.61 5.93-1.82 1.81-4.08 2.73-5.95 2.6zm-2.47-1.05C.02 10 .72 6.24 3.48 3.5 6.23.75 10 .05 11.9 1.94l2.18 2.18c1.9 1.88 1.2 5.64-1.56 8.39C9.77 15.25 6 15.95 4.1 14.06l-2.18-2.18z"></path></svg>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="stream-data__item-text" id="streamCredit">0</div>
+                        </div>
+    					<div class="stream__goal">
+    					    <div class="stream-goal">
+    					        <div class="stream-goal__progress">
+    					            <div class="react-progress-bar react-progress-bar--stream">
+    					                <div class="react-progress-bar__fill " ></div>
+    					            </div>
+    					        </div>
+    					    </div>
+    					</div>
+                    </div>
+                </div>
+            </div>       
+            <div class="stream__actions">
+                <div class="stream__action stream__action--report" style="display: none">
+                    <div class="stream__report">
+                        <div class="icon icon--block icon--md">
+                            <svg class="icon__svg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+
+    	<div class="stream__animated-gift">
+    	    <div class="stream-gift is-animated stream-gift--size-spread">
+    	        <div class="stream-gift__content">
+    	            <div class="stream-gift__image-box">
+    	                <div class="stream-gift__image-animation">
+    	                	<img src=""/>
+    	                </div>
+    	            </div>
+    	        </div>
+    	    </div>
+    	</div>
+    </div>
+    <div class="stream__chat">
+        <div class="stream__info">
+            <div class="stream-author">
+                <a class="stream-author__avatar" data-streamProfileLink target="blank">
+                	<img alt="" id="streamProfilePhoto"></a>
+                <a class="stream-author__link color222" data-streamProfileLink target="blank" href="">
+                    <div class="stream-author__name" id="streamProfileName"></div> 
+                </a>
+                <br><br>
+                <div class="stream-author__actions">
+
+                    <div class="stream-author__action" id="endStream" onclick="endStream()" style="display: none">
+                        <div class="react-button react-button--filled react-button--sm react-button--color-primary react-button--narrow black-bg" role="button">
+                        	<span class="react-button__content">
+    	                    	<span class="react-button__text">
+    		                    	<div class="action"><span><?= $sm['lang'][862]['text']; ?></span></div>
+    		                    </span>
+    	                    </span>
+                    	</div>
+                	</div>
+
+            	</div>
+        	</div>
+    	</div>
+
+        <div class="stream__donators gradient12 box-shadow" style="display: none">
+            <div class="stream-donators">
+                <div class="stream-donators__item">
+
+                    <div class="stream-donator stream-donator--gold is-empty">
+                        <div class="stream-donator__content">
+                            <div class="stream-donator__avatar">
+    							
+    							<div class="stream-donator__avatar-icon">
+    								<div class="icon icon--block icon--md">
+    									<svg class="icon__svg">
+    										<svg id="icon-plus" viewBox="0 0 32 32"><path d="M24 18h-6v6h-4v-6H8v-4h6V8h4v6h6v4z"></path></svg>				
+    									</svg>
+    								</div>
+    							</div>  
+
+                                <div class="stream-donator__photo-box" style="display: none" id="goldBadgePhoto">
+                                	<img class="stream-donator__photo" src="" alt="">
+                                </div>
+                                <div class="stream-donator__badge">
+                                    <div class="stream-donator__badge-icon">
+                                        <div class="icon icon--block icon--stretch">
+                                            <svg class="icon__svg">
+                                                <svg id="icon-star-sm" viewBox="0 0 32 32"><path d="M11.97 11.24L3 12.56l6.5 6.4L7.95 28 16 23.73 24.04 28l-1.53-9.05 6.49-6.4-8.97-1.31L16 3l-4.03 8.24z"></path></svg>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="stream-donator__info">
+                                <div class="stream-donator__name" id="goldBadgeName">
+                                	<?= $sm['lang'][859]['text']; ?></div>
+                                <div class="stream-donator__credits" id="goldBadgeCredits"></div>
+                            </div>
+                        </div>
+                        <a class="stream-donator__link" id="goldBadgeLink" href="" target="_blank"></a>
+                    </div>
+
+                </div>
+                <div class="stream-donators__item">
+                    <div class="stream-donator stream-donator--silver is-empty">
+                        <div class="stream-donator__content">
+                            <div class="stream-donator__avatar">
+    							<div class="stream-donator__avatar-icon">
+    								<div class="icon icon--block icon--md">
+    									<svg class="icon__svg">
+    										<svg id="icon-plus" viewBox="0 0 32 32"><path d="M24 18h-6v6h-4v-6H8v-4h6V8h4v6h6v4z"></path></svg>				
+    									</svg>
+    								</div>
+    							</div>  
+
+                                <div class="stream-donator__photo-box" style="display: none" id="silverBadgePhoto">
+                                	<img class="stream-donator__photo" src="" alt="">
+                                </div>
+
+                                <div class="stream-donator__badge">
+                                    <div class="stream-donator__badge-icon">
+                                        <div class="icon icon--block icon--stretch">
+                                            <svg class="icon__svg">
+                                                <svg id="icon-star-sm" viewBox="0 0 32 32"><path d="M11.97 11.24L3 12.56l6.5 6.4L7.95 28 16 23.73 24.04 28l-1.53-9.05 6.49-6.4-8.97-1.31L16 3l-4.03 8.24z"></path></svg>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="stream-donator__info">
+                                <div class="stream-donator__name" id="silverBadgeName">
+                                	<?= $sm['lang'][860]['text']; ?>
+                                </div>
+                                <div class="stream-donator__credits" id="silverBadgeCredits"></div>
+                            </div>
+                        </div>
+                        <a class="stream-donator__link" id="silverBadgeLink" href="?from=livestream" target="_blank"></a>
+                    </div>
+                </div>
+
+                <div class="stream-donators__item">
+                    <div class="stream-donator stream-donator--bronze is-empty">
+                        <div class="stream-donator__content">
+                            <div class="stream-donator__avatar">
+    							<div class="stream-donator__avatar-icon">
+    								<div class="icon icon--block icon--md">
+    									<svg class="icon__svg">
+    										<svg id="icon-plus" viewBox="0 0 32 32"><path d="M24 18h-6v6h-4v-6H8v-4h6V8h4v6h6v4z"></path></svg>				
+    									</svg>
+    								</div>
+    							</div>  
+
+                                <div class="stream-donator__photo-box" style="display: none" id="bronzeBadgePhoto">
+                                	<img class="stream-donator__photo" src="" alt="">
+                                </div>
+                                <div class="stream-donator__badge">
+                                    <div class="stream-donator__badge-icon">
+                                        <div class="icon icon--block icon--stretch">
+                                            <svg class="icon__svg">
+                                                <svg id="icon-star-sm" viewBox="0 0 32 32"><path d="M11.97 11.24L3 12.56l6.5 6.4L7.95 28 16 23.73 24.04 28l-1.53-9.05 6.49-6.4-8.97-1.31L16 3l-4.03 8.24z"></path></svg>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="stream-donator__info">
+                                <div class="stream-donator__name">
+                                	<?= $sm['lang'][861]['text']; ?>
+                                </div>
+                                <div class="stream-donator__credits"></div>
+                            </div>
+                        </div>
+                        <a class="stream-donator__link" id="bronzeBadgeLink" href="?from=livestream" target="_blank"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="stream__message-list">
+            <div class="scroll scroll--bottom is-visible scroll--fixed" id="liveChatScroll">
+                <div class="stream__message-scroller" id="liveChatContainer">
+
+
+
+                </div>
+            </div>
+        </div>
+        <div class="stream__gifts">
+            <div class="stream-gifts">
+                <div class="stream-gifts__header">
+                    <div class="stream-gifts__caption"><span><?= $sm['lang'][77]['text']; ?></span></div>
+
+                </div>
+                <div class="stream-gifts__content">
+                    <div class="scroll scroll--top is-visible scroll--fixed">
+                        <div class="scroll__inner scroll-margin" tabindex="-1">
+                            <div class="stream-gifts__scroller">
+                            	<?= getGifts('live'); ?>
+                            </div>
+                        </div>
+                        <div class="scroll__track">
+                            <div class="scroll__thumb s-t"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="stream__comment-field">
+            <div class="stream-comment-field">
+                <div class="stream-comment-field__input">
+                    <div class="text-field text-field--md" data-qa-role="text-field">
+                        <input type="text" name="stream" placeholder="<?= $sm['lang'][834]['text']; ?>" class="text-field__input s-input" autocomplete="off" id="sendLiveMessage" value="">
+                    </div>
+                </div>
+                <div class="stream-comment-field__send" onclick="sendLiveMessage()"><?= $sm['lang'][90]['text']; ?></div>
+            </div>
+        </div>
+    </div>
+        <div class="stream__controls" id="streamClose">
+            <div class="stream__control" role="button" onclick="goTo('live')">
+                <div class="stream__control-icon" >
+                    <div class="icon icon--block icon--stretch" >
+                        <svg class="icon__svg">
+                            <svg id="icon-cross-light" viewBox="0 0 32 32"><path d="M16 14.5L27.19 3.3a1.06 1.06 0 111.5 1.5L17.5 16 28.7 27.19a1.06 1.06 0 11-1.5 1.5L16 17.5 4.81 28.7a1.06 1.06 0 11-1.5-1.5L14.5 16 3.3 4.81a1.06 1.06 0 111.5-1.5L16 14.5z"></path></svg>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

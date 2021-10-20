@@ -1,0 +1,129 @@
+.cardGrups {
+  margin:1.5em;
+  float:left;
+}
+
+/* Component Styling */
+.cardGrups {
+  padding: 1em;
+  display: inline-block;
+  border-radius: 6px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0px 4px 10px 0px rgba(34, 34, 34, 0.32);
+  color: #444;
+  width:80%;
+  user-select: none;
+  text-align: left;
+  position: relative;
+}
+.membersGrups {
+  position:absolute;
+  right:1em;
+}
+.membersGrups__avatar {
+  border-radius:50%;
+  width: 1.5em;
+  height:1.5em;
+  border:2px solid #fff;
+  vertical-align:middle;
+}
+.membersGrups__avatar:nth-of-type(2) {
+  width:1.5em;
+  height:1.5em;
+  margin:0 -.5em;
+  z-index:2;
+  position:relative;
+}
+.cardGrups__title {
+  font-size: 1.2em;
+  line-height: 1.2;
+  margin:0;
+  color: rgba(0,0,0,.87);
+  max-width:calc(80% - 4em);
+}
+.cardGrups__count {
+  display:none;
+}
+.membersGrups__count {
+  font-size: 0.8em;
+  line-height:1;
+  margin-top:0;
+  color: rgba(0,0,0,.54);
+  text-align:center;
+}
+.btnGroups {
+  border-radius: 4px;
+  height: 36px;
+  color: #fff;
+  outline: none;
+  border: 0;
+  margin-top: 1.5em;
+  text-transform: uppercase;
+  width: 100%;
+  font-size: 14px;
+  cursor: pointer;
+}
+.btnGroups--active {
+  background-color:#eb1564;
+  color:#fff;
+}
+.btnGroups--active:hover {
+  background-color: #D3165F;
+}
+.btnGroups--inactive {
+  background-color: #f1f3f5;
+  color:#868e96;
+}
+.btnGroups--inactive:hover {
+  background-color: #e9ecef;
+}
+.btnGroups svg {
+  vertical-align: bottom;
+}
+
+@media (min-width: 560px) {
+  .cardGrups {
+    cursor: pointer;
+    max-width: 11.6em;
+    text-align: center;
+  }
+
+  .membersGrups {
+    position:static;
+    
+  }
+  .membersGrups__avatar {
+    width: 2.5em;
+    height:2.5em;
+  }
+  .membersGrups__avatar:nth-of-type(2) {
+    width:3em;
+    height:3em;
+    margin:0 -1em;
+  }
+  .membersGrups__avatar.duo {
+    width:3em;
+    height:3em;
+    margin:0;
+  }
+
+  .cardGrups__title {
+    font-size: 1.2em;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    color: rgba(0,0,0,.87);
+    max-width:none;
+    height:2.5em;
+  }
+  .membersGrups__count {
+    display:none;
+  }
+  .cardGrups__count {
+    font-size: 0.8em;
+    line-height:1;
+    margin-top:0;
+    color: rgba(0,0,0,.54);
+    display: block;
+  }
+
+}

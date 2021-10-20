@@ -1,0 +1,79 @@
+<?php 
+  if($sm['moderator']['ChatFake'] == 'No'){
+    echo '
+    <div class="alert alert-light" role="alert" style="width:50%;margin:0 auto;text-align:center;margin-top:50px;">
+        <strong>Access Denied!</strong> You dont have access to view this section
+    </div>
+    ';
+    
+  } else { 
+?>
+<div class="app-chat-container" data-full-height-chat>
+    <div class="row h-100 m-0">
+        <div class="col-lg-8 py-3 d-flex flex-column h-100 bg-white card">
+            <div class="search-form form-control-rounded search-form--light" style="display: none">
+                <input type="text" class="form-control" placeholder="Search messages" id="searchSample02">
+                <button class="btn" type="button" role="button"><i class="material-icons">search</i></button>
+            </div>
+
+            <div class="flex p-3 d-flex flex-column" id="chat_container" style="height: 550px;overflow-y: auto">
+                <div data-simplebar class="h-100" id="chat_result" >
+
+                </div>
+            </div>
+
+            <form class="input-group input-group-merge" id="c-send">
+                <input type="text" class="form-control form-control-appended" required="" id="chat-message" placeholder="Type message">
+                <input type="hidden" class="form-control form-control-appended" required="" id="r_id" style="display: none">                
+                <div class="input-group-append" >
+                    <div class="input-group-text pr-2" >
+                        <button class="btn btn-flush" type="submit"><i class="material-icons">send</i></button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <div class="col-lg-4 py-3 px-0 bg-light border-left d-flex flex-column card" style="border-radius: 0">
+            <div class="form-group px-3">
+                <div class="input-group input-group-merge input-group-rounded">
+                    <input type="search" class="form-control form-control-prepended" id="search_chat_member" placeholder="Filter members">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <span class="material-icons">filter_list</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex d-flex flex-column" style="overflow-x: hidden!important" data-full-height-chat-right>
+                <div data-simplebar class="h-100">
+                    <div class="list-group list-group-flush" style="position: relative; z-index: 0;">
+                        <?php
+                         foreach ($sm['edit']['chats'] as $value) { 
+                            $name = getData('users','name','WHERE id ='.$value);
+                            $searchName = strtolower($name);
+                        ?>
+                            <div class="list-group-item d-flex media align-items-center bg-light rightSectionChatUser" 
+                                data-uid="<?= $sm['edit']['id']; ?>" data-search-bind="<?= $searchName; ?>" 
+                                data-cid="<?= $value; ?>" onclick="viewChat(this)" 
+                                onmouseover="hoverFriendList(this,1)" onmouseout="hoverFriendList(this,2)" style="cursor: pointer;">
+                                <a href="javascript:;" class="avatar avatar-sm media-left mr-3">
+                                    <img src="<?= profilePhoto($value); ?>" class="avatar-img rounded-circle">
+                                </a>
+                                <div class="media-body">
+                                    <p class="m-0">
+                                        <a href="javascript:;" class="text-body"><strong>
+                                            <?= $name; ?></strong>
+                                        </a><br>
+                                        <span class="text-muted">
+                                            <?= getData('users','credits','WHERE id ='.$value); ?> credits</span>
+                                    </p>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>

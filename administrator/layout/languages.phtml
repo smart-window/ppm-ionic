@@ -1,0 +1,114 @@
+<script>aurl = 'languages';</script>
+
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px ">
+    <div class="card">
+        <div class="card-header card-header-large bg-white">
+            <h2 class="card-header__title" style="font-weight: bold">Languages</h2>
+            <div class="ml-auto" style="position: absolute;right: 10px;top: 10px;">
+                <a href="javascript:;" id="importLanguage" onclick="upJSONfile('language')" class="btn btn-primary">Import JSON language <i class="material-icons">file_download</i></a>
+                <a href="javascript:;" onclick="openWidget('addLanguage');" class="btn btn-success">Add language <i class="material-icons">add</i></a>                
+            </div>
+        </div>
+        <div class="card-body">
+            <p>If you have personally edited a language and wish to share it with us, we would greatly appreciate it. 😊</p>
+        </div>
+    </div>
+
+    <div class="row" style="margin-left: 0;margin-right: 0;padding-bottom: 220px;">
+    <?php 
+        $languages = getDataArrayFull('languages','ORDER BY id ASC');
+        foreach ($languages as $lang) { ?>
+        <div class="card card-form" style="margin-bottom: 10px;width: 100%;">
+            <div class="row no-gutters">
+                <div class="col-lg-5 card-body" style="padding: 5px">
+                    <p style="height: 40px;line-height: 40px;margin: 0;">
+                        <strong class="headings-color" style="font-size: 16px;padding-left: 20px;">
+                            <?= $lang['name']; ?>
+                        </strong>
+                        <small><span class="badge badge-light"><?= $lang['prefix']; ?></span></small>
+                        <?php if($lang['visible'] == 1){
+                            $visible = 'block';
+                            $novisible = 'none';
+                            $checked = 'checked=""';
+                        } else {
+                            $visible = 'none';
+                            $novisible = 'block';
+                            $checked = '';
+                        } ?>
+                        <label data-lang-visibile="<?= $lang['id']; ?>" style="position: absolute;right: 10px;top: 5px;display: <?= $visible; ?>">
+                            <span class="badge badge-success">Visible</span>
+                        </label>
+                        <label data-lang-novisibile="<?= $lang['id']; ?>" style="position: absolute;right: 10px;top: 5px;display: <?= $novisible; ?>">
+                            <span class="badge badge-light">No visible</span>
+                        </label>                    
+                    </p>              
+                </div>
+                <div class="col-lg-7 card-form__body card-body d-flex align-items-center" style="padding: 5px">
+                    <div class="flex" style="padding-left: 20px;">
+                        <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1">
+                            <input <?= $checked; ?> onchange="updateLanguageVisible(this.checked,<?= $lang['id']; ?>);"  type="checkbox" id="lang<?= $lang['id']; ?>" class="custom-control-input">
+                            <label class="custom-control-label" for="lang<?= $lang['id']; ?>">Yes</label>
+                        </div>
+                    </div>
+                    <div class="flex">
+                       <button type="button" class="btn btn-light" onclick="exportLanguage(<?= $lang['id']; ?>,'<?= $lang['name']; ?>','<?= $lang['prefix']; ?>')">
+                          <i class="material-icons mr-1">import_export</i> Export JSON
+                       </button> 
+                    </div>
+                    <div class="flex">
+                      <div class="dropdown" id="editLangDropdown">
+                          <button class="btn btn-light" data-toggle="dropdown" data-caret="false">
+                                <i class="material-icons mr-1">language</i> Edit <?= $lang['name']; ?>
+                          </button> 
+                          <div class="dropdown-menu dropdown-menu-right">
+                              <a class="dropdown-item" href="javascript:;" 
+                                onclick="goTo('editLanguage',<?= $lang['id']; ?>,'site_lang');" 
+                                    style="font-size: 13px;">
+                                Edit Website language
+                              </a> 
+                               <a class="dropdown-item" href="javascript:;" 
+                                onclick="goTo('editLanguage',<?= $lang['id']; ?>,'app_lang');" 
+                                    style="font-size: 13px;">
+                                Edit Mobile language
+                              </a>
+                               <a class="dropdown-item" href="javascript:;" 
+                                onclick="goTo('editLanguage',<?= $lang['id']; ?>,'landing_lang');" 
+                                    style="font-size: 13px;">
+                                Edit Landing <?= $sm['settings']['landingTheme']; ?> Preset: <?= $sm['settings']['landingThemePreset']; ?>
+                              </a>                                                         
+                               <a class="dropdown-item" href="javascript:;" 
+                                onclick="goTo('editLanguage',<?= $lang['id']; ?>,'email_lang');" 
+                                    style="font-size: 13px;">
+                                Edit Email language
+                              </a>  
+                               <a class="dropdown-item" href="javascript:;" 
+                                onclick="goTo('editLanguage',<?= $lang['id']; ?>,'gender');" 
+                                    style="font-size: 13px;">
+                                Edit Gender language
+                              </a>
+                               <a class="dropdown-item" href="javascript:;" 
+                                onclick="goTo('editLanguage',<?= $lang['id']; ?>,'questions');" 
+                                    style="font-size: 13px;">
+                                Edit Profile questions language
+                              </a>
+                               <a class="dropdown-item" href="javascript:;" 
+                                onclick="goTo('editLanguage',<?= $lang['id']; ?>,'seo_lang');" 
+                                    style="font-size: 13px;">
+                                Edit Pages Seo Language
+                              </a>                            
+                              <?php if($lang['id'] != 1){ ?>  
+                              <div class="dropdown-divider"></div>
+                              <a class="dropdown-item" href="javascript:;" onclick="deleteLanguage(<?= $lang['id']; ?>);" style="font-size: 13px;color: #b50000">
+                                Delete <?= $lang['name']; ?>
+                              </a>   
+                              <?php } ?>
+                          </div>
+                      </div>                                                               
+                    </div>                                
+                </div>
+            </div>
+        </div>            
+    <?php } ?>
+    </div>
+</div>

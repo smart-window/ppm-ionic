@@ -1,0 +1,93 @@
+<script>
+    url = "premium";
+</script>
+    <?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    <div class="col s2 real" style="padding-right: 0px;" >
+        <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+                echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+            }
+        ?>
+    </div>
+    <div class="col s8 real"  id="site-content">
+    <?php } else { ?>
+        <div class="col s8 real fix-width-content" style="padding-right: 0px;" id="site-content">
+    <?php } ?>             
+    <div class="wall <?= $sm['theme']['wall_bg_premium']['val']; ?>" style="background: <?= $sm['theme']['wall_bg_premium']['val']; ?>;"> 
+        <div class="payment-promo__head vivify fadeIn" >
+            <div class="brick brick--xxlg brick--stroke">
+                <div class="brick-img profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>
+            </div>
+        </div>
+        <div class="payment-promo" style="position: relative;">
+            <div class="payment-promo__content ">
+                <?php if($sm['user']['premium'] == 1){
+                    echo'<h2 class="montserrat premiumInfoTitle vivify fadeIn" style="font-size: 22px;margin:0">'.$sm['lang'][582]['text'].' <b>'.adminCheckDaysLeft($sm['user']['premium_check']).'</b></h2>'; 
+                } else { ?>                
+                    <h2 class="montserratRegular premiumInfoTitle vivify fadeIn" style="font-size: 22px;margin:0"><?= $sm['lang'][581]['text']; ?></h2>
+                    <div class="payment-promo__buttons">
+                        <?php $a = 0; 
+                        foreach ($sm['premiumPackages'] as $premium) { ?>                        
+                            <div class="premiumPlan vivify fadeIn delay-200 <?= $sm['theme']['premium_section_btn_font_bg']['val']; ?>" style="cursor: pointer;" onclick="purchasePremium(this)" data-premium-package="<?= $a; ?>">
+                                <div class="selectPremiumPlan">
+                                    <span class="radio__interval" style="color: #333"><?= $premium['days']; ?> <?= $sm['lang'][315]['text']; ?></span>
+                                    <span class="radio__price"><?= $premium['price']; ?> <?= $sm['plugins']['settings']['currency']; ?></span>
+                                    <small class="radio__price__info">/ <?= $sm['lang'][694]['text']; ?></small>
+                                </div>
+                            </div>                        
+                        <?php $a++; } ?>
+                    </div>
+                <?php } ?> 
+                    <div class="payment-promo__features">
+                        <div class="major-features">
+                            <div class="major-features__item  vivify fadeIn delay-300">
+                                <div class="major-features__figure major-features__figure--profile">
+                                    <div class="major-features__photo profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                                </div> <span class="x-large payment-info__hint__premium"><?= $sm['lang'][493]['text']; ?> <b><?= $sm['lang'][494]['text']; ?></b> <?= $sm['lang'][495]['text']; ?>.</span>
+                            </div>
+                            <div class="major-features__item   vivify fadeIn delay-400">
+                                <div class="major-features__figure major-features__figure--card">
+                                    <div class="major-features__photo profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                                </div> <span class="x-large payment-info__hint__premium"><?= $sm['lang'][496]['text']; ?> <b><?= $sm['lang'][497]['text']; ?></b>.</span>
+                            </div>
+                            <div class="major-features__item   vivify fadeIn delay-500">
+                                <div class="major-features__figure payment-info__ico--favorite">
+                                    <div class="major-features__photo profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                                </div> <span class="x-large payment-info__hint__premium"><?= $sm['lang'][425]['text']; ?>.</span>
+                            </div>
+                        </div>
+
+                        <div class="payment-features premium-list">
+                            <?php if($sm['plugins']['videocall']['enabled'] == 'Yes'){ ?>
+                            <div class="payment-feature vivify fadeIn delay-600">
+                                <div class="payment-feature__ico"><img src="<?php echo $sm['config']['theme_url']; ?>/images/icon-videocall.png"></div>
+                                <span class="link"><?= $sm['lang'][628]['text']; ?></span>
+                            </div>  
+                            <?php } ?>
+                            <div class="payment-feature vivify fadeIn delay-700">
+                                <div class="payment-feature__ico"><img src="<?php echo $sm['config']['theme_url']; ?>/images/message-first.png"></div>
+                                <span class="link"><?= $sm['lang'][500]['text']; ?></span>
+                            </div> 
+
+                            <div class="payment-feature vivify fadeIn delay-800">
+                                <div class="payment-feature__ico"><img src="<?php echo $sm['config']['theme_url']; ?>/images/chat-more.png"></div>
+                                <span class="link"><?= $sm['lang'][502]['text']; ?></span>
+                            </div>                               
+    
+                        </div>
+
+                    </div>
+            </div>
+        </div>
+    </div>
+ 
+</div>
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    <div class="col s2 real" style="position: relative;">
+        <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+                echo '<div class="ad-zone-vertical" style="margin-left:79px;">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+            }
+        ?>  
+    </div>
+<?php }?>      

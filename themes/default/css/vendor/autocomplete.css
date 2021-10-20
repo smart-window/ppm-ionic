@@ -1,0 +1,66 @@
+/*! teleport-autocomplete - v0.3.1 | https://github.com/teleport/autocomplete#readme | MIT */
+.tp-autocomplete {
+  position: relative;
+  max-width: 25em; 
+  font-family: 'Montserrat'; }
+
+
+
+.tp-ac__list {
+  position: absolute;
+  z-index: 100;
+  width: 100%;
+  margin: 0;
+  padding-left: 0;
+  list-style-type: none;
+  color: #979797;
+  background-color: #fff;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.35);
+  font-size: 0.875em; }
+
+.tp-ac__item {
+  overflow: hidden;
+  padding: 0.35714em 0.71429em;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+          font-weight: 400 !important;
+  white-space: nowrap;
+  text-overflow: ellipsis; }
+  .tp-ac__item:hover, .tp-ac__item.is-active {
+    background-color: #ddd; }
+  .tp-ac__item.no-results, .tp-ac__item.no-results:hover {
+    cursor: default;
+    background-color: #fff; }
+  .tp-ac__item span {
+    color: #4a4a4a;
+    font-weight: 400; }
+
+@-webkit-keyframes spinner {
+  to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
+
+@keyframes spinner {
+  to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
+
+.spinner:before {
+  position: absolute;
+  top: 50%;
+  right: 0.5em;
+  width: 1em;
+  height: 1em;
+  margin-top: -0.625em;
+  margin-left: -0.625em;
+  content: '';
+  -webkit-animation: spinner 1s linear infinite;
+          animation: spinner 1s linear infinite;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  border-top-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%; }
+
+/*# sourceMappingURL=teleport-autocomplete.css.map */

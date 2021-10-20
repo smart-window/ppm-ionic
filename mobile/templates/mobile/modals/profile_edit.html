@@ -1,0 +1,202 @@
+<ion-modal-view>
+  <ion-header-bar style="background:#fff">
+    <button class="button button-clear comforta" ng-if="!loading" style="font-size:14px" ng-click="closeEditProfileModal()"><center><i class="icon"><svg viewBox="0 0 64 64" id="navigation-bar-close" width="100%" height="100%"><path d="M8.68 10.49l44.83 44.83a1.28 1.28 0 0 0 1.81-1.81L10.49 8.68a1.28 1.28 0 0 0-1.81 1.81z"></path><path d="M53.44 8.75l-44.7 44.7a1.28 1.28 0 0 0 1.82 1.8l44.7-44.7a1.28 1.28 0 0 0-1.82-1.8z"></path></svg></i></center></button>
+  </ion-header-bar>	
+  <ion-content class="profile">  
+    <div class="photos" >
+      <div class="row">
+        <div class="col col-66">
+            <div class="photo-pickable"  ng-if="uphotos[0] == null" >
+              <div class="w-full r-3x profileP" ng-click="pick()" style="height:200px;background-color:#f3f3f3;"></div>
+            </div>
+            <div class="photo-pickable" ng-if="uphotos[0] != null">
+              <div class="w-full r-3x profileP" ng-class="{grayScale: uphotos[0].approved == 0}" style="height:200px;background-color:#f3f3f3;background-image:url({{trustPhoto(uphotos[0].photo)}})"></div>
+            </div>
+        </div>
+		
+        <div class="col col-33">
+            <div class="photo-pickable" ng-if="uphotos[1] == null" >
+              <div class="w-full r-3x m-b-xs profileP" ng-click="pick(2)" id="photo2" style="height:100px;background-color:#f3f3f3;"></div>
+            </div>
+            <div class="photo-pickable" ng-if="uphotos[1] != null" >
+              <div class="w-full r-3x m-b-xs profileP" ng-class="{grayScale: uphotos[1].approved == 0}" ng-click="showPhotoOptions(2,uphotos[1].id,uphotos[1].blocked,uphotos[1].profile,uphotos[1].approved)" style="height:100px;background-color:#f3f3f3;background-image:url({{trustPhoto(uphotos[1].photo)}})"></div>
+            </div>
+			
+            <div class="photo-pickable" ng-if="uphotos[2] == null" ng-click="pick(3)" >
+              <div class="w-full r-3x profileP" id="photo3" style="height:100px;background-color:#f3f3f3;"></div>
+            </div>
+            <div class="photo-pickable" ng-if="uphotos[2] != null">
+              <div class="w-full r-3x profileP" ng-class="{grayScale: uphotos[2].approved == 0}" ng-click="showPhotoOptions(3,uphotos[2].id,uphotos[2].blocked,uphotos[2].profile,uphotos[2].approved)"  style="height:100px;background-color:#f3f3f3;background-image:url({{trustPhoto(uphotos[2].photo)}})"></div>
+            </div>
+        </div>
+		
+      </div>
+      <div class="row">
+        <div class="col col-33">
+            <div class="photo-pickable" ng-if="uphotos[3] == null" ng-click="pick(4)">
+              <div class="w-full r-3x profileP"  id="photo4" style='height:100px;background-color:#f3f3f3;'></div>
+            </div>
+            <div class="photo-pickable" ng-if="uphotos[3] != null">
+              <div class="w-full r-3x profileP" ng-class="{grayScale: uphotos[3].approved == 0}" ng-click="showPhotoOptions(4,uphotos[3].id,uphotos[3].blocked,uphotos[3].profile,uphotos[3].approved)"  style="height:100px;background-color:#f3f3f3;background-image:url({{trustPhoto(uphotos[3].photo)}})"></div>
+            </div>
+        </div>
+		
+        <div class="col col-33">
+            <div class="photo-pickable" ng-if="uphotos[4] == null" ng-click="pick(5)" >
+              <div class="w-full r-3x profileP" id="photo5" style="height:100px;background-color:#f3f3f3;"></div>
+            </div>
+            <div class="photo-pickable" ng-if="uphotos[4] != null">
+              <div class="w-full r-3x profileP" ng-class="{grayScale: uphotos[4].approved == 0}" ng-click="showPhotoOptions(5,uphotos[4].id,uphotos[4].blocked,uphotos[4].profile,uphotos[4].approved)"  style="height:100px;background-color:#f3f3f3;background-image:url({{trustPhoto(uphotos[4].photo)}})"></div>
+            </div>
+        </div>
+		
+        <div class="col col-33">
+            <div class="photo-pickable" ng-if="uphotos[5] == null" ng-click="pick(6)" >
+              <div class="w-full r-3x profileP" id="photo6" style="height:100px;background-color:#f3f3f3;"></div>
+            </div>
+            <div class="photo-pickable"  ng-if="uphotos[5] != null">
+              <div class="w-full r-3x profileP" ng-class="{grayScale: uphotos[5].approved == 0}" ng-click="showPhotoOptions(6,uphotos[5].id,uphotos[5].blocked,uphotos[5].profile,uphotos[5].approved)"  style="height:100px;background-color:#f3f3f3;background-image:url({{trustPhoto(uphotos[5].photo)}})"></div>
+            </div>
+        </div>  		
+      </div>
+    </div>  
+    <div class="list m-n">
+      <div class="item item-divider b-none"></div>
+      <div class="item item-divider b-none text-u-c comforta" data-lid="135"></div>
+	 
+      <div class="item" >
+	    <span data-lid="26"></span>
+		<input style="font-size:16px;display:inline-table;border:none;background:none;float:right;text-align:right;" id="userName" value="{{name}}"/>
+      </div>
+	  
+      <div class="item" >
+	    <span data-lid="300"></span>
+		<input style="margin:0;padding:0;font-size:16px;display:inline-table;border:none;background:none;float:right;text-align:right;"  id="userAge" value="{{age}}"/>
+      </div>
+
+      <div class="item item-toggle" ng-click="updateUserGender()">
+	    <span data-lid="34"></span>
+		<label class="toggle" style="font-size:16px;top:14px;">
+			<span>{{gender}}</span>
+		</label>
+      </div>
+
+      <div class="item item-toggle" ng-repeat="q in questions"  ng-click="updateUserQuestion(q,q.answers)" ng-if="q.method == 'select'">
+          <span>{{q.question}}</span>
+            <label class="toggle" style="font-size:16px;top:14px;" >
+          <span ng-if="q.userAnswer != ''" class="userAnswer{{q.id}}"  style="color: #111">{{q.userAnswer}}</span>
+          <span ng-if="q.userAnswer == ''" class="userAnswer{{q.id}}" style="color: #999">{{noData}}</span>
+            </label> 
+        </div> 
+
+      <div class="list m-n " ng-repeat="q in questions"  ng-click="updateUserQuestion(q,q.answers)" ng-if="q.method == 'text'">
+          <div class="item item-divider b-none"></div>
+          <div class="item item-divider b-none text-u-c comforta">{{q.question}}</div>         
+          <div class="item">
+            <textarea style="width:100%;font-size:16px;line-height: 22px">{{q.userAnswer}}</textarea>
+          </div>
+        </div>                       
+      
+    </div>	
+	
+    <div class="list m-n">
+      <div class="item item-divider b-none"></div>
+      <div class="item">
+        <textarea id="userBio" style="width:100%;font-size:16px;line-height: 22px">{{bio}}</textarea>
+      </div>
+    </div>
+      <div class="item item-divider b-none"></div>
+      <div class="item item-toggle" ng-click="updateUserLanguage()">
+      <span>{{lang}}</span>
+        <label class="toggle" style="font-size:16px;top:14px;">
+          {{userLang}}
+        </label>
+      </div>
+
+    <div class="list m-n">
+      <div class="item item-divider b-none"></div>
+      <div class="item item-divider b-none text-u-c comforta">{{alang[93].text}}</div>
+      <div class="item item-toggle comforta">
+        {{alang[94].text}}
+        <label class="toggle toggle-assertive">
+          <input type="checkbox" ng-checked="matches" ng-model="matches"  ng-click="updateNotification('match_me',matches)">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+      <div class="item item-toggle comforta">
+        {{alang[95].text}}
+        <label class="toggle toggle-assertive">
+          <input type="checkbox" ng-checked="fans" ng-model="fans"  ng-click="updateNotification('fan',fans)">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+      <div class="item item-toggle comforta">
+        {{alang[96].text}}
+        <label class="toggle toggle-assertive">
+          <input type="checkbox" ng-checked="messages" ng-model="messages"  ng-click="updateNotification('message',messages)">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
+
+      <div class="item item-toggle comforta">
+        {{alang[207].text}}
+        <label class="toggle toggle-assertive">
+          <input type="checkbox" ng-checked="near_me" ng-model="near_me"  ng-click="updateNotification('near_me',near_me)">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
+    </div>
+
+
+    <div class="list m-n">
+      <div class="item item-divider b-none"></div>
+      <div class="item item-divider b-none text-u-c comforta">{{alang[98].text}}</div>  
+      <div class="item comforta" ng-click="openPrivacy()">
+        {{alang[100].text}}
+        <span class="item-note">
+          <i class="icon ion-chevron-right"></i>
+        </span>
+      </div>
+
+      <div class="item comforta"  ng-click="openTerms()">
+        {{alang[101].text}}
+        <span class="item-note">
+          <i class="icon ion-chevron-right"></i>
+        </span>
+      </div>
+
+      <div class="item item-divider b-none"></div>
+      <div class="item item-divider b-none text-u-c comforta">{{alang[14].text}}</div>        
+      <div class="item comforta"  ng-click="logout()">
+        {{alang[42].text}}
+        <span class="item-note">
+          <i class="icon ion-chevron-right"></i>
+        </span>
+      </div>      
+      <div class="item comforta"  ng-click="deleteProfile()" style="background:#eee;color: #dc3545">
+        {{alang[276].text}}
+        <span class="item-note">
+          <i class="icon ion-chevron-right"></i>
+        </span>
+      </div>        
+
+    </div>
+
+  <div flow-init
+       flow-name="uploader.flow"
+       flow-files-added="processUserFiles($files)">
+    <button flow-btn type="file" id="uploadUserPhoto" style="display: none;">Upload Images</button>
+   </div> 
+ <div class="item item-divider b-none" style="background:#fff"></div>
+  </ion-content>
+</ion-modal-view>

@@ -1,0 +1,74 @@
+<style>
+  ion-header-bar{
+    background: none !important;
+    pointer-events: none!important;
+  }
+</style>
+<ion-view title="" hide-nav-bar="true">
+  <ion-nav-title>
+    <div class="navigation-bar"   >
+        <div class="navigation-bar__primary">
+        </div>
+        <div class="navigation-bar__title">
+            <div class="navigation-bar__logo" style="z-index: 999;">
+              <img src="{{logo}}" />
+            </div>
+        </div>
+        <div class="navigation-bar__secondary"></div>
+    </div>
+  </ion-nav-title>
+<ion-content ng-style="{height: iframeHeight + 'px'}"  scroll="true">
+
+<div class="page landing visible "  style="z-index: 600;">
+<div style="position: absolute;top: 0;right: 10px;z-index: 99!important" ng-show="showChangeLanguage">
+  <center><button class="button button-block button--primary comforta"  style="color:#fff;min-height:15px!important;height:25px;line-height:15px;font-size:12px;background: rgba(0,0,0,.5)!important" ng-click="openLanguagesModal('Visitor')" data-alid="275"></button></center>
+</div>    
+    <div class="flexible-page">
+        <div class="page-content ">
+            <div class="landing-decorations"></div>
+            <div class="landing-wrapper">
+                <div class="landing-logo">
+                    <img src="{{logo}}"></img>
+                </div>
+                <div class="landing-actions">
+                    <div class="cta-box">
+                        <div class="cta-box__content comforta" style="font-size: 16px;margin-top: 25px;margin-bottom: 45px;padding: 25px" data-alid="148"></div>
+                        <div class="cta-box__buttons">
+                         
+                        <ul class="list-view ">
+                          <li class="list-item-form" style="border:none">
+                            <label for="signin-name" data-alid="149"></label>
+                            <input ng-model="user.login_email" class="comforta" name="name" type="email" placeholder="Correo o telf. móvil" autocapitalize="off" style="background: #fafafa;border-radius: 8px;padding-left: 10px;">
+                          </li>
+                          <li class="list-item-form" ng-show="!forgetBtn" style="border:none">
+                            <label for="signin-password" data-alid="150"></label>
+                            <input id="pass" class="comforta" ng-keyup="keyup(user.login_pass.length)" ng-model="user.login_pass" name="password" type="password" style="background: #fafafa;border-radius: 8px;padding-left: 10px;" placeholder="Requerida">
+                          </li>
+                               
+                        </ul>
+                        <div class="button-wrapper" style="margin-top: 25px">
+                            <div class="login-loader" style="margin-bottom: 40px;" ng-if="loginBtn && !forgetBtn">
+                              <center><div class="loader02"></div></center>
+                            </div>                                                     
+                            <button class="button button--primary" ng-if="!loginBtn" ng-class="{disabled: isActive}" ng-click="send(user)">
+                            <div class="button__content"><span class="button__text">{{alang[151].text}}</span></div></button>
+                            <button class="button button--primary" ng-if="forgetBtn" ng-click="forget(user)">
+                            <div class="button__content"><span class="button__text" data-alid="152">{{alang[152].text}}</span></div></button>                            
+                            <button class="button button--primary isActive box-shadow" style="background:none!important;margin-top: 25px;margin-bottom:15px;color: #3b5998!important;font-weight: bold" ng-if="fbEnabled" ng-click="fb()">
+                            <div class="button__content"><span class="button__text">{{alang[159].text}}</span></div></button>
+                            <button ng-click="register()" class="inline-button inline-button--primary"><span class="inline-button__text" data-alid="153"></span></button>                                        
+                        </div>                        
+                    </div>
+                </div>
+                <div class="landing-footer">
+                  <span ng-click="recoverPass()" ng-if="!loginBtn">{{alang[154].text}}</span>
+                  <span ng-click="backLogin()" ng-if="loginBtn">{{alang[155].text}}</span>
+                  <a ng-click="openPrivacy()">{{alang[156].text}}</a>
+                  <a ng-click="openTerms()">{{alang[157].text}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</ion-content>
+</ion-view>	

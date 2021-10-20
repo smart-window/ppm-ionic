@@ -1,0 +1,83 @@
+<ion-view title="">
+  <ion-nav-title >
+    <div class="navigation-bar  navigation-bar--no-shadow  has-wide-sides ">
+        <div class="navigation-bar__primary">
+            <div class="navigation-bar__icon js-goto" ng-click="goTo('home.profile','right');">
+                <div class="icon" style="left: 0px;">
+                        <svg class="icon__content icon__content--inactive">
+<svg viewBox="0 0 64 64" id="navigation-bar-back" width="100%" height="100%"><path d="M12.05 33.28l13.83 13.83-1.81 1.81L7.4 32.25l.26-.26-.23-.24 16.6-16.67 1.82 1.81-13.78 13.83h44.25v2.56H12.05z"></path></svg>
+                    </svg>
+                </div>
+            </div>
+        </div>
+       <div class="navigation-bar__main" style="margin-top: -4px">
+            <div class="navigation-bar__logo">
+                <span class="comforta">{{lang[101].text}} {{myfans.length}}</span>
+            </div>
+        </div>
+        <div class="navigation-bar__secondary"></div>     
+    </div>    
+  </ion-nav-title>
+  
+  <ion-content class="vivify fadeIn" delegate-handle="userMessageScroll">
+		<!--MY LIKES -->
+		<ion-list  ng-if="show == 1" >	 
+			<div ng-show="noFans" >
+				<div class="credits-section text-center">
+					<h5 class="comforta" style="color:#BFC5D5">{{alang[71].text}}</h5>					
+					<div class="wrapper text-center">
+					  <div class="pos-rlt">
+						<div class="thumb-xxl rounded profileP border-profile" style="background-image:url({{photo}});height:{{w}}px;width:{{w}}px;" ></div>						
+					  </div>
+					</div>						
+					<h1>{{alang[234].text}}</h1>
+					<h4>{{alang[232].text}}</h4>
+					<center><span class="cien-me" ng-click="openModalBoost(2)" style="background:#00B697;border:#00B697">{{alang[235].text}}r</span></center>
+					<br><h4>{{alang[208].text}} <b>{{cienmeprice}}</b> {{alang[203].text}}</h4>                      
+				</div>
+			</div>	
+			<div ng-class="!canSeeFans ? 'sblur' : ''">			  
+			<ion-item class="" style="border:none" ng-repeat="p in myfans track by $index" >
+			  <div class="thumb-md rounded pull-left m-l m-r-md profileP" style="margin-top:10px;background-image:url('{{p.photo}}');width:60px;height:60px;" ng-class="p.story > 0 ? 'storyOn' : ''" ng-click="openStory(p.id,p.story)"></div>
+			  <div class="text-lg b-b b-light clear padder-v" ng-click="openProfileStory(p)">
+
+				<div class="text-c chat-name" style="display:inline-table">{{p.name}} <span class="chat-status" ng-if="p.status == 1" style="background:#51B80E" ></span></div>
+				<div class="text-xs text-muted text-right " style="display:inline-table;float:right;padding-right:10px">{{p.last_m_time}}</div>				
+				<div style="position:relative;width:100%;">
+					<p class="text-muted chat-last-m paQueRespete">{{p.last_m}}</p>
+				</div>
+			  </div>
+			</div>
+			</ion-item>
+			<div class="only-premium" ng-show="!canSeeFans && !noFans" >			
+				<div class="credits-section text-center" style="margin-top: -50px;">					
+					<div class="wrapper text-center">
+						<div class="pos-rlt">
+							<div class="thumb-xxl rounded profileP border-profile" style="background-image:url({{photo}});height:{{w}}px;width:{{w}}px;" ></div>						
+						</div>
+					</div>						
+					<h1>{{myfans.length}} {{alang[74].text}}</h1>
+					<h4>{{alang[75].text}}</h4>
+					<center><span class="spotlight-me" ng-click="openPremiumModal()" style="background:#8A21EF;border:#2821EF">{{alang[76].text}}</span></center>
+					<br>                   
+				</div>
+			</div> 	
+		</ion-list>
+	<div class="wrapper-reward" ng-if="modalBoost">
+	    <div class="modal-reward modal--congratulations  vivify fadeIn">
+	        <div class="modal-reward-top">
+	            <div class="klose animated fadeInUp" style="background: #333" ng-click="closeModalBoost()" >
+	                <i class="icon ion-close-round" style="margin-left:7px;line-height:27px;"></i>
+	            </div>
+	            <img class="modal-reward-icon u-imgResponsive animated fadeInUp rounded profileP"  style="width:120px;height:120px;background-image:url({{me.profile_photo}});">
+	            <div class="modal-reward-header animated fadeInUp">{{boostTitle}}</div>
+	            <div class="modal-reward-subheader animated fadeInUp comforta" style="font-size: 12px">{{boostDesc}}<br>{{alang[121].text}} <strong>{{boostPrice}}</strong> {{alang[48].text}}</div>
+	        </div>
+	        <div class="modal-reward-bottom " ng-click="boostBtn();closeModalBoost();">
+	            <button class="modal-reward-btn u-btn u-btn--danger comforta"  >{{boostBtnText}}</button>
+	        </div>
+	    </div>
+	</div>		
+  </ion-content>
+ 	
+</ion-view>

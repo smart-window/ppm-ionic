@@ -1,0 +1,15 @@
+/* Empty. Add your own CSS if you like */
+.demo-input{
+	/*border-color: #fff !important;*/
+	padding-left: 5px !important;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	border-color: #ddd !important;
+	border-width: 1px !important;
+	border-style: solid !important;
+	border-radius: 2px;
+	width: 100%;
+}
+
+select{
+	height: 34px;
+}

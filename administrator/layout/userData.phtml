@@ -1,0 +1,76 @@
+<div class="col-lg-6" data-full-height>                                
+<div class="card">
+  <div class="card-header card-header-large d-flex align-items-center">
+      <h4 class="card-header__title flex m-0" style="color: #444">Profile questions</h4>
+  </div>  
+  <ul class="list-group list-group-flush">
+      <?php
+        $arr = array();
+        $arr = profileQuestion($sm['user']['lang']);
+        foreach($arr as $entry){ $q = $entry['question']; ?>
+        <?php $a = userProfileAnswer($sm['edit']['id'],$entry['id']); ?>
+          <li class="list-group-item">
+              <strong class="text-muted"><?= $entry['question'];?></strong><br>
+          <?php
+            if($entry['method'] == 'text'){
+              echo '<input onchange="updateProfileQuestionAnswer(this)" data-answer="edit" data-profile-question-answer="'.$entry['id'].'" data-question-method="text"  type="" class="form-control" value="'.$a.'"  style="top:-10px;font-size:1.0rem" />
+                <div class="valid-feedback" data-profile-question-answer-update="'.$entry['id'].'">Updated</div>';                     
+            } else {
+              $answer = array();
+              $answer = profileQuestionAnswer($entry['id'],$sm['edit']['lang']);
+              $aSelect = '';
+              foreach($answer as $an){
+                $selected = '';
+                if($an['answer'] == $a){
+                  $selected='selected';
+                }
+                $aSelect.='<option value="'.$an['id'].'" '.$selected.'>'.$an['answer'].'</option>';
+              }                             
+              echo '
+                <select data-answer="edit" onchange="updateProfileQuestionAnswer(this)" data-profile-question-answer="'.$entry['id'].'" data-question-method="select" class="form-control" style="top:-10px;font-size:1.0rem">
+                  '.$aSelect.'
+                </select>
+                <div class="valid-feedback" data-profile-question-answer-update="'.$entry['id'].'">Updated</div>
+              ';
+            }
+            ?> 
+          </li>                        
+  <?php } ?>  
+  </ul>
+  </div>
+</div>
+
+
+<div class="col-lg-6" data-full-height>                                
+<div class="card">
+  <div class="card-header card-header-large d-flex align-items-center">
+      <h4 class="card-header__title flex m-0" style="color: #444">Profile Interests</h4>
+  </div>  
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item"> 
+    <?php 
+      $interests = array();
+      $order = 'id desc';
+      $allInterests = getArray('interest','',$order);   
+
+      foreach ($allInterests as $val) {  
+        if(!isset($sm['edit']['interest'][$val['id']])){ 
+          $visible = 'grayScale';
+          $select = 0;
+        } else {
+          $interests[] = $val;
+          $select = 1;
+          $visible = '';
+        } ?> 
+                          
+          <div class="container-grid-interest box-shadow allInterests interestsBorderRadius <?= $visible; ?>" onclick="selectInterest(this);" data-select-interest-id="<?= $val['id']; ?>" style="background-image:url('<?= $val['icon']; ?>')" data-select="<?= $select; ?>" data-icon="<?= $val['icon']; ?>" data-name="<?= $val['name']; ?>" data-checked="<?= $select; ?>" data-id="<?= $val['id']; ?>">                         
+            <div class="interestName">
+              <span class="text-shadow"><?= $val['name']; ?></span>
+            </div>
+          </div>
+        
+    <?php } ?>
+    </li>
+  </ul>
+  </div>
+</div>

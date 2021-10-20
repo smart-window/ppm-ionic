@@ -1,0 +1,219 @@
+<script>
+  aurl = 'themes';
+  <?php if(isset($_GET['type'])){
+    echo 'themeType = "'.secureEncode($_GET['type']).'";';
+  } ?>  
+</script>
+<style>
+  .previewLaptop{
+    min-height: 690px;
+  }  
+  @media only screen and (device-width: 1280px),
+  only screen and (max-width:1280px) {
+    .previewLaptop{
+      min-height: 550px;
+    }
+    .card-theme{
+      width: 350px !important;
+    }
+  }  
+</style>
+<?php 
+$filter = 'preset = "'.$sm['settings']['desktopThemePreset'].'"';
+$currentTheme = getDataArray('theme_preset',$filter);
+?>
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px ">
+    <div class="row card-group-row">
+        <div data-theme-row class="col-xl-12 col-md-12">
+            <div class="row no-gutters previewLaptop">
+                <div class="col-lg-3 card-body" style="background: none;padding-right:45px;padding-top: 25px">
+                    <p style="font-size: 16px"><strong class="headings-color">Active Live design</strong></p>
+                    <p class="text-muted">This is the current visible preset for your desktop website.</p> 
+                </div>
+                <div class="col-lg-9 card-form__body card card-form card-body" style="background: #fff;padding: 25px">
+                    <h2><strong style="font-size: 22px;color: #111"><?= $sm['config']['name']; ?> desktop theme</strong></h2>
+                    <p class="text-muted">Preset: <strong style="color: #111"><?= $currentTheme['preset_alias'];?></strong></p>
+
+                    <div style="position: absolute;right: 20px;top: 25px;width: 50%;height: 50px">
+                        <div class="dropdown ml-auto">
+                            <a href="#" data-toggle="dropdown" data-caret="false" class="text-muted btn btn-light ml-3" style="width: auto;float: right;">
+                                <i class="material-icons">more_vert</i>
+                            </a>
+                            <div class="dropdown-menu " style="font-size: 13px;">
+                                <a class="dropdown-item" href="<?= $sm['config']['site_url']; ?>index.php?preset=<?= $sm['settings']['desktopThemePreset']; ?>" target="_blank">
+                                  <strong>Live demo</strong>
+                                </a>  
+                                <div class="dropdown-divider"></div>                            
+                                <a class="dropdown-item" href="javascript:;" data-edit-preset-action="duplicate" data-edit-preset="<?= $currentTheme['preset']; ?>" data-edit-preset-alias="<?= $currentTheme['preset_alias']; ?>">Duplicate</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="javascript:;" data-edit-preset-action="rename" data-edit-preset="<?= $currentTheme['preset']; ?>" data-edit-preset-alias="<?= $currentTheme['preset_alias']; ?>">Rename</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item"  href="javascript:;" data-export-preset-json-name="<?= $currentTheme['preset_alias']; ?>" data-export-preset-json="<?= $currentTheme['preset']; ?>">Export JSON file</a>
+                            </div>
+                        </div>
+                        <a href="<?= $sm['config']['site_url'];?>administrator/editor/theme/<?= $sm['settings']['desktopTheme'];?>/<?= $sm['settings']['desktopThemePreset'];?>" target="_blank" class="btn btn-white ml-3" style="width: auto;float: right;background: #4b367c;color: #fff"><i class="material-icons" style="color: #fff">view_compact</i> Customize</a>                                                                   
+                    </div>
+
+                   
+                     <div id="iframe-wrapper" >
+                      <iframe 
+                        id="iframe"
+                        src="<?= $sm['config']['site_url']; ?>index.php?preset=<?= $sm['settings']['desktopThemePreset'];?>" 
+                        frameborder="0"
+                        scrolling="yes" style="display: none"
+                      ></iframe>
+                     </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="row card-group-row"  id="myPresets">
+  <div data-theme-row class="col-lg-12 col-md-10">
+    <div class="row no-gutters" style="min-height: 100px">
+        <div class="col-lg-3 card-body" style="background: none;padding-right:15px;overflow: hidden;">
+            <p style="font-size: 18px">
+              <strong class="headings-color">Customized by you</strong>
+            </p>
+            <p class="text-muted">Manage your custom presets.<br>
+            Edit and publish changes to your online site appearance.</p><br> 
+            <a href="javascript:;" id="importPreset" onclick="upJSONfile('preset')" class="btn btn-light" style="width: 95%">
+              <i class="material-icons">add_circle_outline</i> Import JSON file</a>              
+        </div>
+        <div class="col-lg-9 card-form__body card card-form card-body" data-custom-presets style="background: #fff;padding: 15px;height: 550px;overflow-y: auto">
+          <div class="card-form__body card-body-form-group hidem" style="margin-bottom: 10px;height: 60px">
+              <div class="row">
+                  <div class="col-sm-auto" style="min-width: 30%">
+                      <div class="form-group">
+                          <label for="filter_name">Name</label>
+                      </div>
+                  </div>
+                  <div class="col-sm-auto" style="min-width: 20%">
+                      <div class="form-group">
+                          <label for="filter_name">Theme Base</label>
+                      </div>
+                  </div>                  
+                  <div class="col-sm-auto" style="min-width: 25%">
+                      <div class="form-group">
+                          <label for="filter_category">Last update</label><br>
+                      </div>
+                  </div>
+
+                  <div class="col-sm-auto">
+                      <div class="form-group" style="min-width: 15%;">
+                          <label for="filter_date">Actions</label>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        <?php
+          $filter = 'where theme = "'.$sm['settings']['desktopTheme'].'" and official = 0';
+          $presets = getArray('theme_preset',$filter,'theme_modification DESC');
+          $i=0; 
+          foreach ($presets as $p) { ?>
+          <div class="row align-items-center" data-preset-row="<?= $p['preset']; ?>" style="padding-left: 15px;">
+              <div class="col-auto" style="width: 30%">
+                  <div class="d-flex align-items-center">
+                      <a href="<?= $sm['config']['site_url']; ?>index.php?preset=<?= $p['preset']; ?>" target="_blank" class="text-body">
+                        <strong class="text-15pt mr-2" data-preset-alias="<?= $p['preset']; ?>"><?= $p['preset_alias']; ?></strong>
+                      </a>
+                      <?php if($sm['settings']['desktopThemePreset'] == $p['preset']){ ?> 
+                        <span class="badge badge-success" style="float: right;">Live</span> 
+                      <?php } ?>
+                  </div>
+              </div>
+              <div class="col-auto" style="width: 20%">
+                  <div class="d-flex align-items-center">
+                      <span class="text-body"><strong class="text-15pt mr-2"><?= $p['preset_base']; ?></strong></span>
+                  </div>
+              </div>                
+              <div class="col-auto text-left" style="width: 15%;padding-top: 15px;padding-left: 10px">
+                  <p class="nunito" style="color: #888;font-size: 12px;" data-preset-last-update="<?= $p['preset']; ?>"><?= time_elapsed_string($p['theme_modification']); ?></p>
+              </div>                                              
+              <div class="col-auto text-center" style="width: 33%;right: 40px;float: right;">
+                  <div class="dropdown ml-auto presetsDropdown">
+                      <a href="#" data-toggle="dropdown" data-caret="false" class="text-muted btn btn-light ml-3" style="width: auto;float: right;">
+                          <i class="material-icons">more_vert</i>
+                      </a>
+                      <div class="dropdown-menu" style="font-size: 13px;">
+                          <a class="dropdown-item" href="<?= $sm['config']['site_url']; ?>index.php?preset=<?= $p['preset']; ?>" target="_blank">
+                            <strong>Live demo</strong>
+                          </a>
+                          <div class="dropdown-divider"></div>                          
+                          <a class="dropdown-item" href="<?= $sm['config']['site_url'];?>administrator/editor/theme/<?= $sm['settings']['desktopTheme'];?>/<?= $p['preset']; ?>" target="_blank" style="color: #4b367c;">
+                            <strong>Edit preset</strong>
+                          </a>
+                          <div class="dropdown-divider"></div>                                                     
+                          <a class="dropdown-item" href="javascript:;" data-edit-preset-action="duplicate" data-edit-preset="<?= $p['preset']; ?>" data-edit-preset-alias="<?= $p['preset_alias']; ?>">Duplicate</a>
+
+                          <a class="dropdown-item" href="javascript:;" data-edit-preset-action="rename" data-edit-preset="<?= $p['preset']; ?>" data-edit-preset-alias="<?= $p['preset_alias']; ?>">Rename</a>
+
+                          <a class="dropdown-item" href="javascript:;" data-export-preset-json-name="<?= $p['preset_alias']; ?>" data-export-preset-json="<?= $p['preset']; ?>">Export JSON file</a>
+
+                          <?php if($sm['settings']['desktopThemePreset'] != $p['preset']){ ?> 
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="javascript:;" data-edit-preset-action="delete" data-edit-preset="<?= $p['preset']; ?>" data-edit-preset-alias="<?= $p['preset_alias']; ?>">Delete</a>   
+                          <?php } ?>
+
+                      </div>
+                  </div>                
+                                  
+                  <a href="<?= $sm['config']['site_url'];?>administrator/editor/theme/<?= $sm['settings']['desktopTheme'];?>/<?= $p['preset']; ?>" target="_blank" class="btn btn-light" style="color: #4b367c;float: right;"><i class="material-icons">brush</i></a>                                                 
+              </div>
+          </div>
+        <?php } ?>
+        </div>
+
+        <?php if($sm['user']['admin'] == 1){ ?>
+          <div class="col-lg-3 card-body" style="background: none;padding-right:45px">
+          </div>
+          <div class="col-lg-9 block-buy">
+              <div class="wrapper">
+                <a href="https://belloo.date/demos/<?= $sm['settings']['license']; ?>" target="_blank" style="text-decoration: none">                
+                <div class="block-buy-wrapper background-dark" style="background: #000">
+                  <img class="belloo-logo" src="<?php echo $sm['config']['admin_url']; ?>/assets/images/themes.png">
+                  <div class="row">
+                    <div class="" style="width: 99%">
+                      <h2 class="StolzlBold" style="font-size: 32px;color: #fff">Download <span style="color:#FAD67E">Free</span> Belloo Presets</h2>
+                      <p class="lead" style="color:#FAD67E;font-size: 14px">All designed to offer the best customization variation to every dating niche, you can download and install unlimited preset designs</p>
+                    </div>
+                  </div>
+                </div>  
+                </a>            
+              </div>                    
+          </div>
+        <?php } ?>      
+    </div>
+  </div>
+</div>    
+
+<div style="position: relative;width: 100%;height: 185px;background: none"></div>
+</div>
+
+<script>
+  var tadiv = document.getElementById('loadThemes');
+  selectedPreset = 0;
+  if(verifingLicense == false){
+    c.themes.forEach(function(el) {
+      if(el['themeType'] == themeType){
+        var image = "'"+el.image+"'";
+        var preset = "'"+el.preset+"'";
+        var theme = "'"+el.theme+"'";
+        tadiv.innerHTML += '<div class="card-theme" onclick="createPresetModal(event,'+preset+','+theme+','+image+','+selectedPreset+')"><div class="add box-shadow"  >'+
+          '<a style="color: #333"><i class="material-icons">add</i> Create preset</a></div>'+
+          '<img src="'+el.image+'"/>'+
+          '<div class="card-footer"><div class="card-info">'+
+          '<h4>'+el.preset+'</h4>' +
+          '<span class="card-maker">'+el.author+'</span></div>' +
+          '<span class="costs">'+el.themePrice+'</span>' +  
+          '</div></div>';
+      }
+      selectedPreset++;
+    });
+  }else{
+
+  }
+
+</script>

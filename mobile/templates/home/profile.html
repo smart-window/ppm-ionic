@@ -1,0 +1,193 @@
+<ion-view title="">
+  <ion-nav-title> 
+            <div class="layout__header vivify fadeIn delay-50" >
+                <div class="navigation-bar  navigation-bar--static navigation-bar--no-background" style="background: #fff">
+                    <div class="navigation-bar__primary" style="margin-left: -10px;">
+                        <div class="navigation-bar__icon " ng-click="openEditProfileModal()">
+                            <div class="icon" data-qa="icon">
+                                    <svg class="icon__content icon__content--inactive">
+<svg viewBox="0 0 64 64" id="navigation-bar-add-photo" width="100%" height="100%"><path d="M36.41 51.24c0 .37.02.74.04 1.1H4.41A4.46 4.46 0 0 1 0 47.84v-31.5c0-2.48 1.98-4.82 4.41-4.82h6.62c1.23 0 2.61-.28 2.87-1.02C14.75 8 17.43 6 19.86 6H33.1c2.44 0 5.11 2.01 5.97 4.5.14.4 1.64 1.02 2.86 1.02h6.62c2.44 0 4.42 2.34 4.42 4.83v19.48a15.67 15.67 0 0 0-2.21 0V16.35c0-1.38-1.1-2.63-2.2-2.63h-6.63c-2 0-4.4-.9-4.95-2.5-.56-1.62-2.4-3.01-3.88-3.01H19.86c-1.47 0-3.32 1.4-3.88 3-.66 1.93-2.57 2.51-4.95 2.51H4.41c-1.1 0-2.2 1.25-2.2 2.63v31.5c0 1.27 1 2.29 2.2 2.29h32.04c-.02.36-.04.73-.04 1.1z"></path><path d="M26.48 42.41a11.03 11.03 0 1 0 0-22.07 11.03 11.03 0 0 0 0 22.07zm0 2.21a13.24 13.24 0 1 1 0-26.48 13.24 13.24 0 0 1 0 26.48zm35.31 6.62a9.93 9.93 0 1 1-19.86 0 9.93 9.93 0 0 1 19.86 0zm2.21 0a12.14 12.14 0 1 0-24.28 0 12.14 12.14 0 0 0 24.28 0z"></path><path d="M50.76 45.72v11.04a1.1 1.1 0 0 0 2.2 0V45.72a1.1 1.1 0 0 0-2.2 0z"></path><path d="M57.38 50.14H46.34a1.1 1.1 0 0 0 0 2.2h11.04a1.1 1.1 0 1 0 0-2.2z"></path></svg>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="navigation-bar__main" style="margin-top: -8px;">
+                        <div class="navigation-bar__logo" style="">
+                            <center>
+                                <img class="" src="" style="height: 50px">
+                            </center>
+                        </div>
+                    </div>
+                    <div class="navigation-bar__secondary" style="margin-right: 20px;">
+                        <div class="navigation-bar__icon " ng-click="openEditProfileModal()">
+                            <div class="icon" data-qa="icon">
+                              <svg class="icon__content icon__content--inactive">
+<svg viewBox="0 0 64 64" id="navigation-bar-edit" width="100%" height="100%"><path d="M29.44 29.44a11.52 11.52 0 1 0 0-23.04 11.52 11.52 0 0 0 0 23.04zm0 2.56a14.08 14.08 0 1 1 0-28.16 14.08 14.08 0 0 1 0 28.16zm13.24 4.65H16.07C8.1 36.65 0 45 0 54.13v3.47h2.56v-3.47c0-7.75 6.97-14.92 13.5-14.92H42.7v-2.56z"></path><path d="M39.17 55.04c.23 0 .82-.24.97-.4l20.96-20.9a.69.69 0 0 0 0-.97l-5.36-5.36a.69.69 0 0 0-.98 0L34.01 48.16c-.15.15-.4.75-.4.96v5.92h5.56zm13.78-29.45a3.25 3.25 0 0 1 4.6 0l5.36 5.36a3.25 3.25 0 0 1 0 4.6l-20.95 20.9a4.52 4.52 0 0 1-2.78 1.15h-6.5a1.63 1.63 0 0 1-1.63-1.62v-6.86c0-.9.52-2.14 1.15-2.77l20.75-20.76z"></path><path d="M46.54 33.48l7.56 7.66 1.82-1.8-7.56-7.66z"></path></svg>
+                              </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+</ion-nav-title>
+
+  <ion-content  delegate-handle="modalContent" scroll="true" class="vivify fadeIn">
+<div class="page own-profile visible " style="z-index: 600;">
+    <div>
+        <div class="layout layout--centered-content h-tabbar-affected own-profile-abtest-control">
+            <div class="layout__content" style="margin-top:95px;height: 270px">
+                <div class="own-profile__userpic" style="margin-top: -65px;" ng-click="openProfileStory(me)">
+                    <div class="brick brick--stretch " style="display: inline-table">
+                        <div class="brick__image box-shadow-credits" ng-class="showStory ? 'storyOn' : ''" style="background-image: url('{{me.profile_photo}}');border-radius: 70px"></div>
+                    </div>                  
+                </div>                             
+                <div class="own-profile__username" style="font-size: 22px;margin-bottom: 50px;margin-top: 25px">{{me.name}}, {{me.age}}</div>
+                <div class="own-profile__payments">
+                    <div class="own-profile__payments-row">
+                        <div class="own-profile__payments-item" data-destination="popularity" data-tracking_element="63">
+                            <div class="own-profile__payments-label comforta" style="font-size: 14px" ><br>{{alang[201].text}}</div>
+                        </div>
+                        <div class="own-profile__payments-item" ng-click="openCreditsModal();">
+                            <div class="own-profile__payments-label comforta" style="font-size: 14px">
+                                <br>{{alang[48].text}}</div>
+                        </div>
+                        <div class="own-profile__payments-item" ng-click="openPremiumModal();">
+                            <div class="own-profile__payments-label comforta" data-lid="438" style="font-size: 14px">
+                                </div>
+                        </div>
+                    </div>
+                    <div class="own-profile__payments-row">
+                        <div class="own-profile__payments-item">
+                          <div class="own-profile__payments-value" style="margin-top: 5px"><img src="img/icon-battery-very-low.png" width="30px"></div>                          
+                        </div>
+                        <div class="own-profile__payments-item" ng-click="openCreditsModal();">
+                            <div class="own-profile__payments-value js-credits-value">{{me.credits}}</div>
+                        </div>
+                        <div class="own-profile__payments-item" ng-click="openPremiumModal();">
+                            <div class="own-profile__payments-value comforta" ng-if="me.premium == 0">{{alang[247].text}}</div>
+                            <div class="own-profile__payments-value comforta" ng-if="me.premium == 1">{{alang[248].text}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layout__footer layout__footer--hpadded layout__footer--vpadded" style="margin-top: 35px">
+
+               <div class="selector box-shadow-credits bg-tinder" ng-if="me.premium == 0" style="text-align: center;border-radius: 5px;margin-bottom: 30px" ng-click="openPremiumModal();">
+                    <div class="selector__label comforta" style="color: #fff;text-transform: uppercase;">{{alang[76].text}}</div>
+                </div>     
+
+                <div class="selector " ng-click="goTo('home.match');">
+                    <div class="selector__label comforta" data-lid="22"></div>
+                    <div class="selector__icon " style="margin-right: 5px;">
+                        <span style="font-weight: 700">{{me.totalMatches}}</span>
+                    </div>
+                </div>
+                <div class="selector " ng-click="goTo('home.visitors');">
+                    <div class="selector__label comforta" data-lid="286"></div>
+                    <div class="selector__icon " style="margin-right: 5px;">
+                        <small class="comforta gradient8" ng-if="me.newVisits > 0" style="color: #fff;padding:5px 10px 5px 10px;border-radius: 3px;">{{alang[261].text}}</small>
+                        <span style="font-weight: 700" ng-if="me.newVisits == 0">{{me.totalVisits}}</span>
+                    </div>
+                </div>  
+
+                <div class="selector " ng-click="goTo('home.likesme');">
+                    <div class="selector__label comforta" data-lid="101"></div>
+                    <div class="selector__icon" style="margin-right: 5px;">
+                        <small class="comforta gradient8" ng-if="me.newFans > 0" style="color: #fff;padding:5px 10px 5px 10px;border-radius: 3px;">{{alang[261].text}}</small>
+                        <span style="font-weight: 700" ng-if="me.newFans == 0">{{me.totalFans}}</span>
+                    </div>
+                </div> 
+
+                <div class="selector " ng-click="goTo('home.mylikes');">
+                    <div class="selector__label comforta" data-lid="295"></div>
+                    <div class="selector__icon" style="margin-right: 5px">
+                        <span style="font-weight: 700">{{me.totalMyLikes}}</span>
+                    </div>
+                </div>
+                 
+                <div class="selector " ng-click="openWithdrwal();" ng-if="cashout">
+                    <div class="selector__label comforta">{{alang[262].text}}</div>
+                    <div class="selector__icon " style="margin-right: 5px;">
+                        <small class="comforta gradient32" style="color: #fff;padding:5px 10px 5px 10px;border-radius: 3px;">{{currency}} {{me.payout}}</small>
+                    </div>
+                </div>
+
+                <div class="selector " ng-click="goTo('home.settings');">
+                    <div class="selector__label comforta">{{alang[40].text}}</div>
+                    <div class="selector__icon selector__icon--chevron-righ" style="margin-right: 20px">
+                    </div>
+                </div>
+                <div class="selector " ng-click="openVerificationModal();" ng-if="me.verified == 0 && verificationEnabled">
+                    <div class="selector__label comforta">{{lang[595].text}}</div>
+                    <div class="selector__icon selector__icon--chevron-righ" style="margin-right: 5px">
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1ff5" stroke-width="3" stroke-linecap="round" stroke-linejoin="arcs"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div flow-init
+         flow-name="uploader.flow"
+         flow-files-added="processFiles($files)">
+      <button flow-btn type="file" id="uploadRegPhoto" style="display: none;">{{alang[221].text}}</button>
+     </div>        
+      </ion-content>
+
+<div class="tabbar">
+    <div class="tabbar__items">
+        <div class="tabbar__item">
+            <div class="tabbar-item " ng-click="goTo('home.meet');">
+                <div class="tabbar-item__icon">
+                    <div class="icon icon--stretch" >
+                        <svg class="icon__content icon__content--inactive">
+                            <svg viewBox="0 0 64 64" id="menu-people-nearby" width="100%" height="100%">
+                                <path d="M2.13 32a29.86 29.86 0 1 0 59.73 0 29.86 29.86 0 0 0-59.73 0zM0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0z"></path>
+                                <path d="M42.82 4.07l-.79-1.99c-2.4.96-4.64 2.15-6.26 3.45-2.48 2-3.6 4.38-2.38 6.88.76 1.52 1.74 2.45 3.12 2.8.92.23 1.2.22 3.33-.02 1.23-.14 2.1-.18 3.17-.12 1.76.11 2.92.48 3.6.99.36.26.51.5.55.68.01.07-.05.26-.28.55-.7.85-2.13 1.42-4.06 1.42-.6 0-1.15-.11-1.9-.38l-.6-.22-.67-.26c-1.51-.57-2.65-.89-4.1-1.05-4.04-.44-6.19.22-8.63 2.75-2.12 2.2-3.1 5.27-2.95 9 .17 4.7 3.18 7.69 7.83 7.74a72.94 72.94 0 0 1 1.09.02c.69.02 1.36.05 1.99.1 1 .08 1.77.2 2.09.32 1.16.44 1.9 1.31 2.31 2.78.03.12 0 .72-.15 2.57-.1 1.16-.15 1.93-.17 2.75-.09 4.16.87 7.02 3.94 8.15 2.93 1.07 5.79-.2 8.44-2.97a32.22 32.22 0 0 0 4.99-7.37A26.73 26.73 0 0 0 58.66 35c.3-1.75.48-3.65.48-4.18 0-2.02-1-3.23-3.36-5.16-1.4-1.16-1.74-1.48-1.86-1.7-.21-.43-.21-.7-.15-.78.08-.11.22-.19.66-.19.47 0 1.1.12 2.09.37l.63.17c1.62.44 4 .68 5.33.23l-1.39-4.04a6.4 6.4 0 0 1-1.56-.09l2.25 2.1c-.97.34-3.33-.06-4.08-.26-1.12-.3-2.28-.61-3.27-.61-1.33 0-2.03.57-2.38 1.05-.58.78-.59 1.9-.03 3 .89 1.77 4.99 3.57 4.99 5.9 0 .07-.35 6.53-2.58 10.86-2.23 4.34-6.54 10.88-10.8 9.31-4.27-1.56-1.75-10.07-2.3-12.03-.58-2.1-1.8-3.52-3.62-4.2-1.53-.57-5.61-.57-5.9-.58-3.5-.04-5.58-2.11-5.72-5.69-.12-3.18.68-5.68 2.36-7.43 1.97-2.04 3.46-2.48 6.86-2.11 3.39.37 4.88 1.92 7.5 1.92 2.63 0 4.62-.87 5.71-2.2.62-.75.87-1.58.72-2.32-.2-1.06-1.38-3.1-6.1-3.38-4.73-.3-6.36 1.52-7.84-1.48-1.47-3 3.77-5.92 7.52-7.4zM.4 32.9a11.82 11.82 0 0 0 2.8 4.17l1.47 1.42A9.18 9.18 0 0 1 7 42.37a8.14 8.14 0 0 1-.35 5.32 10.56 10.56 0 0 1-.63 1.36l-.55.91 1.83 1.1.55-.9c.2-.35.5-.94.8-1.72.82-2.2 1.08-4.5.38-6.7A11.27 11.27 0 0 0 6.2 37c-.35-.36-1.46-1.41-1.5-1.45a8.13 8.13 0 0 1-.75-.83 13.57 13.57 0 0 1-1.25-1.9 4.64 4.64 0 0 1-.28-.6l-.33-1-2.03.67.34 1.01z"></path>
+                            </svg>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabbar__item">
+            <div class="tabbar-item "  ng-click="goTo('home.explore');">
+                <div class="tabbar-item__icon">
+                    <div class="icon icon--stretch" >
+                        <svg class="icon__content icon__content--inactive">
+<svg viewBox="0 0 64 64" id="menu-encounters" width="100%" height="100%"><path d="M25.62 54.16a6.4 6.4 0 0 0 6.11 4.5h21.34a6.4 6.4 0 0 0 6.4-6.4v-32a6.4 6.4 0 0 0-6.4-6.4h-11.2l6.78 25.3A8.53 8.53 0 0 1 42.6 49.6l-17 4.56zM41.3 11.73h11.77a8.53 8.53 0 0 1 8.53 8.54v32a8.53 8.53 0 0 1-8.53 8.53H31.73a8.54 8.54 0 0 1-8.18-6.09l-1.54.42a8.53 8.53 0 0 1-10.45-6.04L3.27 18.18A8.53 8.53 0 0 1 9.32 7.73l20.6-5.52a8.53 8.53 0 0 1 10.46 6.03l.93 3.49zm-35.96 5.9l8.28 30.91a6.4 6.4 0 0 0 7.84 4.52l20.6-5.52a6.4 6.4 0 0 0 4.53-7.84L38.3 8.8a6.4 6.4 0 0 0-7.84-4.53L9.86 9.79a6.4 6.4 0 0 0-4.52 7.84z" fill-rule="evenodd"></path></svg>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabbar__item">
+            <div class="tabbar-item " ng-click="goTo('home.matches');">
+                <div class="tabbar-item__icon">
+                    <div class="icon icon--stretch" >
+                        <svg class="icon__content icon__content--inactive">
+<svg viewBox="0 0 64 64" id="menu-connections" width="100%" height="100%"><path d="M59.73 61.87c-3.3 0-10.16-.58-16.82-2.6a28.7 28.7 0 0 1-11.98 2.6 28.8 28.8 0 1 1 28.8-28.8 28.68 28.68 0 0 1-6.21 17.87c1.04 4.26 2.9 8.03 6.21 10.93zm-8.29-10.42l-.24-1.01.64-.82a26.54 26.54 0 0 0 5.76-16.55 26.67 26.67 0 1 0-15.58 24.26l.74-.34.77.24a62.01 62.01 0 0 0 11.29 2.23 25.21 25.21 0 0 1-3.38-8z" fill-rule="evenodd"></path></svg>
+                        </svg>
+                    </div>
+                    <div class="tabbar-item__icon-indicator is-shown" ng-if="unreadMessage"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabbar__item">
+            <div class="tabbar-item" ng-click="goTo('home.profile');">
+                <div class="tabbar-item__icon">
+                    <div class="icon icon--stretch">
+                        <div class="brick-img profile-photo box-shadow-credits" 
+                        style="background-image: url('{{me.profile_photo}}');width: 30px;height:30px;border-radius: 15px"></div>                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

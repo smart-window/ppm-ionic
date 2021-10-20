@@ -1,0 +1,269 @@
+<?php
+  if($sm['admin_ajax'] == false){
+    header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=plugins');
+  }  
+?>
+<script>
+  aurl = 'quickdate';
+  currentMenu = 'plugins';
+  currentMenuCollapse = 'quickdate';  
+</script>
+
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px;min-height: 500px ">
+  <div class="page__heading d-flex align-items-center">
+      <div class="flex">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','')">Plugins</a></li>
+                <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','Software')">Software</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Quick date users importer</li>
+            </ol>            
+          </nav>
+      </div>
+      <a href="#" class="btn btn-light ml-3" onclick="goTo('plugins','','')"><i class="material-icons mr-1">arrow_back</i></a>
+  </div>  
+  <div class="row">
+    <div class="col-lg-12" >   
+      <div class="card card-form">
+          <div class="card-header card-header-large bg-white">
+              <h4 class="card-header__title">Connecting to Quick Date</h4>
+          </div>    
+           <div class="row no-gutters">
+              <div class="col-lg-4 card-body bg-light">
+                  <p class="text-muted">Full url where the quick date software is installed<br>
+                    For example if its installed in this same domain but in a folder make sure to add it as example: <code>https://belloo.date/quickdate/</code></p>
+              </div>
+              <div class="col-lg-8 card-form__body card-body bg-white">
+                <div class="form-row">                 
+          
+                <div class="col-12 col-md-12 mb-12">
+                  <label for="id">Quickdate url</label><br>
+                  <input type="text" data-import="url" value="" class="form-control">
+                </div>
+
+              </div>  
+            </div>    
+        </div>
+           <div class="row no-gutters">
+              <div class="col-lg-4 card-body bg-light">
+                  <p class="text-muted">Database access information</p>
+              </div>
+              <div class="col-lg-8 card-form__body card-body bg-white">
+                <div class="form-row">                 
+          
+                <div class="col-12 col-md-6 mb-3">
+                  <label for="secret">Database Host url</label><br>
+                  <input type="text" data-import="db_host" value="" class="form-control">
+                </div>
+
+                <div class="col-12 col-md-6 mb-3">
+                  <label for="secret">Database user</label><br>
+                  <input type="text" data-import="db_user" value="" class="form-control">
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                  <label for="secret">Database user password</label><br>
+                  <input type="text" data-import="db_pass" class="form-control">
+                </div>
+
+                <div class="col-12 col-md-6 mb-3">
+                  <label for="secret">Database name</label><br>
+                  <input type="text" data-import="db_name" value="" class="form-control">
+                </div>                
+
+              </div>  
+            </div>    
+        </div> 
+           <div class="row no-gutters">
+              <div class="col-lg-4 card-body bg-light">
+                  <p class="text-muted">Send welcome mail notification<br>
+                    When the system import the user to the new software send a welcome mail notification, pleae make sure to have a working SMTP server and this feature will slow down the importer plugin</p>
+              </div>
+              <div class="col-lg-8 card-form__body card-body bg-white">
+                <div class="form-row">                 
+                <div class="col-12 col-md-12 mb-12">
+                  <div class="flex">
+                      <label for="welcomeMailNotification">SEND WELCOME MAIL NOTIFICATION</label><br>
+                      <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1"> 
+                            <input type="checkbox" data-import="mail" id="welcomeMailNotification" class="custom-control-input">
+                            <label class="custom-control-label" for="welcomeMailNotification"></label>
+                        </div>
+                        <label for="welcomeMailNotification" class="mb-0"></label>
+                  </div>
+                </div>
+
+              </div>  
+            </div>    
+        </div>              
+        <div class="card-footer" data-import="connect" style="cursor: pointer;background: #ebb05d;">
+            <center><span style="text-align: center;color: #303030" >Connect to quickdate database</span></center>
+        </div>
+        <div class="card-footer bg-success" data-import="connected" style="cursor: pointer;display: none">
+            <center><span style="text-align: center;color: #fff">Connected successfully</span></center>
+        </div> 
+        <div class="card-footer bg-danger" data-import="failed" style="cursor: pointer;display: none">
+            <center><span style="text-align: center;color: #fff">We couldnt connect to the database</span></center>
+        </div> 
+        <div class="card-footer" data-import="import" style="cursor: pointer;display: none;background-image: linear-gradient(90deg, #e64c4c 0%, #ef32fb 100%);">
+            <center><span style="text-align: center;color: #fff">Import users</span></center>
+        </div>                            
+      </div>
+    </div>
+
+    <div class="col-lg-12" >
+      <div class="card card-form d-flex flex-column flex-sm-row">
+          <div class="card-form__body card-body-form-group flex">
+            <div data-import="progress" class="gradient32" style="position: absolute;top: 0;left: 0;width:0%;height: 100%;">
+            </div>
+              <div class="row">
+                  <div class="col-sm-12">
+                      <div class="form-group" data-import="found" style="text-align: center;font-size: 14px;display: none">
+                        
+                      </div>   
+                      <div class="form-group" data-import="importing" style="text-align: center;font-size: 12px;display: none;color: #f8c301">
+                        IMPORTING USERS, PLEASE WAIT...
+                      </div>                                            
+                  </div>                                                     
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" id="usersPreview"  style="background: none">         
+  </div>  
+</div>
+
+<script>
+var import_users = new Array();
+$('[data-import="connect"]').click(function(){
+  $('[data-import="connect"]').addClass('is-loading');
+  var index = 0;
+  $.ajax({
+      url: siteUrl+'assets/import/quickdate.php', 
+      data: {
+          db_host: $('[data-import="db_host"]').val(),
+          db_user: $('[data-import="db_user"]').val(),
+          db_pass: $('[data-import="db_pass"]').val(),
+          db_name: $('[data-import="db_name"]').val(),
+          url: $('[data-import="url"]').val(),
+          method: 'check'
+      },  
+      type: "post",
+      dataType: 'JSON',           
+      success: function(response) {
+        $('[data-import="connect"]').removeClass('is-loading');
+        $('[data-import="connect"]').hide();
+        if(response.error == 1){
+          $('[data-import="failed"]').show();
+          $('[data-import="failed"] span').text(response.msg);
+          setTimeout(function(){
+            $('[data-import="failed"]').hide();
+            $('[data-import="connect"]').show();
+          },3000);
+        } else {
+          index++;
+          response['users'].forEach(function(user) {
+              if(index < 500){
+                previewUser(user);  
+              }
+          });
+          import_users = response['import'];
+          $('[data-import="found"]').show();
+          $('[data-import="found"]').text('FOUND '+response['total']+' USERS - '+response['install_users']+' ACCOUNTS ARE AVAILABLE TO IMPORT');
+           
+          $('[data-import="connected"]').show();
+          $('[data-import="connect"]').hide();          
+          setTimeout(function(){
+            $('[data-import="connected"]').hide();
+            if(response['install_users'] > 0){
+              $('[data-import="import"]').show();
+            }
+          },1000);          
+              
+        }
+      },
+  });      
+});
+
+$('[data-import="import"]').click(function(){
+  var index = 0;
+  $('[data-import="found"]').hide();
+  $('[data-import="importing"]').show();
+
+  var checked = $('[data-import="mail"]:checked').val();
+  if(checked != 'on'){
+      var mail = 'No';
+  }else {
+      var mail = 'Yes';
+  }
+
+  import_users.forEach(function(user) {  
+    $.ajax({
+        url: siteUrl+'assets/import/quickdate.php', 
+        data: {
+            db_host: $('[data-import="db_host"]').val(),
+            db_user: $('[data-import="db_user"]').val(),
+            db_pass: $('[data-import="db_pass"]').val(),
+            db_name: $('[data-import="db_name"]').val(),
+            url: $('[data-import="url"]').val(),
+            method: 'add',
+            id: user,
+            mail: mail
+        },  
+        type: "post",
+        dataType: 'JSON',           
+        success: function(response) {
+          index++;
+          console.log(response);
+          var text = 'Imported user - '+response['username'];
+          var outOff = import_users.length;
+          var progress = (index * 100) / outOff;
+          progress = parseInt(progress);
+          progress = progress.toFixed(0);
+          if(progress >= 97){
+            progress = 100;
+          }     
+          importProgress(text,progress); 
+        },
+    });  
+  });
+});
+
+function previewUser(user){
+  var url = $('[data-import="url"]').val();
+  var checkUrl = url.substr(-1,1);
+  if(checkUrl != '/'){
+    url = url+'/';
+  }
+  $('#usersPreview').append(`
+    <div class="col-md-3" style="display:inline-table;margin-bottom:10px;">
+      <div class="media align-items-center">
+          <div class="avatar avatar-sm mr-3">
+              <img src="`+url+user.avater+`" class="avatar-img rounded-circle">
+          </div>
+          <div class="media-body" style="  overflow: hidden;text-overflow: ellipsis;max-width:150px">
+              <strong class="js-lists-values-employee-name">`+user.username+`</strong><br>
+              <span class="text-muted" style="font-size:10px !important">`+user.email+`</span><br>
+              <small style="font-size:10px">`+user.status+`</small>
+          </div>
+      </div>
+    </div>                      
+  `);    
+}
+
+function importProgress(text,progress){
+  var current = $('[data-import="progress"]').width() / $('[data-import="progress"]').parent().width() * 100;
+  current = parseInt(current);
+  current = current+5;
+  progress = parseInt(progress); 
+  if(progress > current){
+    $('[data-import="importing"]').text(text);
+    $('[data-import="progress"]').css('width',progress+'%');    
+  }
+  if(progress == 100){
+    $('[data-import="progress"]').css('width','100%');
+    $('[data-import="importing"]').text('Import Complete');
+  }
+}
+
+</script>

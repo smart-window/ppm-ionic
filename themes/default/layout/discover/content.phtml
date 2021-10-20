@@ -1,0 +1,184 @@
+<script>
+	url = "discover";
+</script>
+<?php if($sm['plugins']['story']['enabled'] == 'Yes'){
+ ?>
+	<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+		<div class="stories-feed-layout stories-discover vivivfy fadeIn" data-stories-discover style="margin-left: 16.6%;padding-right: 21%;margin-bottom: 25px;overflow-y: hidden;overflow-x: auto;display: none">
+		    <div class="controlsNav" style="right: 18%">
+		      <div data-story-discover-prev>
+		        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="<?=$sm['theme']['story_nav_arrow']['val']; ?>" d="M136.97 380.485l7.071-7.07c4.686-4.686 4.686-12.284 0-16.971L60.113 273H436c6.627 0 12-5.373 12-12v-10c0-6.627-5.373-12-12-12H60.113l83.928-83.444c4.686-4.686 4.686-12.284 0-16.971l-7.071-7.07c-4.686-4.686-12.284-4.686-16.97 0l-116.485 116c-4.686 4.686-4.686 12.284 0 16.971l116.485 116c4.686 4.686 12.284 4.686 16.97-.001z" class=""></path></svg>
+		      </div>
+		      <div data-story-discover-next>
+		        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="<?=$sm['theme']['story_nav_arrow']['val']; ?>" d="M311.03 131.515l-7.071 7.07c-4.686 4.686-4.686 12.284 0 16.971L387.887 239H12c-6.627 0-12 5.373-12 12v10c0 6.627 5.373 12 12 12h375.887l-83.928 83.444c-4.686 4.686-4.686 12.284 0 16.971l7.071 7.07c4.686 4.686 12.284 4.686 16.97 0l116.485-116c4.686-4.686 4.686-12.284 0-16.971L328 131.515c-4.686-4.687-12.284-4.687-16.97 0z" class=""></path></svg>
+		      </div>
+		    </div>				
+	<?php } else { ?>
+		<div class="stories-feed-layout stories-discover vivify fadeIn" data-stories-discover style="margin-left: 1%;padding-right: 21%;margin-bottom: 25px;overflow-y: hidden;overflow-x: auto;display: none">
+	    <div class="controlsNav" style="right: 13%">
+	      <div data-story-discover-prev>
+	        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="<?=$sm['theme']['story_nav_arrow']['val']; ?>" d="M136.97 380.485l7.071-7.07c4.686-4.686 4.686-12.284 0-16.971L60.113 273H436c6.627 0 12-5.373 12-12v-10c0-6.627-5.373-12-12-12H60.113l83.928-83.444c4.686-4.686 4.686-12.284 0-16.971l-7.071-7.07c-4.686-4.686-12.284-4.686-16.97 0l-116.485 116c-4.686 4.686-4.686 12.284 0 16.971l116.485 116c4.686 4.686 12.284 4.686 16.97-.001z" class=""></path></svg>
+	      </div>
+	      <div data-story-discover-next>
+	        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="<?=$sm['theme']['story_nav_arrow']['val']; ?>" d="M311.03 131.515l-7.071 7.07c-4.686 4.686-4.686 12.284 0 16.971L387.887 239H12c-6.627 0-12 5.373-12 12v10c0 6.627 5.373 12 12 12h375.887l-83.928 83.444c-4.686 4.686-4.686 12.284 0 16.971l7.071 7.07c4.686 4.686 12.284 4.686 16.97 0l116.485-116c4.686-4.686 4.686-12.284 0-16.971L328 131.515c-4.686-4.687-12.284-4.687-16.97 0z" class=""></path></svg>
+	      </div>
+	    </div>			
+	<?php } ?>
+	
+	    <div class="stories-feed stories-discover-feed" style="height: 104px;background: none;border-top:none;">    	
+	        <div class="slider-content" >
+	            <div class="story-container" style="position:relative;opacity:1;display: inline-block;">
+
+	                <div class="story-preview"  data-upload-story onclick="upStoryDiscover()">
+	                	
+	                	<div class="story-preview-background discoverStoryPhoto" data-discover-upload-story="1" style="background-image:url(<?= $sm['user']['profile_photo']; ?>)"></div>
+	                    <div class="story-preview-mask-me"></div><div class="user-avatar story-preview-avatar profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>" style="border:2px solid #7f17a9"></div>
+	                    <p class="story-preview-name">
+	                    	<span><?= $sm['lang'][623]['text']; ?></span>
+	                    </p>
+	                </div>               
+	            </div>
+	            <?= discoverStories($sm['user']['lat'],$sm['user']['lng']); ?>           
+	            <div class="story-container vivify"  data-story-loading="1">
+	                <div class="story-preview" style="background: #312e39"></div>
+	            </div> 
+	            <div class="story-container vivify"  data-story-loading="2">
+	                <div class="story-preview" style="background: #312e39"></div>
+	            </div> 
+	            <div class="story-container vivify" data-story-loading="3">
+	                <div class="story-preview" style="background: #312e39"></div>
+	            </div> 
+	            <div class="story-container vivify"  data-story-loading="4">
+	                <div class="story-preview" style="background: #312e39"></div>
+	            </div>
+	            <div class="story-container vivify" data-story-loading="5">
+	                <div class="story-preview" style="background: #312e39"></div>
+	            </div> 
+	            <div class="story-container vivify" data-story-loading="6">
+	                <div class="story-preview" style="background: #312e39"></div>
+	            </div> 
+	            <div class="story-container vivify"  data-story-loading="7">
+	                <div class="story-preview" style="background: #312e39"></div>
+	            </div> 
+	            <div class="story-container vivify"  data-story-loading="8">
+	                <div class="story-preview" style="background: #312e39"></div>
+	            </div> 			            	                        	            	            	         
+	        </div>		          	
+	    </div>
+	</div>
+<?php } ?>
+
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+	<div class="col s2 real" style="padding-right: 0px;" >
+	<?php 
+		if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+			echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+		}
+	?>		
+	</div>
+	<div class="col s8 real mainContentBorderColor"  id="site-content" style="background: <?=$sm['theme']['wall_bg_discover']['val']; ?>;">
+<?php } else { ?>
+	<div class="col s8 real fix-width-content mainContentBorderColor" style="padding-right: 0px;background: <?=$sm['theme']['wall_bg_discover']['val']; ?>;" id="site-content">
+<?php } ?>	
+
+	<center data-discover-result="0" style="display: none;margin-bottom: 50px">
+		
+		<br>
+        <div class="brick  brick--xxlg vivify" style="width: 240px;height: 240px;border-radius:<?= $sm['theme']['discover_no_result_border']['val']; ?>px">
+            <div class="brick-img profile-photo box-shadow-credits" data-src="<?= $sm['theme']['discover_no_result']['val']; ?>"></div>
+        </div>
+		<br><br>
+		<strong>
+			<h5 style="color:<?= $sm['theme']['wall_color_discover']['val']; ?>"><?=$sm['lang'][153]['text'];?></h5>
+		</strong>
+		<h5 style="color:<?= $sm['theme']['wall_color_discover']['val']; ?>;opacity: .5">
+			<?=$sm['lang'][597]['text'];?>
+		</h5>
+	</center>
+
+    <?php if($sm['theme']['top_user_header_gradient_discover']['val'] == 'Yes'){ ?>          
+    	<div class="top-user-header topHeaderDiscoverSection <?=$sm['theme']['top_user_header_bg_discover']['val']; ?>" data-discover-result="1" style="display: none">
+    <?php } else { ?> 
+    	<div class="top-user-header topHeaderDiscoverSection" data-discover-result="1" style="background: <?=$sm['theme']['top_user_header_bg_discover']['val']; ?>;display: none">
+    <?php } ?>
+		<div class="story" id="discoverStories" onclick="" >
+			<div class="profile-photo vivify popIn" data-game-photo data-src=""></div>
+			<div class="roller" data-storyRoller data-loading-story style="display: none"></div>
+			<div class="over-roller" data-storyPath data-loading-story style="display: none">
+			</div>
+		</div>	
+		<nav class="nav-swipe" >
+		    <button class="button-circular vivify popIn <?=$sm['theme']['icon_nolike_bg_discover']['val']; ?>" data-like-game="0" data-id style="opacity: 1; transform: translateY(0px);background: <?=$sm['theme']['icon_nolike_bg_discover']['val']; ?>">
+		        <svg class="icon" viewBox="0 0 60 60" style="width: 40px;height: 40px">
+		            <polygon fill="<?=$sm['theme']['icon_nolike_color_discover']['val']; ?>" points="45.82 16.12 43.7 14 29.91 27.79 16.12 14 14 16.12 27.79 29.91 14 43.7 16.12 45.82 29.91 32.03 43.7 45.82 45.82 43.7 32.03 29.91"></polygon>
+		        </svg>
+		    </button>
+		    <button class="button-circular vivify popIn <?=$sm['theme']['icon_like_bg_discover']['val']; ?>" data-like-game="1" data-id style="opacity: 1; transform: translateY(0px);background: <?=$sm['theme']['icon_like_bg_discover']['val']; ?>">
+				<svg fill="<?=$sm['theme']['icon_like_color_discover']['val']; ?>" viewBox="0 0 32 32" width="100%" height="100%"><path d="M16 12.06a3.85 3.85 0 0 0-3.12-1.61 3.94 3.94 0 0 0-3.88 4c0 3.6 4.69 8.13 7 8.13 2.31 0 7-4.53 7-8.14 0-2.2-1.74-3.99-3.88-3.99-1.24 0-2.4.6-3.12 1.61z"></path></svg>
+		    </button>
+		</nav>
+
+		<h2 id="dis_name" class="montserratBold" style="left: 110px;"> </h2>
+		<span id="dis_city" style="left: 110px;"></span>
+		<div style="position: absolute;right: 35px;top:30px;">
+		    <div class="btn btn--white btn--ico tooltip-no-js-wrap js-profile-header-btn close-slider-btn" style="float:right;display:none;" onclick="closeSlider()">
+			    <i class="icon ion-close-round" style="font-size: 24px;position: absolute;top: 10px;left:13px"></i> 
+		    </div>	
+		</div>
+
+      <div class="banner-container" data-wide-spotlight style="position: absolute;right: 0;">
+          <div class="banner" style="background: none;box-shadow: none" data-discover-next-people>
+             
+          </div>
+        </div> 					
+	</div>
+	<div class="discover"  data-discover-result="1" style="position:relative;width:100%;height:650px;top:0;" id="dis_photos">
+	</div>
+
+	<?php if($sm['user']['premium'] == 0){ ?>
+
+	  	<div style="position:relative;width:80%;margin-left:10%;height:140px;background: none">
+		    <div class="banner-container" style="margin-left: 0;padding-top: 24px;width: 100%!important">
+				<?php if($sm['theme']['premium_banner_gradient']['val'] == 'Yes'){ ?>
+					<div class="banner <?= $sm['theme']['premium_banner_bg']['val']; ?>" >
+				<?php } else { ?>	
+					<div class="banner" style="background:<?= $sm['theme']['premium_banner_bg']['val']; ?> ">			
+				<?php } ?>			               		
+			        <div class="banner-content" >
+			            <div class="banner-promo" >
+			                <div class="brick-group brick-group--promo">
+			                    <div class="brick brick--lg brick--stroke vivify">
+			                        <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+			                    </div>
+			                    <div class="brick brick--lg brick--stroke vivify ">
+			                        <div class="brick-img profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>
+			                        <mark class="brick brick--xsm brick--spp brick--bc"><img src="<?= $sm['config']['theme_url']; ?>/images/vip_y.png" class="vivify pulsate infinite" width="16px" /></mark>
+			                    </div>
+			                    <div class="brick brick--lg brick--stroke vivify">
+			                        <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+			                    </div>
+			                </div>
+			            </div>
+			            <div class="banner-text montserratRegular" style="color: <?= $sm['theme']['premium_banner_color']['val']; ?>"><?= $sm['lang'][453]['text']; ?>!</div>
+			        </div>
+			        <div class="banner-buttons" onClick="goTo('premium');">
+			            <div class="btn btn--sm" style="background: <?= $sm['theme']['premium_banner_btn_bg']['val']; ?>;color:<?= $sm['theme']['premium_banner_btn_color']['val']; ?>"> <span class="btn-txt"><?= $sm['lang'][433]['text']; ?>!</span></div>
+			        </div>
+			    </div>
+		    </div>		  
+	  	</div>
+
+  	<?php } ?>
+
+	<?= getAbsolutePage('footer'); ?>				
+</div> 
+
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+	<div class="col s2 real" style="position: relative;">
+		<?php 
+			if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+				echo '<div class="ad-zone-vertical" style="margin-left:79px;">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+			}
+		?>	
+	</div>
+<?php }?>	            

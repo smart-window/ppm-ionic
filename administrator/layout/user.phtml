@@ -1,0 +1,597 @@
+<script>
+  aurl = 'user';
+  currentMenu = 'all-users';
+  currentMenuCollapse = 'users';  
+  currentEditUser= <?= $_GET['id']; ?>;
+</script>
+<?php 
+
+  if($sm['moderator']['Users'] == 'No'){
+    echo '
+    <div class="alert alert-light" role="alert" style="width:50%;margin:0 auto;text-align:center;margin-top:50px;">
+        <strong>Access Denied!</strong> You dont have access to view this section
+    </div>
+    ';
+    exit;
+  }
+
+  $sm['userId'] = $_GET['id'];
+  getUserInfo($sm['userId'],8);
+
+  $chatsSentByMe = getArrayDSelectedVal('r_id','chat','WHERE s_id = '.$sm['edit']['id'].' ORDER BY id DESC');
+  $chatsSentToMe = getArrayDSelectedVal('s_id','chat','WHERE r_id = '.$sm['edit']['id'].' ORDER BY id DESC');
+  $arr = array_merge($chatsSentToMe,$chatsSentByMe);
+  $sm['edit']['chats'] = array_unique($arr);
+  $sm['edit']['password'] = getData('users','password','WHERE id = '.$sm['userId']);
+
+  if($sm['edit']['fake'] == 0){
+    $age = explode(',',$sm['edit']['s_age']);  
+  } else {
+    $age = explode(',', "18,30,1");
+  }  
+  
+
+?>
+<script> 
+  edit_info = <?= json_encode($sm['edit']); ?>;
+</script>
+<div style="position: relative; margin-bottom: 1.5rem;display: none" id="profileEditHeader">
+    <div style="min-height: 100px;">
+        <div class="d-flex align-items-end container-fluid page__container" style="position: absolute; left: 0; right: 0; bottom: 0;">
+
+            <div class="avatar avatar-xl <?php if($sm['edit']['status_info'] == 1){ echo 'avatar-online';} else { echo 'avatar-offline'; } ?>" data-toggle="tooltip" data-placement="right" title="" data-original-title="<?= $sm['edit']['first_name']; ?>">
+              <img src="<?= $sm['edit']['profile_photo']; ?>" data-media-profile-photo="<?= $sm['edit']['id']; ?>" alt="avatar" class="avatar-img rounded-circle" style="border: 2px solid white;">
+            </div>          
+            <div class="card-header card-header-tabs-basic nav flex" role="tablist">
+                <a href="#activity" class="active show" data-toggle="tab" role="tab" aria-controls="activity" aria-selected="true">Activity</a>
+                <a href="#profiledata" data-toggle="tab" role="tab"  aria-controls="profilequestions" aria-selected="false" >
+                  Profile
+                </a>                
+                <a href="#media" data-toggle="tab" role="tab"  aria-controls="media" aria-selected="false" 
+                  onclick="goTo('mediaPhotos','All',<?= $sm['edit']['id']; ?>,false,true);">
+                  Media (<?= selectC('users_photos','WHERE u_id = '.$sm['edit']['id']); ?>)
+                </a>
+                <a href="#chats" data-toggle="tab" role="tab" data-tab-url="chat" aria-controls="chats" aria-selected="false">
+                  Chats (<?= count($sm['edit']['chats']); ?>)
+                </a>
+                <a href="#creditsinfo" data-toggle="tab" role="tab" aria-controls="creditsinfo" aria-selected="false">
+                  Credits
+                </a>                
+                <a href="#videocalls" data-toggle="tab" role="tab" onclick="goTo('userVideocalls','All',<?= $sm['edit']['id']; ?>,false,true);" aria-selected="false">
+                  Videocalls
+                </a>                                                                                
+               <div class="text-muted d-flex align-items-center" style="position: absolute;right: 30px">
+                  <div class="">
+                    <div class="dropdown">
+                        <button class="btn btn-light"  data-toggle="dropdown" data-caret="false" >
+                           Actions <i class="material-icons">more_vert</i>
+                         </button> 
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="<?= $sm['config']['site_url']; ?>@<?= $sm['edit']['username']; ?>" target="_blank" style="font-size: 13px">
+                              <i class="material-icons icon-20pt">person_pin</i>
+                              <?= $sm['edit']['first_name']; ?> live profile
+                            </a>
+                            <div class="dropdown-divider"></div>                           
+                            <a class="dropdown-item" href="#" onclick="openWidget('userProfileBasicInfo');" style="font-size: 13px">
+                              <i class="material-icons icon-20pt">edit</i>
+                              Edit <?= $sm['edit']['first_name']; ?>
+                            </a>
+
+                            <div class="dropdown-divider"></div>
+                            <?php if($sm['edit']['popular'] >= 5000){ ?>
+                            <a class="dropdown-item" href="javascript:;" 
+                              onclick="updateProfileData('setPopular',5000,'popular','')" style="font-size: 13px">
+                              <i class="material-icons icon-20pt" >my_location</i>
+                              Remove popularity
+                            </a>
+                            <?php } else { ?>
+                            <a class="dropdown-item" href="javascript:;" 
+                              onclick="updateProfileData('setPopular',5000,'popular','')" style="font-size: 13px">
+                              <i class="material-icons icon-20pt" >my_location</i>
+                              Set as popular
+                            </a> 
+                            <?php } ?> 
+
+                            <?php if($sm['edit']['verified'] == 1){ ?>
+                            <a class="dropdown-item" href="javascript:;" 
+                              onclick="updateProfileData('setVerified',0,'verified','')" style="font-size: 13px">
+                              <i class="material-icons icon-20pt">verified_user</i>
+                              Remove Verification
+                            </a> 
+                            <?php } else { ?>
+                            <a class="dropdown-item" href="javascript:;" 
+                              onclick="updateProfileData('setVerified',1,'verified','')" style="font-size: 13px">
+                              <i class="material-icons icon-20pt">verified_user</i>
+                              Verify User
+                            </a> 
+                            <?php } ?>  
+
+                            <a class="dropdown-item" href="javascript:;" 
+                              onclick="updateProfileData('addToSpotlight','spotlight')"  style="font-size: 13px">
+                              <i class="material-icons icon-20pt">camera</i>
+                              Add to spotlight
+                            </a>                             
+                            <div class="dropdown-divider"></div>  
+
+                            <?php if($sm['edit']['fake'] == 1){ ?>
+                              <a class="dropdown-item" href="javascript:;"
+                                onclick="updateProfileData('setFakeUser',0,'fake','Normal User')" style="font-size: 13px">
+                                <i class="material-icons icon-20pt">person</i>
+                                Change to Normal User
+                              </a>
+                              <a class="dropdown-item" href="javascript:;"
+                                data-toggle="modal" data-target="#modal-update-onlineDay" style="font-size: 13px">
+                                <i class="material-icons icon-20pt">access_time</i>
+                                Change online day
+                              </a>                              
+                              <div class="dropdown-divider"></div>
+                            <?php } else { ?>
+                              <a class="dropdown-item" href="javascript:;"
+                                  onclick="updateProfileData('setFakeUser',1,'fake','Fake User')" style="font-size: 13px">
+                                <i class="material-icons icon-20pt">person</i>
+                                Change to Fake User
+                              </a>
+                              <div class="dropdown-divider"></div>
+                            <?php } ?>
+
+                            <a class="dropdown-item" href="javascript:;" onclick="openWidget('userUpdatePassword');" style="font-size: 13px">
+                              <i class="material-icons icon-20pt">lock_outline</i>
+                              Change password
+                            </a>  
+
+                            <?php if($sm['edit']['admin'] == 0 ||  $sm['user']['admin'] == 1){ ?>                              
+                            <a class="dropdown-item" href="javascript:;" 
+                              onclick="adminDeleteProfile(<?= $sm['userId']; ?>);" style="font-size: 13px">
+                              <i class="material-icons icon-20pt" style="color: #b50000">delete_forever</i>
+                              Delete account
+                            </a>                                    
+                            <a class="dropdown-item" href="javascript:;" 
+                              onclick="adminDeleteProfile(<?= $sm['userId']; ?>,0,'ip,No');" 
+                              style="font-size: 13px">
+                              <i class="material-icons icon-20pt" style="color: #b50000">block</i>
+                              Ban IP user
+                            </a>
+                            <a class="dropdown-item" href="javascript:;" 
+                              onclick="adminDeleteProfile(<?= $sm['userId']; ?>,0,'email,No');" 
+                              style="font-size: 13px">
+                              <i class="material-icons icon-20pt" style="color: #b50000">block</i>
+                              Ban Email user
+                            </a> 
+                            <?php } ?>           
+                        </div>
+                    </div>                 
+                  </div>
+
+                  <?php if($sm['user']['admin'] == 1){ ?>
+                  <div class="" style="margin-left: 10px;">
+                    <div class="dropdown">
+                        <button class="btn btn-light"  data-toggle="dropdown" data-caret="false" >
+                           Admin Actions <i class="material-icons">more_vert</i>
+                         </button> 
+                        <div class="dropdown-menu dropdown-menu-right">
+                          <a class="dropdown-item" href="javascript:;" onclick="adminProfileActions('addCredits')" style="font-size: 13px">
+                            <i class="material-icons icon-20pt" style="color:#FFC107">copyright</i>
+                            Add credits
+                          </a> 
+                          <a class="dropdown-item" href="javascript:;" onclick="adminProfileActions('addPremium')" style="font-size: 13px">
+                            <i class="material-icons icon-20pt" style="color: #3D2292!important">star</i>
+                            Give premium
+                          </a>
+                          <?php if($sm['edit']['admin'] != 1){ ?>
+                          <a class="dropdown-item" href="javascript:;" onclick="adminProfileActions('viewPassword')" style="font-size: 13px">
+                            <i class="material-icons icon-20pt" style="color: #111!important">lock_open</i>
+                            View password
+                          </a> 
+                          <?php } ?>                         
+                          <?php if($sm['edit']['admin'] == 1 && $sm['edit']['id'] != $sm['user']['id']){ ?>
+                            <a class="dropdown-item" href="javascript:;" onclick="updateProfileData('setAdministrator',0,'admin','Normal User')" style="font-size: 13px">
+                              <i class="material-icons icon-20pt">person</i>
+                              Remove Administrator role
+                            </a> 
+                          <?php } ?>
+                          <?php if($sm['edit']['admin'] == 0 || $sm['edit']['admin'] == 2){ ?>
+                            <a class="dropdown-item" href="javascript:;" href="javascript:;" onclick="updateProfileData('setAdministrator',1,'admin','Administrator')" style="font-size: 13px">
+                              <i class="material-icons icon-20pt">person</i>
+                              Convert Administrator
+                            </a>  
+                            <?php 
+                              $moderationList = getArray('moderators','','id ASC');
+                              foreach ($moderationList as $data) { 
+                              ?>
+                              <a class="dropdown-item" href="javascript:;" onclick="updateProfileData('setAdministrator',2,'admin','<?= $data['id']; ?>')" style="font-size: 13px">
+                                <i class="material-icons icon-20pt">person</i>
+                                Convert <?= $data['id']; ?>
+                              </a>                                
+                            <?php } ?>
+                          <?php } ?>                          
+                        </div>
+                    </div>                 
+                  </div>
+                  <?php } ?>                  
+              </div>                 
+            </div>
+        </div>
+    </div>
+</div>
+  <!-- SECTION CONTENT -->
+<div class="container-fluid page__container" id="profileEditContainer" style="display: none">
+  <div class="row">
+      <div class="col-lg-3" id="editUserLeftSection">
+          <h1 class="h4 mb-1"><?= $sm['edit']['name']; ?>, <?= $sm['edit']['age']; ?>
+            <?php if($sm['edit']['status_info'] == 1){
+              echo '<span style="margin-left:0px;color:#17D42B!important;font-size:10px;">online now</span>';
+            }?>
+          </h1>
+          <p class="text-muted">@<?= $sm['edit']['username']; ?></p>
+          <p style="font-size: 12px">
+            <?= $sm['edit']['bio']; ?>
+          </p> 
+
+          <?php if($sm['edit']['fake'] == 1){ ?>
+            <div class="d-flex align-items-center" style="margin-bottom: 10px">
+                <i class="material-icons mr-1">account_box</i>
+                <div class="flex" id="setAdministratorText">Fake user</div>
+            </div> 
+          <?php } ?> 
+
+          <?php if($sm['edit']['fake'] == 0 && $sm['edit']['admin'] == 0){ ?>
+            <div class="d-flex align-items-center" style="margin-bottom: 10px">
+                <i class="material-icons mr-1">account_box</i>
+                <div class="flex" id="setAdministratorText">Normal user</div>
+            </div> 
+          <?php } ?> 
+
+          <?php if($sm['edit']['admin'] >= 1){ ?>
+            <div class="d-flex align-items-center" style="margin-bottom: 10px">
+                <i class="material-icons mr-1">account_box</i>
+                <div class="flex" id="setAdministratorText"><?= $sm['edit']['moderator']; ?></div>
+            </div> 
+          <?php } ?> 
+          <div class="d-flex align-items-center" style="margin-bottom: 10px">
+              <i class="material-icons mr-1">email</i>
+              <div class="flex"><?= $sm['edit']['email']; ?></div>
+          </div>
+          <?php if($sm['edit']['fake'] == 0){ ?>
+          <div class="d-flex align-items-center" style="margin-bottom: 10px">
+              <i class="material-icons mr-1">search</i>
+              <div class="flex">Looking for <?= getGenderName($sm['edit']['s_gender']); ?> <?= $age[0]; ?>-<?= $age[1]; ?> years</div>
+          </div>   
+          <?php } ?>
+ 
+          <div class="d-flex align-items-center" style="margin-bottom: 10px">
+              <i class="material-icons mr-1">location_on</i>
+              <div class="flex"><?= $sm['edit']['city']; ?>, <?= $sm['edit']['country']; ?></div>
+          </div>
+          
+          <div class="d-flex align-items-center" style="margin-bottom: 5px;">
+              <i class="material-icons mr-1" style="color:#FFC107">copyright</i>
+              <div class="flex">
+                <span id="editUserCreditsText"><?= $sm['edit']['credits']; ?></span> credits
+              </div>
+          </div>  
+          <?php if($sm['edit']['verified'] == 1){ ?>
+            <div class="d-flex align-items-center" style="margin-bottom: 10px">
+                <i class="material-icons mr-1" style="color:#1CC5F7;">verified_user</i>
+                <div class="flex">Verified user</div>
+            </div> 
+          <?php } ?>   
+                                      
+          <?php if($sm['edit']['fake'] == 0){ ?>
+            <div class="d-flex align-items-center" style="margin-bottom: 10px">
+                <i class="material-icons mr-1">access_time</i>
+                <div class="flex">
+                  <?php 
+                    $last_connection = time_elapsed_string($sm['edit']['last_access']); 
+                    if(strpos($last_connection, 'second') == true){
+                      echo '<span style="color:#4CAF50!important">Online now</span>';
+                    } else {
+                      echo $last_connection;
+                    }
+                  ?>
+                  </div>
+            </div>
+          <?php } ?>  
+            <div class="d-flex align-items-center" style="margin-bottom: 10px">
+                <i class="material-icons mr-1">date_range  </i>
+                <div class="flex">Joined: <?= $sm['edit']['join_date']; ?></div>
+            </div>
+            <div class="d-flex align-items-center" style="margin-bottom: 10px">
+                <i class="material-icons mr-1">network_wifi</i>
+                <div class="flex">IP: <?= $sm['edit']['ip']; ?></div>
+            </div>                                   
+          
+            <div class="d-flex align-items-center" style="margin-bottom: 10px;">
+                <i class="material-icons mr-1" style="color: #3D2292!important">star</i>
+                <div class="flex">PREMIUM: 
+                  <strong id="editUserPremiumText">
+                  <?php if($sm['edit']['premium'] == 0){ ?>
+                    NO 
+                  <?php } else { ?>
+                    YES <?php } ?>
+                  </strong>
+                </div>
+            </div>
+
+      </div>
+      <div class="col-lg-9" id="editUserRightSection">
+        <div class="tab-content">
+          <div class="tab-pane active" id="activity">          
+            <div class="row">
+                <?= getAbsolutePageAdmin('userActivity'); ?>
+
+            </div>
+          </div>
+          <div class="tab-pane" id="creditsinfo">
+            <div class="row">
+                <?= getAbsolutePageAdmin('userCredits'); ?>
+            </div>
+          </div>
+          <div class="tab-pane" id="profiledata">
+            <div class="row">
+              <?= getAbsolutePageAdmin('userData'); ?>
+            </div>
+          </div>          
+          <div class="tab-pane" id="media">
+            <div class="row" id="mediaProfileAdmin">
+                
+            </div>
+          </div> 
+          <div class="tab-pane" id="videocalls">
+            <div class="row" id="userVideocallsAdmin">
+                
+            </div>
+          </div>                    
+          <div class="tab-pane" id="chats">
+            <div class="row">
+              <?= getAbsolutePageAdmin('userChats'); ?>
+            </div>
+          </div>          
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="lw-widget lw-widget_fullscreen" data-widget="userEditFromAdmin" >
+    <div class="lw-overlay" data-lw-close></div>
+    <div class="lw-container lw-container_md" >
+        <div class="lw-item lw-item_bg" >
+          <button class="lw-close" type="button" data-lw-close><i class="material-icons">close</i></button>
+            <div class="lw-wrap lw-bb">
+                <div class="lw-panel lw-panel_lg">
+                    <div class="lw-preview">
+                      <img class="lw-pic avatar-img" src="<?= $sm['edit']['profile_photo']; ?>">
+                    </div>
+                    <div class="lw-group">
+                        <div class="lw-title" id="editModalTitle"></div>
+                        <div class="lw-content" style="font-size: 15px" id="editModalDesc"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="lw-wrap lw-bg-white" id="editModalContent" style="min-height: 150px">
+
+            </div>
+            <div class="lw-foot" style="padding: 15px">
+              <button class="btn btn-light" data-lw-close>Close</button>
+              <button class="btn btn-primary" id="editModalUpdateBtn" data-toggle="toastr" data-toastr-type="success" data-toastr-title="Updated!" data-toastr-message="User data successfully updated."> Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="lw-widget lw-widget_fullscreen" data-widget="userProfileBasicInfo">
+    <div class="lw-overlay" onclick="sendUpdateProfile()" data-lw-close></div>
+    <div class="lw-container lw-container_lg">
+        <form class="lw-item lw-item_bg" method="post" id="update-profile">
+            <button class="lw-close" data-widget-close="userProfileBasicInfo" data-lw-close>
+                <i class="icon icon--white ion-close-round"></i>
+            </button>
+
+            <div class="lw-wrap lw-bb">
+                <div class="lw-panel lw-panel_lg">
+                    <div class="lw-preview lw-pic profile-photo" style="height: 80px;border-radius: 5px"
+                    data-src="<?= $sm['edit']['profile_photo']; ?>">
+                        
+                    </div>
+                    <div class="lw-group">
+                        <div class="lw-title">
+                            Update <?= $sm['edit']['name']; ?> profile information<br>
+                            <small>Just edit and the system will auto-save the changes</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lw-wrap" style="background: #F7F8F9">
+                <div class="lw-inline">
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][331]['text']; ?></div>
+                        <div class="lw-group">
+                            <input class="lw-input" data-update-profile-info type="text" name="username" value="<?= $sm['edit']['username']; ?>" id="updateUsername" required>
+                        </div>
+                    </div>                    
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][28]['text']; ?></div>
+                        <div class="lw-group">
+                            <input class="lw-input" data-update-profile-info type="email" name="email" value="<?= $sm['edit']['email']; ?>" id="updateEmail" required>
+                        </div>
+                    </div>
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][26]['text']; ?></div>
+                        <div class="lw-group">                        
+                            <input class="lw-input" data-update-profile-info type="text" name="name" value="<?= $sm['edit']['name']; ?>"  required>
+                        </div>
+                    </div>                    
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][30]['text']; ?></div>
+                        <div class="lw-group">
+                            <?php $timestamp = strtotime($sm['edit']['birthday']); ?>
+                            <select class="lw-select" data-update-profile-info name="day" style="width: 25%;display: inline-table;">
+                                <option  style="display: none" selected="selected">
+                                    <?= date("d", $timestamp); ?>  
+                                </option>
+                                <?= date_dropdown_landing(1); ?>
+                            </select>
+                            <select class="lw-select" data-update-profile-info name="month" style="width: 42%;display: inline-table;">
+                                <option  style="display: none" value="<?= date("m", $timestamp); ?>" selected="selected">
+                                    <?= date("M", $timestamp); ?>  
+                                </option>
+                                <?= date_dropdown_landing(0,1); ?>
+                            </select> 
+                            <select class="lw-select" data-update-profile-info name="year" style="width: 30.9%;display: inline-table;">
+                                <option  style="display: none" selected="selected">
+                                    <?= date("Y", $timestamp); ?>  
+                                </option>
+                                <?= date_dropdown_landing(0,0,1); ?>
+                            </select>                                                        
+                        </div>
+                    </div>
+
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][32]['text']; ?></div>
+                        <div class="lw-group">
+                            <input class="lw-input" type="text" autocomplete="new-password" id="settingsLoc" placeholder="" required value="<?= $sm['edit']['city']; ?>">
+                        </div>
+                    </div>
+
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][34]['text']; ?></div>
+                        <div class="lw-group">
+                            <select class="lw-select" data-update-profile-info name="gender">                    
+                                <option  style="display: none" selected="selected">
+                                   <?= getCurrentLang($sm['edit']['lang']); ?> 
+                                </option>
+                            <?php
+                                foreach($sm['genders'] as $entry){
+                                    if($entry['id'] == $sm['edit']['gender']){
+                                        echo '<option value="'.$entry['id'].'" selected>'.$entry['text'].'</option>';
+                                    } else {
+                                        echo '<option value="'.$entry['id'].'" style="color:#000;">'.$entry['text'].'</option>';
+                                    }
+                                }
+                            ?>
+                            </select> 
+                        </div>
+                    </div>
+
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label">Looking for</div>
+                        <div class="lw-group">
+                            <select class="lw-select" data-update-profile-info name="looking">             
+                            <?php
+                                foreach($sm['genders'] as $entry){
+                                    if($entry['id'] == $sm['edit']['s_gender']){
+                                        echo '<option value="'.$entry['id'].'" selected>'.$entry['text'].'</option>';
+                                    } else {
+                                        echo '<option value="'.$entry['id'].'" style="color:#000;">'.$entry['text'].'</option>';
+                                    }
+                                }
+                            ?>
+                            </select> 
+                        </div>
+                    </div>                    
+
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label">Looking age</div>
+                        <div class="lw-group">
+                            
+                            <input type="number" class="lw-input" data-update-profile-info name="age1" value="<?= $age[0]; ?>" style="width: 49%;display: inline-table;"> 
+                            <input type="number" class="lw-input" data-update-profile-info name="age2" value="<?= $age[1]; ?>" style="width: 49.9%;display: inline-table;">                                                                         
+                        </div>
+                    </div>
+
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][134]['text']; ?></div>
+                        <div class="lw-group">
+                            <select class="lw-select" data-update-profile-info name="lang">                           
+                                <option  style="display: none" value="<?= $sm['edit']['lang']; ?>" selected="selected">
+                                   <?= getCurrentLang($sm['edit']['lang']); ?> 
+                                </option>
+                                <?= getSiteLangs($sm['edit']['lang']); ?>
+                            </select> 
+                        </div>
+                    </div>
+
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label">Bio</div>
+                        <div class="lw-group">
+                        <textarea class="lw-input" data-update-profile-info name="bio" style="height: 150px;padding-top: 15px"><?= $sm['edit']['bio']; ?></textarea>
+                        </div>
+                    </div>                   
+
+                    <input type="hidden" value="update" name="action" />
+                    <input type="hidden" name="city" data-update-profile-info id="locality" value="<?= $sm['edit']['city']; ?>" />
+                    <input type="hidden" name="country" id="country" value="<?= $sm['edit']['country']; ?>"  />
+                    <input type="hidden" name="lat" id="lat" value="<?= $sm['edit']['lat']; ?>"  />
+                    <input type="hidden" name="lng" id="lng" value="<?= $sm['edit']['lng']; ?>"  />
+                    <input type="hidden" name="editEmail" id="editEmail" value="<?= $sm['edit']['email']; ?>"  />
+                    <input type="hidden" name="editUsername" id="editUsername" value="<?= $sm['edit']['username']; ?>"  />
+                    <input type="hidden" name="editId" value="<?= $sm['edit']['id']; ?>"  />
+
+
+
+                    <div style="position: relative;height: 60px;width: 100%;margin:0;padding:0;text-align: center">
+                      <span id="update-success" style="width: 90%;margin-left: 5%;padding: 15px;margin-top: 20px;display: none;font-size: 18px;" class="badge badge-success"></span>
+                      <span id="update-error" style="width: 90%;margin-left: 5%;padding: 15px;margin-top: 20px;display: none;font-size: 18px;" class="badge badge-danger"></span>                        
+                    </div>
+
+                    <div class="lw-field" style="border: none;margin-top: 30px">
+                        <div class="lw-label"></div>
+                    </div> 
+                </div>                
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+<div class="lw-widget lw-widget_fullscreen" data-widget="userUpdatePassword"  >
+    <div class="lw-overlay" data-lw-close></div>
+    <div class="lw-container lw-container_md">
+        <form class="lw-item lw-item_bg" method="post" id="change-password">
+            <button class="lw-close" data-widget-close="userUpdatePassword" data-lw-close>
+                <i class="icon icon--white ion-close-round"></i>
+            </button>
+            <div class="lw-wrap lw-bb">
+                <div class="lw-panel lw-panel_lg">
+                    <div class="lw-preview lw-pic profile-photo" style="height: 80px;border-radius: 5px"
+                    data-src="<?= $sm['edit']['profile_photo']; ?>">
+                        
+                    </div>
+                    <div class="lw-group">
+                        <div class="lw-title">
+                            <?= $sm['lang'][130]['text']; ?>
+                        </div>
+                        <div class="lw-content">
+                            <?= $sm['lang'][146]['text']; ?>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lw-wrap">
+                <div class="lw-inline">                  
+                    <div class="lw-field profileSettingField" >
+                        <div class="lw-label"><?= $sm['lang'][147]['text']; ?></div>
+                        <div class="lw-group">
+                            <input type="hidden" name="action" value="changep"> 
+                            <input class="lw-input"  type="password" name="new_password" id="new_password" placeholder="Write your new password here" required>
+                            <input type="hidden" name="user" value="<?= $sm['edit']['id']; ?>" >
+                        </div>
+                    </div>
+
+
+                    <p id="update-error" class="red darken-4 montserrat" style="color:#fff;font-size:16px;padding:5px;display:none;"></p>
+                    <p id="update-success" class="green darken-1 montserrat" style="color:#fff;border-radius:10px;font-size:16px;padding:5px;padding-left:20px;display:none;"></p>                     
+                </div>                
+            </div>
+            <div class="lw-foot" style="padding: 15px;">
+                <button class="btn btn-primary" id="change-pwd-btn"  >
+                  Change password
+                </button>                                          
+            </div>
+        </form>
+    </div>
+</div>

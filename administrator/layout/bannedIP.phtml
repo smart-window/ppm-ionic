@@ -1,0 +1,218 @@
+<?php
+  if($sm['admin_ajax'] == false){
+    header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=users');
+  }
+?>
+<script>
+  aurl = 'bannedIP';
+  currentMenu = 'all-users';
+  currentMenuCollapse = 'bannedUsers';  
+</script>
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px;min-height: 800px ">
+  <div class="card card-form  flex-column flex-sm-row divHidden" data-search-result style="display: none;height: 70px">
+      <div class="card-form__body card-body-form-group flex">
+          <div class="row">
+              <div class="col-sm-12">
+                  <div class="form-group">             
+                      <label for="filter_name" style="line-height: 35px"><i class="material-icons mr-3" id="resultIcon">search</i> Search result <span id="totalResult"></span> banned IPS</label>
+                  </div>
+              </div>                                                 
+          </div>
+      </div>
+      <div class="card-form__body card-body-form-group flex">
+          <div class="row">
+              <div class="col-sm-12">
+                  <div class="form-group">
+                      <input id="filter_name" type="text" data-sfdata="search" class="form-control" placeholder="Search by IP ADDRESS">                    
+                  </div>
+              </div>                                                 
+          </div>
+      </div>      
+  </div>  
+
+
+  <div class="card card-form  flex-column flex-sm-row divHidden" data-selected-data style="display: none">
+      <div class="card-form__body card-body-form-group flex">
+          <div class="row">
+              <div class="col-sm-12">
+                  <div class="form-group">
+                      <label for="filter_name">Selected <strong data-selected-data-total></strong> ip</label>                    
+                  </div>
+                  <div class="avatar-group" data-checkedData style="position: absolute;top: -7px;left: 180px">
+
+
+                  </div>
+              </div>                                                 
+          </div>
+      </div>
+
+      <div class="dropdown">
+          <button class="btn bg-white border-left border-top border-top-sm-0 rounded-top-0 rounded-top-sm rounded-left-sm-0" data-toggle="dropdown" data-caret="false" style="border-radius:0px;background: #fff;width: 100%;height: 100%">
+             <i class="material-icons icon-20pt" style="color: #000">more_horiz</i>
+           </button> 
+          <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="#" onclick="adminBulkAction('unbanIP','bannedIP');" style="font-size: 13px">
+                Remove IP <span data-selected-data-total></span> block
+              </a>            
+          </div>
+      </div>      
+  </div>
+
+  <div class="card card-form">
+      <div class="row no-gutters">
+          <div class="col-lg-12 card-form__body">
+
+              
+              <div class="table-responsive border-bottom" data-search data-toggle="lists" data-lists-values='["js-lists-values-employee-name"]' style="min-height: 100px" data-table="result">   
+
+
+                  <table class="table mb-0 thead-border-top-0" >
+                      <thead>
+                          <tr style="background: #fff">
+                              <th style="width: 18px;">
+                                  <div class="custom-control custom-checkbox">
+                                      <input type="checkbox" onclick="checkAllData(this)" class="custom-control-input" data-target="#dataTable" id="customCheckAll">
+                                      <label class="custom-control-label" style="cursor: pointer;"  for="customCheckAll"><span class="text-hide">Toggle all</span></label>
+                                  </div>
+                              </th>
+                              <th style="width: 180px;">IP</th>
+                              <th style="width: 180px;">Ban date</th>
+                              <th style="width: 200px;">Banned by </th>                                                                                 
+                              <th style="width: 24px;"></th>
+                          </tr>
+                      </thead>
+
+                      <tbody class="list" id="dataTable" style="height: 400px;overflow-y: scroll">
+                      </tbody>
+                  </table>
+              </div>
+
+              <div class="card-footer text-center">
+                <span class="text-muted">Showing </span>
+                <span data-current-view></span>
+                <span class="text-muted">of </span>
+                <span data-current-total-users></span> 
+                <span class="text-muted">results</span>
+                <a href="#results" data-nextPage-search>
+                  <i class="material-icons icon-muted float-right">arrow_forward</i>
+                </a>
+                <a href="#results" data-backPage-search style="display: none">
+
+                  <i class="material-icons icon-muted float-left" >arrow_backward</i>
+                </a>
+              </div> 
+
+          </div>          
+      </div>
+  </div>    
+
+  <div class="v-wrapper">
+    <a href="#" class="btn btn-light ml-3" data-close-video><i class="material-icons mr-1">close</i> Close video</a>
+    <video id="playVideo" controls >
+      <source />
+    </video>
+  </div>
+
+</div>
+
+
+<script>
+    var dataPerPage = 10;
+    var viewedData = 0;
+    var lastPageSearch = 0;
+    var search = {};
+    var searchData = [];
+    var checkedData = [];    
+    search['action'] = 'search_banned';
+    search['type'] = 'ip';
+
+    //load data
+    function loadData(){
+      $('#resultIcon').addClass('is-loading is-loading-secondary');
+      $.ajax({
+        url: request_source()+'/admin.php', 
+        data: search,  
+        type: "post",
+        dataType: 'JSON',        
+        success: function(response) {
+            $('[data-search]').show();
+            searchData = response['data'];
+            for (i = 0; i < dataPerPage; i++) {
+              viewedData++; 
+              $('#dataTable').append(response['data'][i]);
+            }
+            $('#totalResult').text(response.total);
+            if(response['total'] < 9){
+              viewedData = response['total'];
+            }
+            if(response['total'] == 0){
+               $('[data-table="result"]').hide();
+            } 
+            $('#resultIcon').removeClass('is-loading');         
+            $('[data-search-result]').show();
+            $('[data-current-total-users]').text(response.total);
+            $('[data-current-view]').text(viewedData);
+        },
+      });
+    }
+    loadData();
+
+    $('[data-sfdata]').keyup(delay(function (e) {
+        var current = $(this).attr('data-sfdata');
+        search[current] = $(this).val();
+        $('#dataTable').html('');
+        loadData();
+    }, 200)); 
+
+
+    //next result page
+     $('[data-nextPage-search]').click(function(e){
+    
+      $('#customCheckAll').prop("checked",false);         
+        if(searchData.length > viewedData){
+            $('#dataTable').html('');
+            var maxResult = viewedData+dataPerPage;
+
+            lastPageSearch = dataPerPage;
+            if(searchData.length <= maxResult ){
+                maxResult = searchData.length;
+                lastPageSearch = maxResult;
+            }                    
+            for (i = viewedData; i < maxResult; i++) {
+              viewedData++;
+              $('#dataTable').append(searchData[i]);
+            }
+            $('[data-current-view]').text(viewedData);  
+            $('[data-backPage-search]').fadeIn(); 
+
+            checkIfChecked();                
+        }                
+     });  
+
+
+     //back page
+     $('[data-backPage-search]').click(function(e){
+        
+        $('#dataTable').html('');
+        $('#customCheckAll').prop("checked",false);
+        var firstBack = dataPerPage*2;
+        viewedData = viewedData-firstBack;
+        console.log(viewedData);
+        if(viewedData <= 0){
+            $('[data-backPage-search]').hide();
+            viewedData = 0;
+        } 
+        var maxResult = viewedData+dataPerPage;
+        if(searchData.length <= maxResult ){
+            maxResult = searchData.length;
+        }                                
+        for (i = viewedData; i < maxResult; i++) {
+          viewedData++;
+          $('#dataTable').append(searchData[i]);
+        }
+        $('[data-current-view]').text(viewedData);
+        checkIfChecked();                                  
+     });  
+       
+</script>

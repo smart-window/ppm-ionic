@@ -1,0 +1,25 @@
+{
+  "name": "awlert",
+  "description": "Awesome Alert for Ionic 1.X",
+  "main": "dist/js/awlert.min.js",
+  "authors": [
+    "Jouderian Nobre <jouderianjr@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "alert",
+    "toast",
+    "notification",
+    "ionic"
+  ],
+  "homepage": "https://github.com/jouderianjr/awlert",
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ]
+}

@@ -1,0 +1,173 @@
+<?php 
+if(isset($_GET['id'])){
+	$usid = secureEncode($_GET['id']);	
+	getUserInfo($usid,1);
+}
+global $lc;
+getUserInfo($lc,1);
+
+$profile_info = json_encode($sm['profile']);
+$check = blockedUser($sm['user']['id'],$sm['profile']['id']);
+if($check == 1){
+	header('Location:'.$sm['config']['site_url']);
+}
+$me = false;
+if($sm['user']['id'] == $sm['profile']['id']) { 
+	$me = true; 
+}
+$fan = isFan($sm['user']['id'],$sm['profile']['id']);
+$me = false;
+if($sm['user']['id'] == $sm['profile']['id']) $me = true;		
+echo 
+'<script>
+noChat = false;
+current_user_id = ' . $sm['profile']['id'] .';
+var profile_info = '. $profile_info  . ';	
+url = "chat";
+</script>';
+?>
+<div class="col s8 real fix-width-content" id="site-content" style="position:relative;background: #fff;">
+	<div class="chat-right" style="position:absolute;right:0;z-index: 22">
+		<div class="page-right-sidebar_" style="margin-top: 25px;">
+	        <div class="next__users animated fadeIn" id="usersFriends" style="padding-left:20px;width: 80px">
+				<?= getUserFriends($sm['user']['id']); ?>              
+	        </div>
+		</div>
+	</div>
+	<div class="top-user-header" id="chatHeader" style="display:inline-block;width:55%;border-bottom:1px solid #eee">
+		<?php if(!$me){ ?>
+			<?php if($fan == 1){ ?>
+				<img class="like-top" src="<?= $sm['config']['theme_url']; ?>/images/liked.jpg">
+				<img class="nolike-top" src="<?= $sm['config']['theme_url']; ?>/images/noliked.jpg"/>
+			<?php } else { ?>
+				<img class="like-top" src="<?= $sm['config']['theme_url']; ?>/images/like.jpg" data-id="<?=$sm['profile']['id']; ?>">
+				<img class="nolike-top" src="<?= $sm['config']['theme_url']; ?>/images/nolike.jpg" data-id="<?=$sm['profile']['id']; ?>"/>	
+			<?php } ?>
+			<h2 onclick="goToProfile(<?=$sm['profile']['id']; ?>)" style="cursor:pointer;">
+				<?= $sm['profile']['name']; ?>, <?= $sm['profile']['age']; ?>
+				<?php if($sm['profile']['premium'] == 1){
+					echo '<div class="premium" data-tooltip="'.$sm['lang'][438]['text'].'"><i class="mdi-editor-attach-money"></i></div>';
+				}?>
+				<?php if($sm['profile']['verified'] == 1){
+					echo '<div class="verified" data-tooltip="'.$sm['lang'][439]['text'].'"><i class="mdi-action-verified-user"></i></div>';
+				}?>
+				<?php if($sm['profile']['popular'] >= siteConfig('popular_user')){
+					echo '<div class="popular" data-tooltip="'.$sm['lang'][440]['text'].'"><i class="mdi-social-whatshot"></i></div>';
+				}?>				
+			</h2>
+			<?  if($sm['profile']['status'] == 'y'){
+				echo '<span style="color:#17D42B">'.$sm['lang'][441]['text'].'</span>';
+			} else {
+				echo '<span>Last connection '.time_elapsed_string($sm['profile']['last_access']).'</span>';
+			} ?>
+		<?php } else { ?>
+			<h2 style="left: 20px;">
+				<?= $sm['profile']['name']; ?>, <?= $sm['profile']['age']; ?>
+				<?php if($sm['profile']['premium'] == 1){
+					echo '<div class="premium" data-tooltip="'.$sm['lang'][438]['text'].'"><i class="mdi-editor-attach-money"></i></div>';
+				}?>
+				<?php if($sm['profile']['verified'] == 1){
+					echo '<div class="verified" data-tooltip="'.$sm['lang'][439]['text'].'"><i class="mdi-action-verified-user"></i></div>';
+				}?>
+				<?php if($sm['profile']['popular'] >= siteConfig('popular_user')){
+					echo '<div class="popular" data-tooltip="'.$sm['lang'][440]['text'].'"><i class="mdi-social-whatshot"></i></div>';
+				}?>	
+			</h2>
+			<?  if($sm['profile']['status'] == 'y'){
+				echo '<span style="left:22px;color:#17D42B">'.$sm['lang'][441]['text'].'</span>';
+			} else {
+				echo '<span style="left:22px;">Last connection '.time_elapsed_string($sm['profile']['last_access']).'</span>';
+			} ?>
+		<?php } ?>
+</div>					
+	<div class="top-user-header-right" id="chatHeaderRight" style="border-bottom:1px solid #eee">
+	    <div class="btn btn--white btn--ico tooltip-no-js-wrap js-profile-header-btn close-slider-btn" style="float:right;margin-left: 15px;display:none;" onclick="closeSlider()">
+		    <i class="icon ion-close-round" style="font-size: 24px;position: absolute;top: 10px;left:13px"></i> 
+	    </div>	
+	    <div class="btn btn--white btn--ico tooltip-no-js-wrap js-profile-header-btn" style="float:right;margin-left: 15px;" onclick="reportUser(<?= $sm['profile']['id']; ?>,'<?= $sm['profile']['first_name']; ?>','<?= $sm['profile']['profile_photo']; ?>');" >
+		    <i class="icon ion-android-alert" style="font-size: 24px;position: absolute;top: 10px;left:12px"></i> 
+	    </div>	
+	    <div class="btn btn--white btn--ico tooltip-no-js-wrap js-profile-header-btn" style="float:right;margin-left: 15px;" onclick="deleteConv(<?= $sm['profile']['id']; ?>,'<?= $sm['profile']['first_name']; ?>','<?= $sm['profile']['profile_photo']; ?>');">
+		    <i class="icon ion-trash-b" style="font-size: 24px;position: absolute;top: 10px;left:14px"></i> 
+		</div>
+	    <div class="btn btn--white btn--ico tooltip-no-js-wrap js-profile-header-btn" style="float:right;margin-left: 15px;" onClick="showChatGifts()">
+		    <i class="icon ion-icecream" style="font-size: 24px;position: absolute;top: 10px;left:14px"></i> 
+		</div>		
+	</div>
+		<div class="chat-gifts" style="bottom: 0px;z-index: 9999;display:none;height: 250px">
+	        <div class="flex flex--column flex--center attention-gifts js-attention-gifts">
+	            <p class="x-large montserrat" style="font-size: 16px;position: fixed;margin-top: -65px">
+	            	<?= $sm['lang'][446]['text']; ?>
+	            	 <span id="giftUserName"><?= $sm['profile']['first_name']; ?></span> <?= $sm['lang'][447]['text']; ?>:</p>
+	            <div class="carousel js-gallery-images-wrap" style="width: 2100px">
+	                <div class="relative">
+	                    <div class="carousel__items js-gallery-images">
+	                        <div class="carousel__scroll js-gallery-scroll">
+	                        	<?= getGifts(); ?>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>	
+	    
+		<div class="chat" id='chat-container' style="padding-bottom: 45px;z-index: 99;height: 65%">	
+			<?=getChat($sm['user']['id'],$sm['profile']['id']); ?>
+		</div>
+
+		<div class="js-top-chat-banner-wrap" id="highlight" style="display: none" >
+		    <div class="connection-banner--top-chat connection-banner active js-messenger-top-chat-promo" style="margin:0;margin-left:20px;margin-top: 20px;">
+		        <div class="montserrat" style="font-size: 12px;"><b class="montserrat"><?= $sm['lang'][442]['text']; ?></b>
+		            <br><?= $sm['lang'][443]['text']; ?>!</div>
+		        <div class="btn btn--sm btn--white"><span class="btn-txt"><?= $sm['lang'][444]['text']; ?></span> </div>
+		    </div>
+		</div>
+
+
+
+		<div class="js-message-block isWriting" style="display:none;position: absolute;z-index: 100000;left: 48px;bottom: 225px" >
+			<div class="message">
+				<div class="brick brick--xsm brick--hover">
+					<div class="brick-img profile-photo" id="writingPhoto" data-src="<?= $sm['profile']['profile_photo']; ?>"></div>
+				</div>
+				<div class="message__txt">
+					<div class="message__name lgrey" style="margin-top: 5px"><b id="writingName"><?= $sm['profile']['name']; ?></b> <?= $sm['lang'][445]['text']; ?>...</div>
+				</div>
+			</div>
+		</div>
+	<div class="wall-chat" >
+	    <div class="flex flex--middle message-tools">
+	        <div class="flex__item flex message-tools__wrap" style="margin-top:-20px">  
+	            <div class="relative flex__item message-tools__field" >
+	                <div style="width: 500px">
+						<form id="c-send" action="#">
+							<div  id="chat-message" contenteditable="true" class="input input--sm"  autocomplete="off" placeholder="<?= $sm['lang'][89]['text']; ?>" ></div>
+							<input id="r_id" value="<?= $sm['profile']['id']; ?>" type="hidden" style='display:none'>
+						</form>
+						<form action="<?php echo $sm['config']['site_url']; ?>/assets/sources/sendphoto.php" method="post" enctype="multipart/form-data" id="sendPhoto">
+							<input name="image_file" id="photo-to-send" type="file"  style="display:none;"/>
+							<input id="rid" name="rid" value="<?= $sm['profile']['id']; ?>" type="hidden" style='display:none'>
+						</form>							
+	                </div>
+	            </div>
+	            <div class="relative flex__item message-tools__field" id="send-photo" style="margin-left:20px;">
+	                <div class="btn btn--sm btn--white">
+	                	<img src="<?= $sm['config']['theme_url']; ?>/images/icon-control-camera.png" style="width: 20px">
+	                </div>
+	            </div>	
+				<? if(siteConfig('videocall') !== ''){ ?>	            	            
+	            <div class="flex__item flex__item message-tools__btn" id="videocall" style="height:25px;margin-left:10px;padding-right: 3px;">
+	                <div class="btn btn--sm btn--white" style="height: 32px;">
+	                	<i class="icon icon--white ion-ios-videocam-outline" style="font-size: 24px;margin-top: -2px;"></i>
+	                </div>
+	            </div>
+				<? } ?>	            		                  	            
+	            <div class="flex__item flex__item--fixed message-tools__btn" id="chat-send" style="margin-left: 45px;">
+	                <div class="btn btn--sm btn--blue" title="Send" style="height: 32px;width: 50px;">
+	                	<i class="icon icon--white icon-paper-plane" style="font-size: 20px;text-align: center;"></i>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+ </div>

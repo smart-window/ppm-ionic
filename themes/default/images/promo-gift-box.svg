@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="96px" height="64px" viewBox="0 0 96 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>promo-gift-box</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="promo-gift-box">
+            <g id="Group-2">
+                <rect id="Rectangle-28-Copy" fill="#DBE1EE" x="0" y="0" width="61" height="64"></rect>
+                <polygon id="Rectangle-28-Copy-2" fill="#BBC7DA" points="61 0 96 0 96 64 61 64"></polygon>
+                <rect id="Rectangle-2" fill="#05A2E6" x="23" y="0" width="11" height="64"></rect>
+                <rect id="Rectangle-3" fill="#0083C9" x="23" y="0" width="11" height="16"></rect>
+                <rect id="Rectangle-2-Copy-2" fill="#0083C9" x="78" y="0" width="6" height="64"></rect>
+                <rect id="Rectangle-3-Copy" fill="#0076B5" x="78" y="0" width="6" height="16"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

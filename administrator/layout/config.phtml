@@ -1,0 +1,124 @@
+
+<script>aurl = 'config';</script>
+
+<!-- SECTION CONTENT -->
+
+<div class="container-fluid page__container" style="padding-top:25px;padding-bottom: 50px">
+<div class="page__heading d-flex align-items-center">
+    <div class="flex">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">General Settings</li>
+          </ol>
+        </nav>
+    </div>
+</div>
+
+
+<?php $config = getDataArraySelectedCol('name,email','config');  ?>
+  <div class="card card-form">
+    <div class="card-header card-header-large bg-white">
+        <h4 class="card-header__title">General Settings</h4>
+    </div>    
+     <div class="row no-gutters">
+    <?php
+      $i=0;
+      foreach ($config as $c) { 
+        $i++;
+        if($i == 1){
+          $title = 'Website name';
+          $desc = 'Update the website name';
+          $type = 'text';
+        }
+        if($i == 2){
+          $title = 'Website email';
+          $desc = 'Update the website email, this is used for contact form';
+          $type = 'text';
+        }        
+
+
+
+      ?>
+        <div class="col-lg-4 card-body bg-light" >
+            <p><strong class="headings-color"><?= $title; ?></strong></p>
+            <p class="text-muted"><?= $desc; ?></p>
+        </div>
+        <div class="col-lg-8 card-form__body card-body d-flex align-items-center bg-white" >
+            <div class="flex">
+                <label for=""><?= $title; ?></label><br>
+
+                <!-- FROM TYPE TEXT,NUMBER -->
+                <?php if($type == 'text'){ ?>   
+                  <input type="<?= $type; ?>" data-config-update="<?= $c; ?>" class="form-control" data-config-type="<?=$type; ?>" placeholder="" value="<?= $c; ?>">
+                <?php } ?>   
+
+
+                <!-- FROM TYPE BOOLEAN -->
+                <?php if($type == 'boolean'){ ?> 
+                  <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1">
+                      <input <?=$checked; ?> type="checkbox" id="<?= $c; ?>" data-config-type="<?=$type; ?>" data-config-update="<?= $c; ?>" class="custom-control-input">
+                      <label class="custom-control-label" for="<?= $c; ?>"></label>
+                  </div>
+                  <label for="<?= $c; ?>" class="mb-0"></label>
+                <?php } ?>
+
+
+                <!-- FROM TYPE SELECT -->
+                <?php if($type == 'select'){ ?>
+                  <select id="<?= $c; ?>" data-config-type="<?=$c; ?>" data-config-update="<?= $c; ?>"  class="form-control">
+                  <?php                
+                    //select options
+                  ?> 
+                  </select> 
+                <?php } ?>
+            </div>
+        </div>
+    <?php } ?>
+    </div>
+    <div class="card-footer bg-success" data-footer-config="config" style="display: none">
+        <span style="color:#fff">Changes saved</span>
+    </div>    
+  </div> 
+</div>
+
+
+<script>
+window.onload = function() {
+
+};
+
+$('[data-config-update]').change(function(){
+  var config = $(this).attr('data-config-update');
+  var type = $(this).attr('data-config-type');
+  var val = '';
+  if(type == 'boolean'){
+    var current = $(this).attr('data-config-update');
+    var checked = $('[data-config-update='+current+']:checked').val();
+    if(checked != 'on'){
+        val = 'No';
+    }else {
+        val = 'Yes';
+    }
+  } else {
+    val = $(this).val();
+  }
+
+  $.ajax({
+      url: request_source()+'/admin.php', 
+      data: {
+          action: 'updateConfig',
+          val: val,
+          config: config,
+          globalKey: globalKey
+      },  
+      type: "post",
+      dataType: 'JSON',           
+      success: function(response) {
+      },
+  });      
+  $('[data-footer-config]').fadeOut('fast');
+  $('[data-footer-config="config"]').fadeIn();
+  console.log(val);
+});
+
+</script>

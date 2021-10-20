@@ -1,0 +1,10 @@
+.awlert{position:absolute;width:100%;transform:translateY(-100%);transition:.6s cubic-bezier(.6,-.28,.735,.045);z-index:99;top:0}
+.awlert .space{height:10px}
+.awlert.enter{transition:.6s cubic-bezier(.175,.885,.32,1.275);transform:translateY(-15%)}
+.content{
+	color:#fff;
+	padding:10px;
+	font-family:'Montserrat';
+	font-size:14px;
+	text-align:center;
+}

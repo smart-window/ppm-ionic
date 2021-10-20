@@ -1,0 +1,143 @@
+<style>
+  .tableGenders{
+    border-collapse:separate !important; 
+    border-spacing:0 2px !important;     
+  }
+</style>
+<?php
+global $mysqli;
+if(isset($_GET['u'])){
+  $id = secureEncode($_GET['u']);
+  $name = secureEncode($_GET['name']);
+  $sex = secureEncode($_GET['sex']);
+  $mysqli->query("UPDATE config_genders set name = '".$name."',sex = '".$sex."' where id = '".$id."'");
+  header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=genders');
+}
+if(isset($_GET['a'])){
+  $id = secureEncode($_GET['a']);
+  $name = secureEncode($_GET['name']);
+  $sex = secureEncode($_GET['sex']);
+  $query = $mysqli->query("SELECT * FROM languages order by id ASC");
+  if ($query->num_rows > 0) { 
+    while($re = $query->fetch_object()){  
+        $mysqli->query("INSERT INTO config_genders (id,name,lang_id,sex) 
+          VALUES ('".$id."','".$name."','".$re->id."','".$sex."')");
+    }
+  }
+  header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=genders');
+}
+if(isset($_GET['d'])){
+  $id = secureEncode($_GET['d']);
+  $mysqli->query("DELETE FROM config_genders where id = '".$id."'");
+  header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=genders');
+}
+?>
+<script>
+  aurl = 'genders';
+  currentMenu = 'plugins';
+  currentMenuCollapse = 'accounts';  
+</script>
+
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px;min-height: 500px ">
+  <div class="page__heading d-flex align-items-center">
+      <div class="flex">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','')">Plugins</a></li>
+                <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','Software')">Software</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Gender settings</li>
+            </ol>            
+          </nav>
+      </div>
+      <a href="#" class="btn btn-light ml-3" onclick="goTo('plugins','','')"><i class="material-icons mr-1">arrow_back</i></a>
+  </div>  
+  <div class="row">
+    <div class="col-lg-12" >   
+      <div class="card card-form">
+          <div class="card-header card-header-large bg-white d-flex align-items-center">
+            <h4 class="card-header__title flex m-0">Site Genders Settings</h4>
+            <div></div>
+          </div>    
+          <div class="row no-gutters">
+            <div class="col-lg-12 card-form__body card-body d-flex align-items-center bg-light" >
+              <table class="tableGenders"  style="width: 100%;text-align: left;" >
+                <tr style="width: 100%;margin-bottom: 20px">
+                  <td style="display: inline-table;width: 35%;padding-right: 20px;"> Name/value<br> Will be displayed in the site</td>
+                  <td style="display: inline-table;width: 35%padding-right: 20px;"> Sex<br>For fake Users creation</td>
+                </tr>
+              <?php
+                $all = end($sm['genders']);
+                $all = $all['id'] + 1;                  
+                foreach($sm['genders'] as $entry){
+                  $sex = getGenderSex($entry['id']); $name = $entry['text']; ?>
+                  <tr style="margin-top: 10px;">
+                    <td style="display: inline-table;width: 35%">
+                      <input class="form-control" id="genderName<?= $entry['id'];?>" value="<?= $entry['text'];?>" name="site_gender_name" style="width: 85%"/>
+                    </td> 
+                    <td style="display: inline-table;width: 35%">
+                      <select class="form-control" id="genderSex<?= $entry['id'];?>" style="width: 85%" name="site_gender_sex">
+                        <?php if($sex == 1){
+                          echo '<option value="1"  selected>Male</option>';
+                          echo '<option value="2">Female</option>';
+                        } else {
+                          echo '<option value="2" selected>Female</option>';
+                           echo '<option value="1">Male</option>';
+                        } ?>
+                      </select> 
+                    </td>                                        
+                    <td style="display: inline-table;width: 20%">
+                      <a href="#" onClick="uGender(<?= $entry['id'];?>)" class="btn btn-light" style="display: inline-table;margin-right: 3px"><i class="material-icons">update</i></a>                                
+                      <a href="#" onClick="dGender(<?= $entry['id'];?>)" class="btn btn-danger" style="display: inline-table;"><i class="material-icons">delete</i></a>                      
+                    </td>                       
+                  </tr> 
+                <?php } ?>
+                   
+                  <tr style="margin-top: 10px;">
+                    <input class="form-control" type="hidden" disabled value="<?= $all;?>" name="site_gender_id" style="display: none"  />
+                    <td style="display: inline-table;width: 35%">
+                      <input class="form-control" id="genderName" placeholder="Add new gender or niche" value="" name="site_gender_name" style="width: 85%"/>
+                    </td> 
+                    <td style="display: inline-table;width: 35%">
+                      <select class="form-control" id="genderSex" style="width: 85%" name="site_gender_sex">
+                        <option value="1">Male</option>
+                        <option value="2">Female</option>
+                      </select> 
+                    </td>                                        
+                    <td style="display: inline-table;width: 20%">
+                      <a href="#" id="addGender" class="btn btn-success" style="display: inline-table;margin-right: 3px"><i class="material-icons">add_circle</i></a>                                                     
+                    </td>                       
+                  </tr>                    
+                 </table>                     
+            </div>           
+          </div>
+        <div class="card-footer bg-secundary" data-footer="1" >
+            <p>
+                Everytime you update, add or remove a gender it will be updated in all the languages of the software,<br>however you can go to the 
+              <a href="javascript:;" onclick="goTo('languages','','')">language system</a> and edit it for each language
+            </p>
+        </div>      
+      </div> 
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+document.getElementById("addGender").addEventListener("click", addGender);
+function addGender(){
+  var id = <?= $all; ?>;
+  var name = $('#genderName').val();
+  var sex = $('#genderSex').val();
+  window.location.href = 'index.php?page=admin&p=genders&a='+id+'&name='+name+'&sex='+sex;
+}
+function uGender(id){
+  var name = $('#genderName'+id).val();
+  var sex = $('#genderSex'+id).val();  
+  window.location.href = 'index.php?page=admin&p=genders&u='+id+'&name='+name+'&sex='+sex;
+}
+function dGender(id){
+  window.location.href = 'index.php?page=admin&p=genders&d='+id;
+}
+</script>

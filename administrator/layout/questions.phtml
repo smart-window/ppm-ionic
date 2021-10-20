@@ -1,0 +1,196 @@
+<style>
+  .tableQuestions{
+    border-collapse:separate !important; 
+    border-spacing:0 2px !important;     
+  }
+</style>
+<?php
+global $mysqli;
+if(isset($_GET['u'])){
+  $id = secureEncode($_GET['u']);
+  $q = secureEncode($_GET['q']);
+  $t = secureEncode($_GET['t']);
+  $o = secureEncode($_GET['o']);
+  $g = secureEncode($_GET['g']);   
+  $mysqli->query("UPDATE config_profile_questions set question = '".$q."',method = '".$t."',q_order = '".$o."',gender = '".$g."' where id = '".$id."'");
+  header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=questions');
+}
+if(isset($_GET['a'])){
+  $id = secureEncode($_GET['a']);
+  $q = secureEncode($_GET['q']);
+  $t = secureEncode($_GET['t']);
+  $g = secureEncode($_GET['g']);  
+  $query = $mysqli->query("SELECT * FROM languages order by id ASC");
+  if ($query->num_rows > 0) { 
+    while($re = $query->fetch_object()){  
+        $mysqli->query("INSERT INTO config_profile_questions (id,question,lang_id,method,gender) 
+          VALUES ('".$id."','".$q."','".$re->id."','".$t."','".$g."')");
+    }
+  }
+
+  header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=questions');
+}
+if(isset($_GET['d'])){
+  $id = secureEncode($_GET['d']);
+  $mysqli->query("DELETE FROM config_profile_questions where id = '".$id."'");
+  $mysqli->query("DELETE FROM config_profile_answers where qid = '".$id."'");
+  header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=questions');
+}
+?>
+<script>
+  aurl = 'questions';
+  currentMenu = 'plugins';
+  currentMenuCollapse = 'accounts';  
+</script>
+
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px;min-height: 500px ">
+  <div class="page__heading d-flex align-items-center">
+      <div class="flex">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','')">Plugins</a></li>
+                <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','Software')">Software</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Custom Profile Questions</li>
+            </ol>             
+          </nav>
+      </div>
+      <a href="#" class="btn btn-light ml-3" onclick="goTo('plugins','','')"><i class="material-icons mr-1">arrow_back</i></a>
+  </div>  
+  <div class="row">
+    <div class="col-lg-12" >   
+      <div class="card card-form">
+          <div class="card-header card-header-large bg-white d-flex align-items-center">
+            <h4 class="card-header__title flex m-0">Custom Profile Questions settings</h4>
+            <div></div>
+          </div>    
+          <div class="row no-gutters">
+            <div class="col-lg-12 card-form__body card-body d-flex align-items-center bg-light" >
+              <table class="tableQuestions"  style="width: 100%;text-align: left;" >
+                <tr style="width: 100%;margin-bottom: 20px">
+                  <td style="display: inline-table;width: 30%"> Question<br>
+                    <span class="text-muted" style="font-size: 12px;">Will be displayed in the site, multilang support in language page</span></td>
+                  <td style="display: inline-table;width: 15%;padding-right: 10px;"> Type<br>
+                    <span class="text-muted" style="font-size: 12px;">For the input, text or select</span></td>
+                  <td style="display: inline-table;width: 25%;padding-right: 30px;"> Gender<br>
+                    <span class="text-muted" style="font-size: 12px;">Filter question to one gender or all genders</span></td>
+                  <td style="display: inline-table;width: 15%"> Order<br>
+                    <span class="text-muted" style="font-size: 12px;">In this order will be displayed</span></td>                  
+                </tr>
+                <?php
+                  $arr = array();
+                  $arr = profileQuestion(1);
+                  $all = max($arr);
+                  $all = $all['id'] + 1;
+                  foreach($arr as $entry){ $q = $entry['question']; ?>
+                  <tr style="margin-top: 10px;">
+                    <td style="display: inline-table;width: 30%">
+                      <input class="form-control" id="profileQuestion<?= $entry['id'];?>" value="<?= $entry['question'];?>" style="width: 85%"/>
+                    </td> 
+                    <td style="display: inline-table;width: 15%">
+                      <select class="form-control" id="profileType<?= $entry['id'];?>" style="width: 85%">
+                        <?php if($entry['method'] == 'text'){
+                          echo '<option value="text"  selected>Text</option>';
+                          echo '<option value="select">Select</option>';
+                        } else {
+                          echo '<option value="select" selected>Select</option>';
+                           echo '<option value="text">Text</option>';
+                        } ?>
+                      </select>                       
+                    </td>
+                    <td style="display: inline-table;width: 25%">
+                      <select class="form-control" id="profileGender<?= $entry['id'];?>" style="width: 85%">
+                        <?php
+                            $genders = siteGenders(1);
+                            $selected = '';
+                            if($entry['gender'] == 0){ 
+                              $selected = 'selected';
+                            }
+                            echo '<option value="0" '.$selected.'>All Genders</option>';
+                            foreach($genders as $gen){
+                                if($gen['id'] == $entry['gender']){ $selected = 'selected';} 
+                                else {$selected = '';}
+                                echo '<option value="'.$gen['id'].'" '.$selected.'>'.$gen['text'].'</option>';
+                            }
+                        ?>                        
+                      </select>                       
+                    </td>                      
+                    <td style="display: inline-table;width: 10%">
+                      <input class="form-control" type="number" id="profileOrder<?= $entry['id'];?>" value="<?= $entry['q_order'];?>" style="width: 75%"/>
+                    </td>                                                           
+                    <td style="display: inline-table;width: 15%">
+                      <a href="#" onClick="uQuestion(<?= $entry['id'];?>)" class="btn btn-success" style="display: inline-table;margin-right: 3px"><i class="material-icons">check_circle</i></a>                                
+                      <a href="#" onClick="dQuestion(<?= $entry['id'];?>)" class="btn btn-danger" style="display: inline-table;"><i class="material-icons">delete</i></a>                      
+                    </td>                       
+                  </tr> 
+                <?php } ?>
+                   
+                  <tr style="margin-top: 10px;">
+                    <input class="form-control" type="hidden" style="display: none" disabled value="<?= $all;?>" name="site_profile_id" style="width: 70%"  />
+                    <td style="display: inline-table;width: 30%">
+                      <input class="form-control" value="" id="profileQuestion" placeholder="Add profile question" style="width: 85%"/>
+                    </td> 
+                    <td style="display: inline-table;width: 15%">
+                      <select class="form-control" id="profileType" style="width: 85%" >
+                        <option value="text">Text</option>
+                        <option value="select">Select</option>
+                      </select> 
+                    </td>
+                    <td style="display: inline-table;width: 25%">
+                      <select class="form-control" id="profileGender" style="width: 85%">
+                        <?php
+                            $genders = siteGenders(1);
+                            $selected = '';
+                            echo '<option value="0">All Genders</option>';
+                            foreach($genders as $gen){
+                                echo '<option value="'.$gen['id'].'" '.$selected.'>'.$gen['text'].'</option>';
+                            }
+                        ?>                        
+                      </select>                       
+                    </td>                                                              
+                    <td style="display: inline-table;width: 20%">
+                      <a href="#" id="addQuestion" class="btn btn-success" style="display: inline-table;margin-right: 3px"><i class="material-icons">add_circle</i></a>                                                     
+                    </td>                       
+                  </tr>                    
+                 </table>                     
+            </div>           
+          </div>
+        <div class="card-footer bg-secundary" data-footer="1" >
+            <p>
+              Everytime you update,add or remove a question or answer it will be updated in all the languages of the software,
+              <br>however you can go to the <a href="javascript:;" onclick="goTo('languages','','')">language system</a> and edit it for each language
+            </p>
+        </div>      
+      </div> 
+    </div>
+
+  </div>
+
+  <div class="row" id="ajaxAnswers">
+    <?= getAbsolutePageAdmin('questionsAjax'); ?>
+  </div>
+</div>
+
+
+<script>
+document.getElementById("addQuestion").addEventListener("click", addQuestion);
+function addQuestion(){
+  var id = <?= $all; ?>;
+  var q = $('#profileQuestion').val();
+  var t = $('#profileType').val();
+  var g = $('#profileGender').val();
+  window.location.href = 'index.php?page=admin&p=questions&a='+id+'&q='+q+'&t='+t+'&g='+g;
+}
+
+function uQuestion(id){
+  var q = $('#profileQuestion'+id).val();
+  var t = $('#profileType'+id).val(); 
+  var o = $('#profileOrder'+id).val();  
+  var g = $('#profileGender'+id).val();  
+  window.location.href = 'index.php?page=admin&p=questions&u='+id+'&q='+q+'&t='+t+'&o='+o+'&g='+g;
+}
+function dQuestion(id){
+  window.location.href = 'index.php?page=admin&p=questions&d='+id;
+}
+
+</script>

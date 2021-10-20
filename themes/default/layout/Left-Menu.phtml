@@ -1,0 +1,136 @@
+<div class="row" id='mainRow' style="max-width: 1440px;">
+    <div class="col s2 real left-menu-margin" style="background: none;height: auto;border:none" >
+        <div class="logo" style="border-bottom: 1px solid <?=$sm['theme']['left_menu_border_color']['val']; ?>">
+           <a href="<?=$sm['config']['site_url']; ?>"><img class="responsive-img" src="<?= $sm['theme']['logo']['val']; ?>" style="max-width: 140px" /></a>
+        </div>
+        <div class="menu menu-margin" style="background:none;border: none">
+            <?php if($sm['user']['guest'] == 1){ ?>                  
+            <ul style="top: -120px">
+                <li data-menu-image="meet" data-murl="meet">
+                    <img src="<?= $sm['config']['theme_url']; ?>/images/m-meet.png" /> <span><?= $sm['lang'][49]['text']; ?></span>
+                </li>
+                <li data-menu-image="discover" data-murl="discover">
+                    <img src="<?= $sm['config']['theme_url']; ?>/images/m-discover.png" /> <span><?= $sm['lang'][50]['text']; ?></span>
+                </li>
+                <li data-menu-image="popular" data-murl="popular">
+                    <img src="<?= $sm['config']['theme_url']; ?>/images/m-popular.png" /> <span><?= $sm['lang'][52]['text']; ?></span>
+                </li> 
+                <li>
+                    <a href="<?= $sm['config']['site_url']; ?>logout" ><img src="<?= $sm['config']['theme_url']; ?>/images/m-chat.png" /> <span><?= $sm['lang'][16]['text']; ?></span></a>
+                </li>                                          
+                <div class="spotlight-users">
+                    <div class="add-me-here" style="cursor:pointer;background: #fafafa"><?= $sm['lang'][287]['text']; ?> <span style="color:#c1c1c1;font-size:10px;">- <?= $sm['lang'][288]['text']; ?></div>
+                </div>
+            </ul>
+            <?php } else { ?>
+            <div class="user-left" style="border-bottom: 1px solid <?=$sm['theme']['left_menu_border_color']['val']; ?>">
+                <div id="profile-menu" data-activates='dropdown1' class="profile-photo box-shadow-left-profile" onClick="goToProfile(<?= $sm['user']['id']; ?>)" data-force-profile-photo="1"
+                    data-src="<?= $sm['user']['profile_photo']; ?>" style="border-radius:<?=$sm['theme']['left_menu_photo_border_radius']['val']; ?>px">
+                </div>
+                <div class="user-coins" data-murl="credits" >
+                    <img src="<?= $sm['theme']['left_menu_icon_credits']['val']; ?>" >
+                    <span class="montserratBold userCredits vivify popIn" style="top:4px;margin-left: 12px"><b><?= $sm['user']['credits']; ?></b></span>
+                </div>  
+                <div class="user-vip" data-murl="premium">
+                    <?php if($sm['user']['premium'] == 1){
+                        echo '<img src="'.$sm['theme']['left_menu_icon_premium']['val'].'">
+                    <span class="montserratBold" style="top:4px"><b >ON</b></span>';
+                    } else {
+                        echo '<img src="'.$sm['theme']['left_menu_icon_premium']['val'].'" class="grayScale">
+                    <span class="montserratBold" style="top:4px"><b>Off</b></span>';
+                    }
+                    ?>
+                </div>                          
+                <div class="user-name " onClick="goToProfile(<?= $sm['user']['id']; ?>)" style="cursor: pointer;font-weight: bold"><?= $sm['user']['first_name']; ?></div>
+                <div class="user-name-sub" onclick="goTo('popularity');" style="cursor: pointer;font-weight: 500">
+                    <div class="sidebar-nav__popularity" style="color: <?= $sm['theme']['left_menu_credits_color']['val']; ?>">
+                        <?= $sm['lang'][700]['text']; ?>
+                    </div>
+                </div>                      
+            </div>          
+            <ul style="margin-top: 130px">
+                <li data-menu-image="meet" data-murl="meet">
+                    <img src="<?= $sm['theme']['left_menu_icon_people_nearby']['val']; ?>" /> <span class="montserrat" style="font-weight: 700;"><?= $sm['lang'][49]['text']; ?></span>
+                </li>
+                <li data-menu-image="discover" data-murl="discover">
+                    <img src="<?= $sm['theme']['left_menu_icon_discover']['val']; ?>" /> <span class="montserrat" style="font-weight: 700;"><?= $sm['lang'][50]['text']; ?></span>
+                </li>
+                <?php 
+                  $checkLivePlugin = getData('plugins','enabled','where name = "live"');
+                  if($checkLivePlugin == 1){ ?>
+                <li data-menu-image="live" data-murl="live">
+                    <img src="<?= $sm['config']['theme_url'];?>/images/live.png" style="width: 26px;padding: 2px;margin-left: 2px;margin-top: 4px;" /> <span class="montserrat" style="font-weight: 700;"><?= $sm['lang'][858]['text']; ?></span>
+                </li> 
+                <?php } ?>         
+                <li data-menu-image="popular" data-murl="popular">
+                    <img src="<?= $sm['theme']['left_menu_icon_popular']['val']; ?>" /> <span class="montserrat" style="font-weight: 700;"><?= $sm['lang'][52]['text']; ?></span>
+                </li>                    
+                <li data-menu-image="chat" data-murl="chat">
+                    <img src="<?= $sm['theme']['left_menu_icon_chat']['val']; ?>" /> <span class="montserrat" style="font-weight: 700;"><?= $sm['lang'][16]['text']; ?></span>
+                    <?php if(checkUnreadMessages($sm['user']['id']) > 0){
+                        echo '<div class="mark mark--red vivify pulsate infinite" id="chatCount">'.checkUnreadMessages($sm['user']['id']).'</div>';        
+                    } else {
+                        echo '<div class="mark mark--red" id="chatCount" style="display: none">'.checkUnreadMessages($sm['user']['id']).'</div>';    
+                    } ?>
+                </li>                    
+                <li data-menu-image="matches" data-murl="matches">
+                    <img src="<?= $sm['theme']['left_menu_icon_interactions']['val']; ?>" /> <span class="montserrat" style="font-weight: 700;"><?= $sm['lang'][51]['text']; ?></span>
+                </li>
+              
+                <?php if($sm['plugins']['withdrawal']['enabled'] == 'Yes'){ ?>
+                  <li data-murl="withdraw">
+                    <img src="<?= $sm['theme']['left_menu_icon_withdrawl']['val']; ?>" ><span class="montserrat" style="font-weight: 700;"><?= $sm['lang'][536]['text']; ?></span>
+                  </li>                         
+                <?php } ?> 
+
+                <?php if($sm['user']['admin'] >= 1){ ?>
+                  <li>
+                    <a href="<?= $sm['config']['site_url']; ?>index.php?page=cp">
+                        <span class="montserrat" style="font-weight: 700;">
+                            <?= $sm['lang'][813]['text']; ?>
+                        </span>
+                    </a>
+                  </li>                         
+                <?php } ?>                                    
+                <div class="spotlight-users">
+                    <div class="add-me-here add-yourself" style="cursor:pointer;background: #fafafa"><?= $sm['lang'][287]['text']; ?> <span style="color:#c1c1c1;font-size:10px;">- <?= $sm['lang'][288]['text']; ?></div>
+                    <div class="add-me-here-down"  >
+                        <div class="mdi-navigation-arrow-drop-down" style="color: #fafafa" ></div>
+                    </div>                                          
+
+                    <div data-spotlight-update="1" style="position:relative;padding:0;margin:0;text-align: center;">
+                        <?= spotLightMobile($sm['user']['lat'],$sm['user']['lng']); ?>
+                    </div>
+                </div>
+                <?php 
+                    if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_200x200'] == "Yes"){
+                      
+                      echo '<div data-left-menu-meet-ad class="ad-zone-square" style="margin-top:25px;margin-left:14px;">
+                      '.$sm['plugins']['adsWeb']['200x200'].'</div>';
+                    } else {
+                      $bannerMarginTop = 10;
+                    }  
+                 ?>                  
+            </ul>
+            
+            <?php } ?>       
+        </div>                      
+    </div>
+    <div class="col sl10 real" style="padding-top: 0px;border: none" >
+    <div class="n-wrapper" id="middleContent"></div>
+    <div id="profile-content-slider"></div>
+        <div id="data-content">
+            <?php echo $sm['content']; ?> 
+        </div>
+        <div class="col s2 real fix-width hide-mobile" style="padding-left: 10px;border: none;background: none">
+          <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+              echo '
+              <div class="ad-zone-vertical" style="margin-top:110px">
+                '.$sm['plugins']['adsWeb']['160x600'].'
+              </div>';
+            }
+          ?>    
+        </div>
+    </div>
+</div>

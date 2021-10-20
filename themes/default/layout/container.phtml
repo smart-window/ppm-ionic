@@ -1,0 +1,2071 @@
+<html >
+<head>
+<title><?php echo $sm['seoLang']['landing'][1]['text']; ?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="theme-color" content="#fff">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="<?php echo $sm['seoLang']['landing'][2]['text']; ?>">
+<meta name="keywords" content="<?php echo $sm['seoLang']['landing'][3]['text']; ?>">
+<meta name="author" content="<?php echo $sm['config']['name']; ?>"/>
+<meta property="fb:app_id" content="<?= siteConfig('fb_app_id'); ?>" />
+
+<meta property="og:title" content="<?php echo $sm['config']['title']; ?>" />
+<meta property="og:url" content="<?php echo $sm['config']['site_url']; ?>" />
+<meta property="og:image" content="<?php echo $sm['config']['logo']; ?>" />
+<meta property="og:description" content="<?php echo $sm['config']['description']; ?>" />
+<meta property="og:type" content="website" />
+
+<link href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/materialize.css" type="text/css" rel="stylesheet" />
+<link href="<?php echo $sm['config']['theme_url']; ?>/css/belloo.css" type="text/css" rel="stylesheet" />
+<link href="<?php echo $sm['config']['theme_url']; ?>/css/<?= $sm['theme']['card_design']['val']; ?>.css" type="text/css" rel="stylesheet" />
+
+<link rel="stylesheet" type="text/css" href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/sweetalert.css">
+<link rel="icon" type="image/png" href="<?= $sm['theme']['favicon']['val']; ?>" sizes="32x32">
+<link rel="stylesheet" href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/hint.css"/>
+<link rel="stylesheet" href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/scroller.css"/>  
+<link rel="stylesheet" href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/overlays.css"/>   
+<link rel="stylesheet" href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/v2.css"/>
+<link rel="stylesheet" href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/vivify.css"/>
+<link rel="stylesheet" href="<?php echo $sm['config']['site_url']; ?>themes/default/css/crossplatform.css"/>
+
+<link rel="stylesheet" href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/simple-line-icons.css">   
+<link rel="stylesheet" href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/slim-lightbox.min.css">    
+<link href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/jquery.dm-uploader.min.css" rel="stylesheet">
+<link href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/fbphotobox.css" rel="stylesheet" type="text/css" /> 
+<link href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/autocomplete.css" rel="stylesheet" type="text/css" /> 
+<link href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/nprogress.css" rel="stylesheet" type="text/css" />
+<link href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/clever.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/slick.css"/>
+<link rel="stylesheet" type="text/css" href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/little-widgets.css"/>
+<link rel="stylesheet" type="text/css" href="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1462889/unicons.css"/>
+
+<?php foreach($sm['plugin'] as $plugin){ ?>
+    <?php if(!empty($plugin['css_file'])){
+        $show = true;
+        if($show){
+            echo '<link rel="stylesheet" id="style'.$plugin['css_file'].'" type="text/css" href="'.$sm['config']['theme_url'].'/css/vendor/'.$plugin['css_file'].'.css"/>';
+        }
+    } 
+} ?>
+
+
+<link href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/ionicons.min.css" rel="stylesheet">
+<link href="<?php echo $sm['config']['theme_url']; ?>/css/vendor/emoji.css" rel="stylesheet">
+
+<script src="https://js.pusher.com/4.3/pusher.min.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/velocity.min.js"></script>
+<script>
+var siteUrl = '<?= $sm['config']['site_url']; ?>';
+</script>
+<?php $actual_link = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']; ?> 
+<?php
+$site_config = json_encode($sm['config']);
+$site_plugins = array();
+$requiredPlugins = array('settings','videocall','accounts','populars','adsWeb','fortumo','meet','live','profile','story','withdrawal','discover','chat','recordVideocall','verification','fakeUsersInteractions','facebook','pusher','ipstack','rewards');
+foreach ($sm['plugins'] as $plugin => $data) {
+    if (in_array($plugin, $requiredPlugins)) {
+        if($plugin == 'facebook'){
+            unset($data['secret']);
+        }
+        if($plugin == 'pusher'){
+            unset($data['secret']);
+        }
+        if($plugin == 'fortumo'){
+            unset($data['secret']);
+        }        
+        $site_plugins[$plugin] = $data;
+    }
+}
+$site_plugins = json_encode($site_plugins);
+$site_theme = json_encode($sm['theme']);
+$pk = $sm['plugins']['pusher']['key'];
+$site_prices = json_encode($sm['price']);
+$account_basic = json_encode($sm['basic']);
+$account_premium = json_encode($sm['premium']);
+$site_lang = json_encode($sm['lang']);
+$seo_lang = json_encode($sm['seoLang']);
+$user_info = json_encode($sm['user']);
+$filter_age = 0;
+$um = checkUnreadMessages($sm['user']['id']);
+$p = 'true';
+$f_age = explode( ',', $sm['user']['s_age'] );
+$allG = count($sm['genders']);
+$allG = $allG + 1;
+echo 
+'<script>
+var url;
+var allG = '.$allG.';
+var upType = 0;
+var totalDiscoverStories = 0;
+var distanceMeter = "'.$sm['plugins']['settings']['distanceMeter'].'";
+var distanceLimit = '.$sm['plugins']['settings']['distanceLimit'].';
+var mobile = false;
+var noChat = false;
+var themeUpdate = "'.$sm['settings']['desktopThemePreset'].'";
+var siteUrl = "'.$sm['config']['site_url'].'";
+var chatLimit = false;
+
+var spotlightLoaded = false;';
+echo '
+
+var um = '.$um.';
+var mobileSite = false;
+var site_config = '. $site_config  . ';
+var plugins = '. $site_plugins  . ';
+var site_prices = '. $site_prices  . ';
+var site_theme = '. $site_theme  . ';
+var account_basic = '. $account_basic  . ';
+var account_premium = '. $account_premium  . ';
+var site_lang = '. $site_lang  . ';
+var seo_lang = '. $seo_lang  . ';
+var user_info = '. $user_info  . ';
+
+';
+if($sm['user']['guest'] == 0){
+   echo 'var fage1 =  '. $f_age[0] . ';
+var fage2 =  '. $f_age[1] . ';'; 
+} else {
+    echo 'var fage1 = 18;var fage2 = 25;';
+}
+echo '
+function request_source(){
+    return \'' . $sm['config']['ajax_path'] . '\';
+}
+function site_title(){
+    return \'' . $sm['config']['title'] . '\';
+}   
+function theme_source(){
+    return \'' . $sm['config']['theme_url'] . '\';
+}
+function site_url(){
+    return \'' . $sm['config']['site_url'] . '\';
+}   
+function user_id(){
+    return \'' . $sm['user']['id'] . '\';
+}
+var current_user_id = 0;
+var user_name;  
+var uploadStory = false;
+</script>';
+?>
+
+<script>
+var gUrl = request_source()+'/rt.php';
+var aUrl = request_source()+'/api.php';    
+function defer(method) {
+    if (!window.jQuery) {
+        method();
+    } else {
+        setTimeout(function() { defer(method) }, 100);
+    }
+}
+
+var w = window,
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName('body')[0],
+    x = w.innerWidth || e.clientWidth || g.clientWidth,
+    h = w.innerHeight|| e.clientHeight|| g.clientHeight; 
+    <?php if($sm['theme']['design_style_wide']['val'] == 'Yes' && $_GET['page'] == 'meet'){ ?>
+        h = h-70;
+    <?php } ?>  
+
+    <?php if($sm['theme']['design_style']['val'] == 'Left-Menu'){ ?>
+        h = h;
+    <?php } ?>    
+
+</script>
+<?php $fonts = getArrayDSelected('font','theme_preset_fonts','where preset = "'.$_SESSION['preset'].'"');
+foreach ($fonts as $font) { 
+    $f = $font['font'];
+    $f = str_replace(' ','+', $f);
+    echo '<link href="https://fonts.googleapis.com/css?family='.$f.'" rel="stylesheet" type="text/css"/>';
+} ?>
+<style id="themeData">
+    <?= getAbsolutePage('styles'); ?>
+</style>
+
+<?php if(!empty($sm['plugins']['analytics']['ga_id'])){ ?>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= $sm['plugins']['analytics']['ga_id']; ?>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '<?= $sm['plugins']['analytics']['ga_id']; ?>');
+    </script>    
+<?php } ?>
+
+<?= $sm['plugins']['customHtml']['website_header']; ?>
+
+</head>
+<body class="body-background">
+<?php if($sm['theme']['preload_enable']['val'] == 'Yes'){ ?> 
+    <div id="preloader-container" style="background: <?= $sm['theme']['preload_bg']['val']; ?>;"><div id="preloader"><img class="icon" src="<?= $sm['theme']['preload_image']['val']; ?>">
+    </div></div>    
+<?php } ?>
+
+  <?php if($sm['theme']['design_style']['val'] == 'Top-Menu'){
+    echo getPage('Top-Menu');
+  } else {
+    echo getPage('Left-Menu');
+  } ?>
+
+<aside class="ovl startingVideocall videocall-container" style="display:none;overflow-y: hidden;">
+    <section class="ovl-frame animated fadeIn" style="top: 50%";>
+        <div class="js-ovl-content">
+            <div class="ovl-body" style="width: 1024px;position: relative;" >
+    <div class="videocall-container" style="position:relative;">
+        <div class="videopb"></div>
+     
+        <nav class="video-control">
+          <button class="video" id="turn-video"><i class="mdi-av-videocam"></i></button>
+          <button class="audio" id="turn-mic"><i class="mdi-av-mic"></i></button>
+          <button onclick="finishCall(true)" ><i class="mdi-communication-call-end"></i></button>
+          <button id="chat-call"><i class="mdi-communication-chat"></i></button>
+        </nav>          
+  
+        <div class="videocall-container calle"  style="position:relative;">
+            <div class="videopb"></div>
+            <div class="loading">
+                <b id="call_status" style="color:#FFF;"></b><br><br><br><br>
+                <div class="call-loader" ></div>
+            </div>
+            <div class="profile-photo1">
+                <img src="<?= $sm['user']['profile_photo']; ?>" />
+                <video id="my-video" muted="true" autoplay></video>
+            </div>
+            <div class="video">
+                <div class="topleft">
+                    <span><b id="call-name"></b><br></span><span id="minutes">00</span>:<span id="seconds">00</span>
+                </div>                  
+                <video id="their-video" autoplay></video>
+            </div>
+            <img class="profile-photo2" style="border-radius: 50%" alt="jofpin"/>
+        </div>
+    </div>                
+                </div>             
+            </div>
+        </div>
+    </section>
+    <div class="ovl-align"></div>   
+</aside>
+
+<toast-bar class="hydrated" style="display:none">
+    <div class="toast-bar isVisible">
+        <div class="container">
+            <div class="toast-bar--inner">
+                <div class="toast-bar__details">
+                    <div class="toast-bar__section">
+                        <div class="toast-bar__section-header"></div>
+                        <div class="toast-bar__section"></div>
+                        <div class="toast-bar__section"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</toast-bar>    
+
+
+
+<aside class="ovl uploadphotos" style="display: none;overflow-y: hidden">
+    <section class="ovl-frame js-ovl-wrap absoluteCenter vivify swoopInBottom"  style="top: 90px;max-height: 100%">
+        <div class="js-ovl-content vivify fadeIn delay-100" style="height: 680px;width:850px">
+            <div class="ovl-body" style="position: relative;width: 100%">
+                <div class="ovl-content">
+                    <center>
+                        <div data-upload-header="1">
+                            <div class="brick brick--xxlg box-shadow">
+                                <div class="brick-img profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>
+                            </div>                        
+                            <h5 class="xxx-large b" style="font-weight: 700"><?=$sm['lang'][631]['text']; ?></h5>
+                            <p class="large"><?=$sm['lang'][632]['text']; ?></p><br>
+
+                        </div>
+                        <div data-upload-header="2" style="display: none">                     
+                            <h5 class="xxx-large b" style="font-weight: 700"><?=$sm['lang'][633]['text']; ?></h5>
+
+                        </div>                        
+                        <div class="file-upload-promo-wrapper" data-upload-proccess="2" style="display:none;height: 80%;overflow-y: auto;max-width: 654px" >
+                            <div class="upload__files" data-user-media>
+                                <div class="preview" style="cursor:pointer;max-height: 140px">
+                                    <div class="photo-list__action" onclick="upMedia()" style="cursor:pointer;background: #fafafa;width: 100%;height: 140px;margin-top:8px;display: inline-block;">
+                                        <div class="inline">
+
+                                            <i class="icon icon--lg icon--white ion-android-camera" style="font-size: 28px;color: #999"></i>
+                                            <b class="photo-list__action-title" style="color: #999"><?= $sm['lang'][74]['text']; ?></b>
+                                        </div>
+                                        <span class="middle"></span>
+                                     </div>
+                                </div>
+                               
+                                <?php 
+                                    $userMediaFilter = 'where u_id = '.$sm['user']['id'].' AND story = 0';
+                                    $userMedia = getArray('users_photos',$userMediaFilter,'profile desc,id desc');
+                                    foreach ($userMedia as $media) { ?>
+
+                                    <?php if($media['approved'] == 1){ ?>
+                                        <div class="preview vivify delay-400 fadeIn" style="cursor:pointer;max-height: 140px" data-manage-media-path="<?= $media['photo']; ?>" data-my-media="<?= $media['id']; ?>">
+                                            <div class="dropdown-media">
+                                              <input class="dropdown-toggle" type="text">
+                                              <div class="dropdown-text" style="display: none"></div>
+                                              <ul class="dropdown-content-media">
+                                                <?php if($media['profile'] == 0 && $media['video'] == 0){ ?>
+                                                    <li><a href="#" onclick="manageUserMedia(<?=$media['id'];?>,1)">
+                                                        <?= $sm['lang'][636]['text']; ?></a>
+                                                    </li>
+                                                <?php } ?> 
+                                                <li><a href="#" onclick="manageUserMedia(<?=$media['id'];?>,4)"><?= $sm['lang'][637]['text']; ?></a></li>        
+
+                                                <?php if($media['profile'] == 0){ ?>
+                                                    <li><a href="#" style="color:#e40404" onclick="manageUserMedia(<?=$media['id'];?>,2)"><?= $sm['lang'][638]['text']; ?></a></li>
+                                                <?php } ?>                                                 
+                                              </ul>
+                                            </div> 
+                                            <?php if($media['profile'] == 1){ ?>
+                                            <div class="gradient3" style="position: absolute;right: 30px;top: 5px;width: 20px;height: 20px;border-radius: 50px;">
+                                                <i class="icon icon--lg icon--white ion-ios-person" style="line-height:18px;font-size: 18px;color: #fff;margin-left: -6px"></i>
+                                            </div> 
+                                            <?php } ?> 
+                                            <div class="gradient5" style="background:#fff;position: absolute;right: 5px;top: 5px;width: 20px;height: 20px;border-radius: 50px;">
+                                                <i class="icon icon--lg icon--white ion-edit" style="line-height:12px;font-size: 12px;color: #fff;margin-left: -6px;margin-top: 4px;"></i>
+                                            </div>                                                                                  
+                                           <div class="preview__thumb">
+                                            <?php if($media['video'] == 1){ ?>
+                                                <video autoplay muted loop width="100%" height="100%">
+                                                    <source src="<?= $media['photo']; ?>"></video>
+                                            <?php } else { ?>
+                                                <img src="<?= $media['thumb']; ?>" />
+                                            <?php } ?>
+                                           </div>
+                                            <?php if($media['profile'] == 0){ ?>
+                                                <label class="switch" >
+                                                    <input type="checkbox"
+                                                        <?php if($media['private'] == 1){ echo 'checked'; } ?>
+                                                        onclick="manageUserMedia(<?=$media['id'];?>,3)" data-my-media-private="<?=$media['id'];?>">
+                                                    <span>
+                                                        <em></em>
+                                                        <strong></strong>
+                                                    </span>
+                                                </label>
+                                            <?php } ?>
+                                        </div>
+                                    <?php }  ?>
+                                    <?php if($media['approved'] == 0){ ?>
+                                        <div class="preview" style="cursor:pointer;max-height: 140px" data-manage-media-path="<?= $media['photo']; ?>">
+                                            <div class="dropdown-media">
+                                              <input class="dropdown-toggle" type="text">
+                                              <div class="dropdown-text" style="display: none"></div>
+                                              <ul class="dropdown-content-media">
+                                                <?php if($media['profile'] == 0 && $media['video'] == 0){ ?>
+                                                    <li><a href="#"><?= $sm['lang'][636]['text']; ?></a></li>
+                                                <?php } ?> 
+                                                <li><a href="#"><?= $sm['lang'][637]['text']; ?></a></li>        
+                                                <li><a href="#" style="color:#e40404"><?= $sm['lang'][638]['text']; ?></a></li>
+                                              </ul>
+                                            </div> 
+                                           
+                                            <div  style="position: absolute;left:0;top: 10px;width: 80%;margin-left:10%;height: 25px;background: rgba(0,0,0,1);border-radius: 5px">
+                                                <span style="line-height: 25px;color: #fff;font-size: 12px">Pending review</span>
+                                            </div> 
+                                                                         
+                                           <div class="preview__thumb">
+                                            <?php if($media['video'] == 1){ ?>
+                                                <video autoplay muted loop width="100%" height="100%">
+                                                    <source src="<?= $media['photo']; ?>"></video>
+                                            <?php } else { ?>
+                                                <img src="<?= $media['thumb']; ?>" />
+                                            <?php } ?>
+                                           </div>
+                                            <label class="switch">
+                                                <input type="checkbox">
+                                                <span>
+                                                    <em></em>
+                                                    <strong></strong>
+                                                </span>
+                                            </label>
+                                        </div>
+                                    <?php } ?>                                                                          
+                                <?php }  ?>
+                                
+
+                            </div>
+                        </div>
+                        <div class="file-upload-promo-wrapper" data-upload-proccess="1" style="cursor: pointer;height: 265px" >
+                            
+                            <div class="file-upload" id="upload-area" >
+
+                                <div class="file-upload__content-area" style="height: 250px">
+                                    
+                                    <div class="upload" onclick="upMedia()">
+                                        <svg class="circle" viewBox="0 0 164 164">
+                                            <circle cx="82" cy="82" r="80"></circle>
+                                            <circle class="active" cx="82" cy="82" r="80"></circle>
+                                        </svg>
+                                        <svg class="image" viewBox="0 0 60 60">
+                                            <rect fill="currentColor" x="0" y="0" width="60" height="60" rx="11.9999993"></rect>
+                                            <circle fill="#FFFFFF" cx="15" cy="15" r="5"></circle>
+                                            <path d="M50,54 L10,54 C7.790861,54 6,52.209139 6,50 L6,44.2867962 C6,44.0993765 6.05266944,43.9157289 6.1520017,43.7567973 L12.6080068,33.4271891 C12.9299296,32.9121126 13.3649277,32.4771145 13.8800042,32.1551917 C15.7533504,30.9843504 18.2211519,31.553843 19.3919932,33.4271891 L26,44 L36.3752674,21.7672841 C36.7726106,20.9158345 37.4570086,20.2314365 38.3084581,19.8340934 C40.3103427,18.8998806 42.6905198,19.7653995 43.6247326,21.7672841 L53.9061831,43.7989639 C53.9679765,43.9313783 54,44.0757261 54,44.2218493 L54,50 C54,52.209139 52.209139,54 50,54 Z" fill="#FFFFFF"></path>
+                                        </svg>
+                                    </div>               
+                                    <div class="file-upload__hint">
+                                        <div class='file-input' style="margin-left: 10%">
+                                          <input type='file' id="uploadContent" style="display: none" />
+                                          <span class='button' onclick="upMedia()" ><?= $sm['lang'][634]['text']; ?></span>
+                                          <span class='label' data-js-label><?= $sm['lang'][635]['text']; ?></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </center>
+                </div>
+
+                <center>
+                    <p class="grey text-center" style="font-size: 12px"><?= $sm['lang'][402]['text']; ?>
+                            <br><?= $sm['lang'][403]['text']; ?></p>
+                </center>
+            </div>
+        </div>       
+        <div class="ovl-close"><i class="icon icon--white ion-close-round" style="color: #333;font-size: 24px;"></i></div>
+    </section>
+    <div class="ovl-align"></div>  
+</aside>
+<?php if($sm['plugins']['settings']['forceEmailVerification'] == 'Yes' && $sm['user']['email_verified'] == 0 ){ ?>
+    <?php if($sm['theme']['design_style']['val'] == 'Top-Menu'){ ?>
+     <div class="simple-page__content" style="background:<?= $sm['theme']['body_background']['val']; ?>;color: <?= $sm['theme']['menu_font_color']['val']; ?>">
+        <div class="simple-promo__title" style="background:<?= $sm['theme']['body_background']['val']; ?>">
+    <?php } else { ?>
+    <div class="simple-page__content" style="background:<?= $sm['theme']['body_background']['val']; ?>;color: <?= $sm['theme']['left_menu_color']['val']; ?>">
+        <div class="simple-promo__title" style="background:<?= $sm['theme']['body_background']['val']; ?>">
+    <?php } ?>
+
+        <center>
+            <img class="responsive-img" src="<?= $sm['theme']['logo']['val']; ?>" style="margin-bottom: 20px;padding-top: 20px" />
+        </center>
+    </div>  
+    <div class="simple-promo" style="background: none">
+      <center>
+        <div class="simple-promo__content" style="background: none;">
+            <div class="simple-promo__img">
+                <div class="brick brick--xxlg brick--verify" style="background:#fefefe;border: 2px solid <?= $sm['theme']['spotlight_border_story_add']['val']; ?>">
+                    <div class="brick-img profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>
+                    <div class="brick brick--xsm brick--verify brick--bc" style="background: <?= $sm['theme']['spotlight_border_story_add']['val']; ?>"><i class="ion-ios-email" style="position:absolute;font-size: 18px;top:1px;left: 4px;"></i></div>
+                </div>
+            </div>
+            <div class="js-verification-wrapper">
+                <h5 class="xxx-large b"><?= $sm['lang'][404]['text']; ?></h5>
+                <p class="large"><?= $sm['lang'][405]['text']; ?> <strong data-current-email-verify><?= $sm['user']['email']; ?></strong> <?= $sm['lang'][406]['text']; ?>.<br><?= $sm['lang'][408]['text']; ?></p><br>
+            </div>
+        </div>
+        <div class="lgrey simple-promo__footer">
+            <?= $sm['lang'][409]['text']; ?> <strong data-current-email-verify><?= $sm['user']['email']; ?></strong><br><br> 
+            <a href="#" onclick="changeEmail()" class="lgrey link js-signout-immediately">
+                <strong><?= $sm['lang'][639]['text']; ?></strong>
+            </a> |
+
+            <a href="<?= $sm['config']['site_url']; ?>logout" class="lgrey link js-signout-immediately">
+                <?= $sm['lang'][410]['text']; ?>
+            </a>            
+        </div>
+    </center></div>
+</div>                 
+<?php } ?>
+
+<?php if($sm['user']['total_photos'] == 0 && !isset($_SESSION['skipUploadPhoto']) && $sm['plugins']['settings']['showUploadPhotoAfterRegister'] == 'Yes' || $sm['user']['total_photos'] == 0 &&  $sm['plugins']['settings']['forcePhotoUpload'] == 'Yes' && $sm['plugins']['settings']['showUploadPhotoAfterRegister'] == 'Yes'){ ?>
+    <?php if($sm['theme']['design_style']['val'] == 'Top-Menu'){ ?>
+     <div class="simple-page__content" data-force-profile-photo="10" style="background:<?= $sm['theme']['body_background']['val']; ?>;color: <?= $sm['theme']['menu_font_color']['val']; ?>">
+        <div class="simple-promo__title" style="background:<?= $sm['theme']['body_background']['val']; ?>">
+    <?php } else { ?>
+    <div class="simple-page__content" data-force-profile-photo="10" style="background:<?= $sm['theme']['body_background']['val']; ?>;color: <?= $sm['theme']['left_menu_color']['val']; ?>">
+        <div class="simple-promo__title" style="background:<?= $sm['theme']['body_background']['val']; ?>">
+    <?php } ?>
+
+        <center>
+            <img class="responsive-img" src="<?= $sm['theme']['logo']['val']; ?>" style="margin-bottom: 20px;padding-top: 20px" />
+        </center>
+    </div> 
+<div class="simple-promo" style="background: none">
+    <center>
+    <div class="simple-promo__content" style="background: none">
+      
+        <div class="simple-promo__img">
+                <div style="position:absolute;left:44%;width: 140px;height: 140px;background: none;z-index: 2;cursor: pointer;" onclick="upProfilePoto()"></div>            
+            <div class="brick brick--xxlg"  style="background: none;cursor: pointer;" >
+
+                <div class="brick-img profile-photo" data-upload-force data-force-profile-photo="1" data-src="<?= $sm['user']['profile_photo']; ?>" style="cursor: pointer;"></div>
+                <div class="onboarding-tooltip" data-direction="right" style="left: 120px" >
+                    <div class="onboarding-tooltip__inner">
+                        <div class="onboarding-tooltip__text" contenteditable="true" data-force-profile-photo="5" style="outline: none"><?= $sm['user']['bio']; ?></div>
+                    </div>
+                </div>
+                                     
+            </div>
+
+        </div>
+        <div style="margin-top: 35px;">
+            <h5 class="xxx-large b montserratRegular" data-force-profile-photo="2" style="font-weight: 700"><?= $sm['lang'][644]['text']; ?></h5>
+            
+        </div>          
+        <p class="large" data-force-profile-photo="3" style="margin-top: 5px"><?= $sm['lang'][645]['text']; ?></p><br>
+        <button class="button-circular box-shadow vivify popIn" onclick="upProfilePoto()" style="opacity: 1; transform: translateY(0px);background: #fff;right: 25px;top:55px;z-index: 9">
+            <svg id="icon-camera-add" viewBox="0 0 32 32" width="60%" height="60%"><path d="M30 25h-2v-2h-1v2h-2v1h5v-1zm-2 3v-2h-1v2h1zm-.5 2a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9zM21 25.51c0 .89.18 1.73.5 2.5H5.04A3.08 3.08 0 0 1 2 24.9V10.1A3.08 3.08 0 0 1 5.04 7h4.31l2.72-3h7.86l2.7 2.99h4.34c1.68 0 3.04 1.4 3.04 3.12v9.4a6.5 6.5 0 0 0-9.01 6zM16.02 24A6.9 6.9 0 0 0 23 17c0-1.28-.31-2.45-.93-3.52A6.94 6.94 0 0 0 16.02 10 7.01 7.01 0 0 0 9 17a7.01 7.01 0 0 0 7.02 7zm2.8-4.17A3.85 3.85 0 0 0 20 17c0-1.1-.4-2.05-1.17-2.83A3.85 3.85 0 0 0 16 13c-1.1 0-2.05.4-2.83 1.17A3.85 3.85 0 0 0 12 17c0 1.1.4 2.05 1.17 2.83A3.85 3.85 0 0 0 16 21c1.1 0 2.05-.4 2.83-1.17z"></path></svg>
+        </button>
+        <br><br>
+        <?php if($sm['plugins']['settings']['forcePhotoUpload'] == 'No'){ ?> 
+            <p class="large" style="margin-top: 5px">
+                <a href="#" onclick="skipUploadPhoto()">Skip this step</a>
+            </p><br>
+        <?php } ?>                    
+</center></div>
+</div> 
+<?php } ?>
+
+<div class="simple-page__content" id="goToMobile" style="display:none">
+<div class="simple-promo" style="width: 100%;height: 100%;margin: 0"><center><img class="responsive-img" src="<?= $sm['config']['logo']; ?>" style="margin-bottom: 20px;" />
+    <div class="simple-promo__content">
+        <div class="simple-promo__img">
+            <div class="brick brick--xxlg brick--verify box-shadow">
+                <div class="brick-img profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>
+            </div>
+        </div>
+        <div class="js-verification-wrapper">
+            <h5 class="xxx-large b"><?= $sm['lang'][537]['text']; ?></h5>
+            <p class="large"><?= $sm['lang'][538]['text']; ?>..</p><br>
+        </div>
+    </div>
+</center></div>
+</div>   
+<aside class="ovl js-ovl-close js-core-events-container" id="add-spotlight" style="display:none">
+    <section class="ovl-frame absoluteCenter vivify swoopInBottom js-ovl-wrap" style="top: 20%;">
+        <div class="js-ovl-content">
+            <div class="ovl-body">
+                <input type="hidden" name="photo_id" class="js-photo-id" value="">
+                <div class="ovl__header ovl__header--spotlight" style="background: #fff">
+                    <div class="ovl__header-content">
+                        <div class="spotlight-navigation"  style="border-bottom: 2px solid #fff">
+                          <div class="bricks-line bricks-line--lg">
+                              <div class="brick  brick--xxlg  brick--white vivify popIn delay-400 ">
+                                  <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                              </div>
+                              <div class="brick brick--xxxlg  brick--white vivify popIn delay-1000  brick--stroke ">
+                                 <div class="brick-img profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>                              
+                              </div>
+                              <div class="brick  brick--xxlg  brick--white vivify popIn delay-400">
+                                  <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ovl-content"><center>
+                    <h3 class="comforta" style="font-size: 26px;"><?= $sm['lang'][411]['text']; ?>!</h3>
+                    <p><?= $sm['lang'][413]['text']; ?> .</p>
+                </center></div>
+                <div class="ovl__actions">
+                    <div class="btn vivify fadeIn delay-1000 <?= $sm['theme']['credits_section_spotlight_up_bg']['val']; ?>" style="background:<?= $sm['theme']['credits_section_spotlight_up_bg']['val']; ?>" id="add-sphoto">
+                        <span class="btn-txt montserratBold" style="color: <?= $sm['theme']['credits_section_spotlight_up_color']['val']; ?>;font-size: 28px"><?= $sm['lang'][431]['text']; ?></span>
+                    </div>
+                    <br>
+                    <p style="color:#555;font-size: 12px;"><?= $sm['lang'][335]['text']; ?>: <?= $sm['price']['spotlight']; ?> <?= $sm['lang'][73]['text']; ?>                    
+                </div>
+                <div class="ovl-close"><i class="icon icon--white ion-close-round" style="color: #222;font-size: 22px;"></i></div>
+        </div>
+    </section>
+    <div class="ovl-align"></div>
+</aside>
+
+<?php 
+$checkUserReward = getData('users_rewards','reward','WHERE uid = '.$sm['user']['id'].' AND reward = "newAccountFreeCredit"');
+if($sm['plugins']['rewards']['newAccountFreeCredit'] > 0 && $checkUserReward == 'noData'){ ?>
+<aside class="ovl js-ovl-close js-core-events-container" id="creditsRewardModal" style="background: rgba(0,0,0,0.8)">
+    <section class="ovl-frame absoluteCenter vivify swoopInBottom js-ovl-wrap " id="creditsRewardModal2" style="top: 30%;margin-left:100px;cursor: pointer;background: none" onclick="hideCoinModal(<?= $sm['plugins']['rewards']['newAccountFreeCredit']; ?>)">
+        <div class="js-ovl-content coinModalContent vivify popInBottom" >
+            <div class="ovl-body ovl-body--narrow">
+                <div class="ovl__header" style="background: none">
+                    <div class="ovl__header-content" style="background: none">
+                        <div style="position: relative;">
+                            <div class='coin'>
+                              <div class='front jump' id="coinJump">
+                                <div class='star'></div>
+                                <span class='creditsAmount'><?= $sm['plugins']['rewards']['newAccountFreeCredit']; ?></span>
+                                <div class='shapes'>
+                                  <div class='shape_l'></div>
+                                  <div class='shape_r'></div>
+                                  <span class='top'>C</span>
+                                  <span class='bottom'><?= $sm['plugins']['settings']['siteName']; ?></span>
+                                </div>
+                              </div>
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ovl-content" style="margin-top: 45px">
+                    <h1></h1>
+                    <p class="large center montserrat" style="font-size: 16px;font-weight: 500;color: #fff">
+                       <?= $sm['lang'][524]['text']; ?>  <?= $sm['plugins']['settings']['siteName']; ?>, 
+                       <?= $sm['lang'][525]['text']; ?>  <strong><?= $sm['plugins']['rewards']['newAccountFreeCredit']; ?></strong> <?= $sm['lang'][73]['text']; ?>.
+                    </p>
+                </div>               
+            </div>
+        </div>
+    </section>
+</aside>
+<audio id="coinSound" type="audio/wav" preload="false" ><source src='<?= $sm['plugins']['inAppNotification']['coinSound']; ?>' /></audio> 
+<script>
+function hideCoinModal(val){
+    var coinModal = $(".coinModalContent");
+    coinModal.removeClass('popInBottom');
+    coinModal.addClass('popOut');
+    coinSound.play(); 
+    setTimeout(function(){
+        $('#creditsRewardModal').hide();
+
+        updateCredits(<?= $sm['user']['id']; ?>,<?=$sm['plugins']['rewards']['newAccountFreeCredit']; ?>,'reward','Reward credits for register','newAccountFreeCredit');
+    },550);   
+    setTimeout(function(){
+        $('.userCredits').html('<b><?=$sm['plugins']['rewards']['newAccountFreeCredit']; ?></b>');
+        user_info.credits = <?=$sm['plugins']['rewards']['newAccountFreeCredit']; ?>;
+    },1050);
+}
+var coinSound = document.getElementById("coinSound");
+
+setTimeout(function(){
+    document.getElementById("coinJump").classList.remove('jump');
+},3000);    
+</script>
+<?php } ?>
+
+
+<?php if(!$sm['liveTheme']){ ?>
+<div class="box-shadow gradient10" style="position: fixed;bottom: 0;width: 100%;height:40px;left: 0;background:#24CF5F;z-index: 999;text-align: center;">
+    <span class="text-shadow montserratRegular" style="line-height: 40px;font-size: 16px;text-align: center;color: #fafafa">
+        Current viewing preset theme: <strong><?= getData('theme_preset','preset_alias','WHERE preset = "'.$_SESSION['preset'].'"'); ?></strong> <a class="box-shadow" href="<?= $sm['config']['site_url'];?>index.php?preset=<?=$sm['settings']['desktopThemePreset']; ?>" style="margin-left: 100px;color:#333;background: #fafafa;padding: 5px;line-height: 30px;border-radius: 3px;padding-left: 10px; padding-right: 10px">Back to live theme (<?= getData('theme_preset','preset_alias','WHERE preset = "'.$sm['settings']['desktopThemePreset'].'"'); ?>)</a>
+    </span>
+</div>
+<?php } ?>
+
+<aside class="ovl js-ovl-close js-core-events-container" id="rise-up" style="display: none" >
+    <section class="ovl-frame absoluteCenter vivify swoopInBottom js-ovl-wrap " style="top: 20%;">
+        <div class="js-ovl-content">
+            <div class="ovl-body">
+                <div class="ovl__header <?= $sm['theme']['credits_section_rise_up_bg']['val']; ?>" style="background: <?= $sm['theme']['credits_section_rise_up_bg']['val']; ?>" >
+                    <div class="ovl__header-content" >
+                        <div class="bricks-line bricks-line--lg">
+                            <div class="brick vivify popIn delay-300 brick--xxlg  brick--white ">
+                                <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                            </div>
+                            <div class="brick vivify popIn delay-500 brick--xxxlg  brick--white  brick--stroke ">
+                               <div class="brick-img profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>                              
+                            </div>
+                            <div class="brick vivify popIn delay-300 brick--xxlg  brick--white ">
+                                <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ovl-content vivify fadeIn delay-800"><center>
+                    <h5><?= $sm['lang'][414]['text']; ?></h5>
+                    <p class="x-large"><?= $sm['lang'][415]['text']; ?></p>
+                </div>
+                <div class="ovl__actions">
+                    <div class="btn vivify fadeIn delay-700 montserrat <?= $sm['theme']['credits_section_rise_up_bg']['val']; ?>" style="background: <?= $sm['theme']['credits_section_rise_up_bg']['val']; ?>" onclick="riseUp()"> <span class="btn-txt" style="font-size: 22px;color: <?= $sm['theme']['credits_section_rise_up_color']['val']; ?>"><?= $sm['lang'][416]['text']; ?></span></div>
+                    <br>
+                    <p style="color:#555;font-size: 12px;"><?= $sm['lang'][335]['text']; ?>: <?= $sm['price']['first']; ?> <?= $sm['lang'][73]['text']; ?>
+                </div>
+                <div class="ovl-close"><i class="icon icon--white ion-close-round" style="color: #fff;font-size: 24px;"></i></div>
+            </div></center>
+        </div>
+    </section>
+    <div class="ovl-align"></div>
+</aside>
+<aside class="ovl js-ovl-close js-core-events-container" id="showWithdraw" style="display: none;     background: <?=$sm['theme']['btn_bg']['val']; ?> !important;">
+    <section class="ovl-frame js-ovl-wrap absoluteCenter vivify swoopInBottom" style="top: 20%;overflow: hidden;background: none">
+        <div class="js-ovl-content" style="background: none;overflow: hidden ">
+            <div class="ovl-body" >
+                <div class="ovl__header ovl__header--green" style="background: none">
+                    <div class="ovl__header-content" style="background: none">
+                        <div class="bricks-line bricks-line--lg">
+                            <div class="brick brick--xxlg brick--stroke">
+                                <div class="brick-img profile-photo" data-src="https://www.paypalobjects.com/webstatic/icon/pp144.png"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ovl-content" ><center>
+                    <h5 class="montserratBold" style="color: <?=$sm['theme']['btn_color']['val']; ?> !important; "><?= str_replace('credits', $sm['user']['credits'].' '.$sm['lang'][73]['text'], $sm['lang'][627]['text']); ?>!</h5>
+                    <p class="x-large" style="color: <?=$sm['theme']['btn_color']['val']; ?> !important; "><?= $sm['lang'][540]['text']; ?> <b><?= $sm['plugins']['settings']['currency']; ?> <?= $sm['user']['payout']; ?></b> <?= $sm['lang'][544]['text']; ?> <b>PayPal</b> <?= $sm['lang'][541]['text']; ?>
+                    </p>
+                <center>
+               <?php if(checkWithdrawExist($sm['user']['id']) == 1){ ?>
+                    <br>
+                    <div class="alert alert-info" style="background: #fff;color: <?=$sm['theme']['btn_color']['val']; ?> !important; border-radius: 5px;padding:10px;">
+                        <strong><?= $sm['lang'][542]['text']; ?></strong><br>
+                        <?= $sm['lang'][543]['text']; ?> paypal <?= $sm['user']['paypal'];?>
+                    </div>
+                <?php } else { ?>
+                    <div class="row">
+                    <div class="input-field col s8" style="margin-left: 20%">
+                        <b class="form-label__value" style="color: <?=$sm['theme']['btn_color']['val']; ?> !important; ">Paypal Email: </b><br>
+                        <input class="input clever" value="<?= $sm['user']['paypal']; ?>" id="paypalEmail"/>
+                    </div>
+                </div>
+                </center>                                    
+                </div>
+                <div class="ovl__actions">
+                    <div class="btn montserrat boostProfile gradient32" onclick="withdrawNow()">
+                        <span class="btn-txt"><?= $sm['lang'][705]['text']; ?></span></div>
+                </div>
+                <?php }  ?>               
+                <div class="ovl-close"><i class="icon icon--white ion-close-round" style="color: #666;font-size: 24px;"></i></div>
+            </div></center>
+        </div>
+    </section>
+    <div class="ovl-align"></div>
+</aside>
+
+<aside class="ovl js-ovl-close js-core-events-container" id="showSendCredit" style="display: none;" >
+    <section class="ovl-frame js-ovl-wrap absoluteCenter vivify swoopInBottom" style="top: 20%;overflow: hidden;background: #FFF">
+        <div class="js-ovl-content" style="background: none;overflow: hidden ">
+            <div class="ovl-body" >
+                <div class="ovl__header" style="background: #fff">
+                    <div class="ovl__header-content">
+                        <div class="bricks-line bricks-line--lg">
+                            <div class="brick brick--xxlg brick--stroke vivify delay-500 popIn">
+                              <div class="brick-img profile-photo box-shadow" data-src="<?= $sm['user']['profile_photo']; ?>"></div>
+                            </div>
+
+                            <div class="brick brick--xxlg brick--stroke vivify delay-600 popIn">
+                                <div class="brick-img profile-photo box-shadow" id="sendCreditPhoto" data-src=""></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ovl-content vivify delay-300 fadeIn" ><center>
+                    <h5 class="montserratRegular"><?= $sm['lang'][546]['text']; ?> <span class="sendCreditName"></span></h5>
+                    <p class="x-large"><?= $sm['lang'][547]['text']; ?> <span class="sendCreditName"></span></p>
+                <center>
+                    <div class="row">
+                    <div class="input-field col s8" style="margin-left: 20%">
+                        <input class="input input--sm " type="number" placeholder="<?= $sm['lang'][548]['text']; ?>" id="sendCreditAmount"/>
+                        <input class="input input--sm"  type="hidden" style="display: none" id="sendCreditMessage"/>                        
+                    </div>
+                </div></center>                                    
+                </div>
+                <div class="ovl__actions vivify delay-700 fadeIn">
+                        <div class="btn btn--white" style="margin-left: 20px;" onclick="sendCreditNow()">
+                            <span class="btn-txt montserrat" style="padding-left: 20px;">
+                            <img src="<?= $sm['config']['theme_url']; ?>/images/icon-coins.png"
+                                                style="position:absolute;width: 30px;margin-top: -2px;margin-left: -35px;"> <?= $sm['lang'][549]['text']; ?> </span>
+                        </div>
+                    <br>
+                    <p style="color:#555;font-size: 12px;"><?= $sm['lang'][550]['text']; ?> <b class="userCredits"><?= $sm['user']['credits']; ?></b> <?= $sm['lang'][285]['text']; ?></p>                        
+                </div>
+                <div class="ovl-close vivify delay-400 fadeIn" ><i class="icon icon--white ion-close-round" style="color: #333;font-size: 24px;"></i></div>
+            </div></center>
+        </div>
+    </section>
+    <div class="ovl-align"></div>
+</aside>
+
+<aside class="ovl js-ovl-close js-core-events-container" id="showStreamPrivate" style="display: none" >
+    <section class="ovl-frame js-ovl-wrap absoluteCenter vivify swoopInBottom" style="top: 20%;overflow: hidden;background: url('<?= $sm['config']['theme_url'];?>/images/streamPrivateBG.jpg') no-repeat">
+        <div class="js-ovl-content" style="background: none;overflow: hidden ">
+            <div class="ovl-body" >
+                <div class="ovl__header" style="background: none">
+                    <div class="ovl__header-content" style="background: none">
+                        <div class="bricks-line bricks-line--lg " >
+                            <div class="brick brick--xxlg brick--stroke vivify delay-500 popIn">
+                              <div class="brick-img profile-photo box-shadow" id="streamPrivateProfilePhoto" data-src=""></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ovl-content vivify delay-300 fadeIn" ><center>
+                    <h5 class="montserratRegular" style="color: #fff"><?= $sm['lang'][838]['text']; ?>!</h5>
+                    <p class="x-large" style="color: #fafafa">
+                        <?= $sm['lang'][840]['text']; ?> <span data-private-stream-credits></span> <?= $sm['lang'][73]['text']; ?>
+                    </p>                                  
+                </div>
+                <div class="ovl__actions vivify delay-700 fadeIn">
+                        <div class="btn" style="margin-left: 20px;color:#fff;background: rgba(0,0,0,.5)" onclick="accessPrivateStream()">
+                            <span class="btn-txt montserrat" style="padding-left: 20px;">
+                            <img src="<?= $sm['config']['theme_url']; ?>/images/icon-coins.png"
+                                                style="position:absolute;width: 30px;margin-top: -2px;margin-left: -35px;"> <?= $sm['lang'][837]['text']; ?> </span>
+                        </div>
+                    <br>
+                    <p style="color:#fff;font-size: 12px;"><?= $sm['lang'][550]['text']; ?> <b class="userCredits"><?= $sm['user']['credits']; ?></b> <?= $sm['lang'][285]['text']; ?></p>                        
+                </div>
+                <div class="ovl-close vivify delay-400 fadeIn" id="closeAccessPrivateStreamModal"><i class="icon icon--white ion-close-round" style="color: #fff;font-size: 24px;"></i></div>
+            </div></center>
+        </div>
+    </section>
+    <div class="ovl-align"></div>
+</aside>
+
+
+<aside class="ovl js-ovl-close js-core-events-container" id="startPrivateStream" style="display:none;background: rgba(0,0,0,.65)">
+    <section class="ovl-frame js-ovl-wrap absoluteCenter vivify swoopInBottom" style="top: 15%;overflow: hidden;background: none">
+        <div class="js-ovl-content" style="background: none; ">
+            <div class="ovl-body" >
+                <div class="ovl__header" style="background: none">
+                    <div class="ovl__header-content" style="background: none">
+                        <div class="bricks-line bricks-line--lg " >
+                            <div class="brick brick--xxlg brick--stroke vivify delay-500 popIn">
+                              <div class="brick-img profile-photo box-shadow"  data-src="<?= $sm['user']['profile_photo']; ?>"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ovl-content vivify delay-300 fadeIn" ><center>
+                    <h4 class="montserratRegular" style="color: #fff"><?= $sm['lang'][838]['text']; ?>!</h4>
+                    <p class="x-large" style="color: #fafafa">
+                        <?= $sm['lang'][852]['text']; ?>
+                    </p> 
+                    <div class='ctrl'>
+                      <div class='ctrl__button ctrl__button--decrement gradient16'>&ndash;</div>
+                      <div class='ctrl__counter'>
+                        <input class='ctrl__counter-input' maxlength='10' id="streamPrivatePrice" type='number' min="10" value='10'>
+                        <div class='ctrl__counter-num'>10</div>
+                      </div>
+                      <div class='ctrl__button ctrl__button--increment gradient16'>+</div>
+                    </div>                                                     
+                </div>
+                <div class="ovl__actions vivify delay-700 fadeIn">
+                    <div class="btn" style="margin-left: 20px;color:#fff;background: rgba(0,0,0,.5)" onclick="startPrivateStream()">
+                        <span class="btn-txt montserrat" style="padding-left: 20px;text-transform: none">
+                        <img src="<?= $sm['config']['theme_url']; ?>/images/icon-coins.png"
+                                            style="position:absolute;width: 30px;margin-top: -2px;margin-left: -35px;"> 
+                        <?= $sm['lang'][842]['text']; ?>
+                        </span>
+                    </div>
+                    <br>                       
+                </div>
+                <div class="ovl-close vivify delay-400 fadeIn" id="closeStreamPrivate"><i class="icon icon--white ion-close-round" style="color: #fff;font-size: 24px;"></i></div>
+            </div></center>
+        </div>
+    </section>
+    <div class="ovl-align"></div>
+</aside>
+
+<aside class="ovl js-ovl-close js-core-events-container" id="askPrivate"  style="display: none">
+    <section class="ovl-frame js-ovl-wrap absoluteCenter vivify swoopInBottom" style="top: 20%;">
+        <div class="js-ovl-content">
+            <div class="ovl-body">
+                <div class="ovl__header">
+                    <div class="ovl__header-content gradient36" style="background: #262b37">
+                        <div class="bricks-line bricks-line--lg" >
+                            <div class="brick brick--xxlg brick--stroke vivify fadeIn delay-350" style="top: -25px">
+                                <div class="brick-img profile-photo" data-src="" id="askPrivatePhoto" style="width: 120px;height: 120px"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ovl-content"><center>
+                    <h4 class="montserrat" style="font-weight: bold"><?= $sm['lang'][551]['text']; ?></h4>
+                    <p class="x-large montserrat" style="font-size: 16px;"><?= $sm['lang'][552]['text']; ?> <b onclick="goTo('premium');" style="cursor: pointer;color:#F69426">PREMIUM</b> <?= $sm['lang'][553]['text']; ?> <?= $sm['config']['name']; ?>
+                </p>
+                </div>
+                <div class="ovl__actions">
+                        <div class="btn btn--white" style="margin-left: 20px;display: inline-table;" onclick="goTo('premium');">
+                            <span class="btn-txt montserrat" style="padding-left: 20px;">
+                                <?= $sm['lang'][452]['text']; ?>
+                            </span>
+                        </div>
+                        <div style="position:relative;width: 100%;height: 25px;"></div>
+                    <br>
+                </div>
+                <div class="ovl-close"><i class="icon icon--white ion-close-round" style="color: #fff;font-size: 24px;"></i></div>
+            </div></center>
+        </div>
+    </section>
+    <div class="ovl-align"></div>
+</aside>
+
+
+<aside class="ovl js-ovl-close js-core-events-container" id="discover100" style="display: none" >
+    <section class="ovl-frame js-ovl-wrap absoluteCenter vivify swoopInBottom" style="top: 20%;">
+        <div class="js-ovl-content">
+            <div class="ovl-body">
+                <div class="ovl__header <?= $sm['theme']['credits_section_discover_up_bg']['val']; ?>" style="background: <?= $sm['theme']['credits_section_discover_up_bg']['val']; ?>">
+                    <div class="ovl__header-content">
+                        <div class="bricks-line bricks-line--lg">
+                            <div class="brick vivify popIn delay-300 brick--xxlg  brick--white ">
+                                <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                            </div>
+                            <div class="brick brick--xxxlg vivify popIn delay-500  brick--white  brick--stroke ">
+                               <div class="brick-img profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>                              
+                            </div>
+                            <div class="brick  brick--xxlg vivify popIn delay-300  brick--white ">
+                                <div class="brick-img profile-photo" data-src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ovl-content vivify fadeIn delay-200"><center>
+                    <h5><?= $sm['lang'][526]['text']; ?></h5>
+                    <p class="x-large"><?= $sm['lang'][527]['text']; ?></p>
+                </div>
+                <div class="ovl__actions">
+                    <div class="btn montserrat vivify fadeIn delay-500 <?= $sm['theme']['credits_section_discover_up_bg']['val']; ?>" style="background: <?= $sm['theme']['credits_section_discover_up_bg']['val']; ?>" onclick="discover100()"> <span class="btn-txt" style="font-size: 22px;color:<?= $sm['theme']['credits_section_discover_up_color']['val']; ?>"><?= $sm['lang'][526]['text']; ?></span></div>
+                    <br>
+                    <p style="color:#555;font-size: 12px;"><?= $sm['lang'][335]['text']; ?>: <?= $sm['price']['discover']; ?> <?= $sm['lang'][73]['text']; ?>
+                </div>
+                <div class="ovl-close"><i class="icon icon--white ion-close-round" style="color: #fff;font-size: 24px;"></i></div>
+            </div></center>
+        </div>
+    </section>
+    <div class="ovl-align"></div>
+</aside>
+<aside class="ovl js-ovl-close" style="display: none">
+    <section class="ovl-frame absoluteCenter vivify swoopInBottom js-ovl-wrap" style="top: 20%">
+        <div class="js-ovl-content"><center>
+            <div class="ovl-body ovl-body--narrow">
+                <div class="ovl__header gradient40">
+                    <div class="ovl__header-content"> <img src="" alt="" width="180" height="180"> </div>
+                </div>
+                <div class="ovl-content">
+                    <h4><?= $sm['lang'][417]['text']; ?></h4>
+                    <p class="x-large"> <?= $sm['lang'][418]['text']; ?>
+                        <br><b><?= $sm['lang'][419]['text']; ?></b> <?= $sm['lang'][420]['text']; ?> <?php echo $sm['config']['name']; ?></p>
+                </div>
+                <div class="ovl__actions">
+                    <div class="btn box-shadow" style="color: #333;background: #fafafa"> <span class="btn-txt"><?= $sm['lang'][421]['text']; ?></span> <span class="b-link js-ovl-awardshow-share"></span> </div>
+                </div>
+                <div class="ovl-close"><i class="icon icon--white ion-close-round" style="color: #fff;font-size: 24px;"></i></div>
+            </div></center>
+        </div>
+    </section>
+    <div class="ovl-align"></div>
+</aside>
+<?php if(!isset($_COOKIE['freePremiumAd']) && siteConfig('free_premium') > 0 && $sm['user']['total_photos'] >= 1  ){ 
+    setcookie('freePremiumAd', 1,time()+(3600*24*3)); ?>
+    <aside class="ovl js-ovl-close"  >
+        <section class="ovl-frame absoluteCenter vivify swoopInBottom js-ovl-wrap" style="top: 20%;">
+            <div class="js-ovl-content"><center>
+                <div class="ovl-body ovl-payment-promo">
+                    <div class="ovl__header ovl__header--orange">
+                        <h1 class="ovl__title center montserrat" style="font-weight: 700" ><?= $sm['lang'][422]['text']; ?></h1> </div>
+                    <div class="ovl-content">
+                        <div class="payment-promo-ovl">
+                            <div class="payment-promo-ovl__icon"></div>
+                            <p class="b xx-large montserrat" style="font-size: 19px"><?= $sm['lang'][423]['text']; ?><br><?= siteConfig('free_premium'); ?> <?= $sm['lang'][332]['text']; ?></p>
+                            <div class="payment-info">
+                                <div class="payment-info__item">
+                                    <div class="payment-info__ico payment-info__ico--top">
+                                        <div class="payment-info__photo profile_photo"><img src="<?= randomPhotoUser($sm['user']['s_gender']); ?>" alt=""></div>  </div>
+                                    <p> <?= $sm['lang'][424]['text']; ?> </p>
+                                </div>
+                                <div class="payment-info__item">
+                                    <div class="payment-info__ico payment-info__ico--top payment-info__ico--favorite">
+                                        <div class="payment-info__photo profile_photo"><img src="<?= randomPhotoUser($sm['user']['s_gender']); ?>" alt=""></div> </div>
+                                    <p><?= $sm['lang'][425]['text']; ?></p>
+                                </div>
+                            </div> <span class="x-large app  montserrat" style="font-weight: 700" rel="spp-promo" ><?= $sm['lang'][426]['text']; ?></span> </div>
+                    </div>
+                    <div class="ovl__actions">
+                        <div class="btn btn--spp closeModal"> <span class="btn-txt  montserrat" style="font-weight: 700"> <?= $sm['lang'][427]['text']; ?>  </span> <span class="b-link js-ovl-close"></span> </div>
+                    </div>
+                    <div class="ovl-close"><i class="icon icon--white ion-close-round" style="color: #fff;font-size: 22px;"></i></div>
+                </div></center>
+            </div>
+        </section>
+        <div class="ovl-align"></div>
+    </aside>
+<?php } ?>
+    <aside class="ovl js-ovl-close" id="showGiftModal"  style="display: none" >
+        <section class="ovl-frame js-ovl-wrap absoluteCenter vivify popIn <?= $sm['theme']['send_gift_body_bg']['val']; ?>" style="top: -10%;background: <?= $sm['theme']['send_gift_body_bg']['val']; ?>">
+            <div class="js-ovl-content" style="background: none"><center>
+                <div class="ovl-body ovl-payment-promo" style="width: 700px">
+                    <div class="ovl__header <?= $sm['theme']['send_gift_header_bg']['val']; ?>" 
+                        style="background: <?= $sm['theme']['send_gift_header_bg']['val']; ?>;" >
+                        <h1 class="ovl__title center montserrat" style="color:<?= $sm['theme']['send_gift_header_color']['val']; ?>">
+                            <?= $sm['lang'][647]['text']; ?>
+                            <div class="brick brick--xs" style="position: absolute;top: 8px">
+                                <div class="brick-img profile-photo" id="giftUserPhoto" data-src=""></div>
+                            </div>
+                            <strong style="margin-left: 52px" id="giftUserNameModal"></strong>
+                        </h1>
+                    </div>
+                    <div class="ovl-content" style="position:relative;height: 60%;background: none">
+
+                    <div class="flex  flex--center attention-gifts"
+                     style="position:relative;height: 100%;overflow-y: auto">
+
+                        <div class="carousel" style="position:relative;width: 100%;height: auto">
+                            <div class="relative">
+                                <div class="carousel__items">
+                                    <div class="carousel__scroll">
+                                        <?= getGifts(); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="ovl-close"><i class="icon icon--white ion-close-round" style="color:<?= $sm['theme']['send_gift_header_color']['val']; ?>;font-size: 22px;"></i></div>
+                </div></center>
+            </div>
+        </section>
+        <div class="ovl-align"></div>
+    </aside>
+
+    <aside class="ovl js-ovl-close js-core-events-container" id="send-gift" style="display: none">
+        <section class="ovl-frame absoluteCenter vivify swoopInBottom js-ovl-wrap <?= $sm['theme']['send_gift_body_bg']['val']; ?>" style="top: 30%;margin-left:-150px!important;min-height:400px;background: <?= $sm['theme']['send_gift_body_bg']['val']; ?>">
+            <div class="js-ovl-content" style="background: none" >
+                <div class="ovl-body ovl-body--narrow">
+                    <div class="ovl__header" style="background: none;">
+                        <div class="ovl__header-content" style="background: none">
+                            <div class="inline relative">
+                                <img class="vivify popIn delay-300" data-gift-img="" src="" style="max-width: 160px;border-radius: 20px">
+                                <div class="ovl-promo-label vivify popIn delay-500 <?= $sm['theme']['send_gift_header_bg']['val']; ?>" style="width: 32px;height: 32px;background: <?= $sm['theme']['send_gift_header_bg']['val']; ?>;border-radius: 50px;text-align: center;padding: 0;margin: 0;border: none">
+                                    <b style="color:<?= $sm['theme']['send_gift_header_color']['val']; ?>;;line-height: 32px;" data-gift-price></b>
+                                </div>
+         
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ovl-content" style="background: none">
+                        <center>
+                            <div class="btn montserrat <?= $sm['theme']['send_gift_bg']['val']; ?>" style="background: <?= $sm['theme']['send_gift_bg']['val']; ?>" id="send-gift-btn">
+                                <span class="btn-txt" style="color: <?= $sm['theme']['send_gift_color']['val']; ?>"><?= $sm['lang'][77]['text']; ?></span>
+                            </div>
+                            <br>
+                            <p style="font-size: 12px;color: <?= $sm['theme']['send_gift_body_color']['val']; ?>"><?= $sm['lang'][335]['text']; ?>:
+                            <span data-gift-price></span> <?= $sm['lang'][73]['text']; ?></p>                    
+                        </center>
+                    </div>               
+                    <div class="ovl-close closeSendGift" onclick="closeSendGift()">
+                        <i class="icon icon--white ion-ios-arrow-down" style="color: <?= $sm['theme']['send_gift_body_color']['val']; ?>;font-size: 28px;"></i>
+                    </div>
+                </div>
+            </div>
+            <form id="send-gift-form">
+                <input type="hidden" name="g_id" id="g_id" />               
+                <input type="hidden" name="g_src" id="g_src" />
+                <input type="hidden" name="g_price" id="g_price" />                 
+                <input type="hidden" name="action" value="gift" />                  
+            </form>
+        </section>
+    </aside>
+
+    <div style="display:none">
+        <form id="add-photo-spotlight">
+            <input type="hidden" name="s_photo" id="s_photo" value="<?= $sm['user']['profile_photo']; ?>" />
+            <input type="hidden" name="s_uid" value="<?= $sm['user']['id']; ?>" />
+            <input type="hidden" name="s_lat" value="<?= $sm['user']['lat']; ?>" />
+            <input type="hidden" name="s_lng" value="<?= $sm['user']['lng']; ?>" />
+            <input type="hidden" name="s_lang" value="<?= $sm['user']['lang']; ?>" />
+            <input type="hidden" name="action" value="spotlight" />                 
+        </form> 
+    </div>
+
+
+<aside class="ovl js-ovl-close js-core-events-container" id="verify-account" style="display: none">
+    <section class="ovl-frame absoluteCenter vivify swoopInBottom js-ovl-wrap" style="top: 20%;border: 5px">
+        <div class="js-ovl-content">
+            <div class="ovl-body ovl-body--narrow"  style="width: 600px">
+                <div class="ovl__header" style="border: 10px">
+                    <div class="ovl__header-content" style="background: #fff;">
+                        <div class="inline relative">
+                             <img class="box-shadow" src="<?= $sm['plugins']['verification']['gesture']; ?>" style="max-width: 250px;border-radius: 5px" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="ovl-content">
+                    <center>
+                        <h5 class="comforta"><?= $sm['lang'][602]['text']; ?></h5>                        
+                        <p class="large"><?= $sm['lang'][603]['text']; ?></p>  
+                        <div class="btn btn--verify" role="button" id="verify-account-btn">
+                            <div class="btn__content"> <span class="btn__text"><?= $sm['lang'][605]['text']; ?></span> </div>
+                        </div>
+                        <p class="large" style="font-size: 12px;color: #999"><?= $sm['lang'][604]['text']; ?></p>  
+                        <br>              
+                    </center>
+                </div>            
+                <div class="ovl-close" id="g_close"><i class="icon icon--white ion-close-round" style="color: #000;font-size: 22px;"></i></div>
+            </div>
+        </div>
+
+    </section>
+</aside>
+
+
+<div class="videocall-chat"><video id="video-chat" autoplay></video></div>
+
+<div class="videocall-notify" style="display: none">
+    <div class="call-animation ">
+    </div>
+    <div class="ball-container">
+        <div class="halo vivify popIn delay-300"></div>
+        <div class="notif">
+            <div class="bar">
+                <div class="action"></div>
+                <p class="text" id="text_videocall"></p>
+            </div>
+            <div class="arrow"></div>
+        </div>
+        <div class="buttons vivify fadeIn delay-400" style="width: 350px;margin-left: -45px">  
+            <a class="btn btn-accept montserrat <?= $sm['theme']['income_videocall_accept_btn_bg']['val']; ?>" style="background:<?= $sm['theme']['income_videocall_accept_btn_bg']['val']; ?>;color: <?= $sm['theme']['income_videocall_accept_btn_color']['val']; ?>" id="acept-video">
+                <?= $sm['lang'][557]['text']; ?>
+            </a>
+            <a class="btn btn-decline montserrat <?= $sm['theme']['income_videocall_decline_btn_bg']['val']; ?>" style="background:<?= $sm['theme']['income_videocall_decline_btn_bg']['val']; ?>;color:<?= $sm['theme']['income_videocall_decline_btn_color']['val']; ?>" id="reject-video">
+                <?= $sm['lang'][558]['text']; ?>
+            </a>
+        </div>
+    </div>
+</div>
+
+<form enctype="multipart/form-data" name='imageform' role="form" id="add-photos-form" method="post" action="<?php echo $sm['config']['site_url']; ?>assets/sources/ajaxImage.php">                  
+    <input type="file" name="photos[]" id="add-photos-file" accept="image/*" multiple="true" style="display:none" />
+</form> 
+<form enctype="multipart/form-data" name='imageform' role="form" id="add-private-photos-form" method="post" action="<?php echo $sm['config']['site_url']; ?>assets/sources/privateImage.php">                  
+    <input type="file" name="photos[]" id="add-private-photos-file" accept="image/*" multiple="true" style="display:none" />
+</form>  
+
+<form id="paypalForm" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+    <input type="hidden" name="cmd" value="_xclick">
+    <input type="hidden" name="business" value="<?= $sm['plugins']['paypal']['email']; ?>">
+    <input type="hidden" name="item_name" data-payment-name value="<?= $sm['config']['name']; ?>">
+    <input type="hidden" name="currency_code" value="<?= $sm['plugins']['settings']['currency']; ?>">
+    <input type="hidden" name="amount" data-payment-amount value="">
+    <input type="hidden" name="custom" data-payment-custom value="">  
+    <input type="hidden" name="no_shipping" value="1">                  
+    <input type="hidden" name="notify_url" value="<?= $sm['config']['site_url']; ?>assets/sources/ipn.php">
+    <input type="hidden" name="return" value="<?= $sm['config']['site_url']; ?>credits-ok">                 
+</form>
+<form id="paypalSubscribe" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+    <input type="hidden" name="cmd" value="_xclick-subscriptions">
+    <input type="hidden" name="business" value="<?= $sm['plugins']['paypal']['email']; ?>">
+    <input type="hidden" name="item_name" id="premiumName" value="<?= $sm['config']['name']; ?> Premium">
+    <input type="hidden" name="currency_code" value="<?= $sm['plugins']['settings']['currency']; ?>">
+    <input type="hidden" name="a3" id="premiumPrice" value="">
+    <input type="hidden" name="p3" id="premiumDays" value=""> 
+    <input type="hidden" name="t3" value="D">
+    <input type="hidden" name="src" value="1">
+    <input type="hidden" name="sra" value="1">
+    <input type="hidden" name="custom" id="premiumCustom" value="">
+    <input type="hidden" name="no_shipping" value="1">                
+    <input type="hidden" name="notify_url" value="<?= $sm['config']['site_url']; ?>assets/sources/ipnpremium.php">
+    <input type="hidden" name="return" value="<?= $sm['config']['site_url']; ?>">                           
+</form>  
+<form id="paygolForm" name="pg_frm" method="post" action="https://www.paygol.com/pay" >
+   <input type="hidden" name="pg_serviceid" value="<?= $sm['plugins']['paygol']['id']; ?>">
+   <input type="hidden" name="pg_currency" value="<?= $sm['plugins']['settings']['currency']; ?>">
+   <input type="hidden" name="pg_name" data-payment-name value="<?= $sm['config']['name']; ?>">
+   <input type="hidden" name="pg_custom" data-payment-custom value="">
+   <input type="hidden" name="pg_price" data-payment-amount value="">
+   <input type="hidden" name="pg_return_url" value="<?= $sm['config']['site_url']; ?>credits-ok">
+   <input type="hidden" name="pg_cancel_url" value="<?= $sm['config']['site_url']; ?>">     
+</form> 
+
+
+
+<div id="storytime" data-story="0"></div>
+<div class="preload-photos" style="display:none"></div> 
+
+
+<div class="lw-widget" data-widget="randomProfileQuestion2" style="display: none"  data-widget-timeout="1000" >
+    <div class="lw-container">
+        <div class="lw-item lw-item_white" style="background: #F55400">
+            <button class="lw-close lw-close_white" data-widget-close="randomProfileQuestion2" data-lw-close>
+                <i class="icon icon--white ion-close-round"></i>
+            </button>
+            <div class="lw-wrap">
+                <div class="lw-title lw-title_sm">Choose the right option</div>
+                <div class="lw-content lw-mb">a.</div>
+                <div class="lw-choose">
+                    <div class="lw-group"><button class="lw-btn lw-active" data-lw-ripple>Yes, continue</button></div>
+                    <div class="lw-group"><button class="lw-btn" data-lw-ripple>No, thanks, I’m good</button><button class="lw-btn" data-lw-ripple>I’m fine 👋</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="overlay-dark" style="display: none"></div>
+
+<div class="lw-widget" data-widget="reportProfile">
+    <div class="lw-overlay" data-lw-close></div>
+    <div class="lw-container lw-container_custom">
+        <div class="lw-item lw-item_white" style="background: #f7f7f7">
+            <button class="lw-close lw-close_white" data-widget-close="reportProfile" data-lw-close>
+                <i class="icon icon--white ion-close-round"></i>
+            </button>
+            <div class="lw-wrap">
+                <div class="lw-user" style="margin-bottom: 20px">
+                    <div class="lw-preview lw-pic profile-photo interactionPhoto"
+                    data-src="" id="reportUserPhoto"></div>
+                </div>              
+                <div class="lw-title lw-title_sm"  style="color: #333"><?= $sm['lang'][800]['text']; ?> <span id="reportUserName"></span>?</div>
+                <div class="lw-mb-sm" style="margin-top: 15px;margin-bottom: 25px">
+                    <label class="lw-toggler">
+                        <input class="lw-toggler-input" type="radio" name="reportReason">
+                        <span class="lw-toggler-content montserrat" style="font-size: 16px"><?= $sm['lang'][801]['text']; ?></span>
+                    </label>
+                    <label class="lw-toggler">
+                        <input class="lw-toggler-input" type="radio" name="reportReason">
+                        <span class="lw-toggler-content montserrat" style="font-size: 16px"><?= $sm['lang'][802]['text']; ?></span>
+                    </label>
+                    <label class="lw-toggler">
+                        <input class="lw-toggler-input" type="radio" checked name="reportReason">
+                        <span class="lw-toggler-content montserrat" style="font-size: 16px"><?= $sm['lang'][803]['text']; ?></span>
+                    </label>
+                    <label class="lw-toggler">
+                        <input class="lw-toggler-input" type="radio" name="reportReason">
+                        <span class="lw-toggler-content montserrat" style="font-size: 16px"><?= $sm['lang'][804]['text']; ?></span>
+                    </label>
+                    <label class="lw-toggler">
+                        <input class="lw-toggler-input" type="radio" name="reportReason">
+                        <span class="lw-toggler-content montserrat" style="font-size: 16px"><?= $sm['lang'][805]['text']; ?></span>
+                    </label>    
+                    <label class="lw-toggler">
+                        <input class="lw-toggler-input" type="radio" name="reportReason">
+                        <span class="lw-toggler-content montserrat" style="font-size: 16px"><?= $sm['lang'][806]['text']; ?></span>
+                    </label>    
+                    <label class="lw-toggler">
+                        <input class="lw-toggler-input" type="radio" name="reportReason">
+                        <span class="lw-toggler-content montserrat" style="font-size: 16px"><?= $sm['lang'][807]['text']; ?></span>
+                    </label>                                                            
+                </div>
+                <div class="lw-actions">
+                    <div class="lw-content">
+                        <a href="javascript:;" id="reportProfileBtn" class="montserrat"  style="color: #333;font-weight: 700"><?= $sm['lang'][326]['text']; ?></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="lw-widget lw-widget_fullscreen" style="display: none">
+    <div class="lw-overlay" data-lw-close></div>
+    <div class="lw-container lw-container_lg">
+        <div class="lw-item" style="background-color: #F9F9F9; --theme-color: #ff2e63">
+            <button class="lw-close lw-close_circle" data-lw-close>
+                <i class="icon icon--white ion-close-round"></i>
+            </button>
+            <form class="lw-row" action="">
+                <div class="lw-col lw-col_bg" style="background-image: url(<?php echo $sm['user']['random_photo']; ?>)">
+                    
+                </div>
+                <div class="lw-col">
+                    <div class="lw-wrap lw-p-lg center">
+                        <div class="lw-center" style="margin-bottom: 20px">
+                            <div class="lw-logo lw-logo_center lw-mb">
+                                <div class="lw-preview">
+                                    <div class="profile-photo box-shadow" data-src="<?= $sm['user']['profile_photo']; ?>" style="height: 80px;width:80px;border-radius: 50%"></div>
+                                </div>
+                            </div>
+                            <div class="lw-title lw-title_sm lw-title_thin">Suscribe to <strong><?= $sm['user']['first_name']; ?></strong> to see all the private stories and videos</div>
+                        </div>
+                        <div class="lw-content lw-mb"><?= $sm['user']['bio']; ?></div>
+                        <button class="lw-btn">Subscribe for <?= $sm['user']['subscribe']; ?> credits</button>
+                        <div class="lw-content lw-content_sm lw-mt-md center" style="font-size: 12px">
+                            The subscription period is monthly.<br>
+                            The credits amount will be auto debited from your credits wallet
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="lw-widget lw-widget_fullscreen" id="payment_module" data-widget="purchaseCredits" style="">
+    <div class="lw-overlay" data-widget-remove="purchaseCredits" data-lw-close></div>
+    <div class="lw-container lw-container_lg" style="">
+        <?php if($sm['theme']['buy_credits_bg_gradient']['val'] == 'Yes'){ ?>          
+            <div class="lw-item <?= $sm['theme']['buy_credits_bg']['val']; ?>" style="padding: 20px;">
+        <?php } else { ?> 
+            <div class="lw-item" style="padding: 20px;background: <?= $sm['theme']['buy_credits_bg']['val']; ?>">
+        <?php } ?>        
+            
+                <div class="payment-promo__head center" style="padding-top:10px">
+                    <div class="brick brick--xxlg box-shadow"> 
+                        <div class="brick-img profile-photo" data-src="<?= $sm['user']['profile_photo']; ?>"></div>
+                        <mark class="brick brick--sm vivify pulsate"><img src="<?= $sm['config']['theme_url']; ?>/images/coin.png" /> </mark>
+                    </div>
+                </div>                      
+                <div class="lw-product center">
+
+                <div class="payment-promo" style="margin-top: 0px;">
+                <center>
+                    <span class="large payment-section-title montserratRegular" 
+                    style="margin-top: 25px;color:<?= $sm['theme']['buy_credits_color']['val']; ?> ">
+                    <?= $sm['lang'][711]['text']; ?>:</span>
+                </center>
+                <div class="payment-packages" style="margin-top: 25px">
+                    <div class="payment-packages__inner">
+                        <?php $i=1;$a=0; foreach ($sm['creditsPackages'] as $credit) {
+                            $image = 'buy_credits_package_image_'.$i;
+                            $before = $credit['price'] * 1.5;
+                            $save = $credit['price'] * 0.5;
+                            $i++;
+                            
+                         ?>
+                            <div class="payment-packages__item" style="margin-right: 20px;background:<?= $sm['theme']['buy_credits_package_bg']['val']; ?>;border-radius: 6px;min-width: 180px">
+                                <div class="payment-package not-selected" data-credits="<?=$credit['credits'];?>" data-price="<?=$credit['price'];?>" data-package="<?= $a; ?>" style="cursor: pointer;" onclick="updateCreditSelection(this)">
+                                    <div class="payment-package__inner">
+
+                                        <div class="payment-package__media">
+                                            <img src="<?= $sm['theme'][$image]['val']; ?>"  style="border-radius: 15px;max-width: 125px;margin-top: 40px">
+                                        </div>
+                                        <div class="payment-package__header">
+                                            <h4 class="payment-package__title montserratRegular" style="padding-top: 15px;color: <?= $sm['theme']['buy_credits_package_color']['val']; ?>">
+                                                <?=$credit['credits'];?> <?= $sm['lang'][73]['text']; ?>
+                                            </h4>
+                                            <div class="payment-package__price">
+                                                <div class="payment-package__price-value payment-package__price-value--old montserrat">
+                                                    <span style="color: <?= $sm['theme']['buy_credits_package_color']['val']; ?>;opacity: .6"><?= $before; ?> <?= $sm['plugins']['settings']['currency']; ?></span>
+                                                </div>
+                                                <div class="payment-package__price-value payment-package__price-value--new montserratBold" style="font-size: 22px">
+                                                    <span style="color: <?= $sm['theme']['buy_credits_package_price_color']['val']; ?>"><?=$credit['price'];?> <?= $sm['plugins']['settings']['currency']; ?></span>
+                                                </div>
+                                            </div>
+                                            <div class="payment-package__benefits" style="color: <?= $sm['theme']['buy_credits_package_price_color']['val']; ?>"><?= $sm['lang'][690]['text']; ?> <?= $save; ?> <?= $sm['plugins']['settings']['currency']; ?>!</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php  $a++; } ?>
+
+                    </div>
+                </div>
+
+                        </div>
+                    </div>                                      
+            </div>   
+
+
+
+
+            <div class="lw-item lw-item_white " style="display: none;background:<?= $sm['theme']['buy_credits_payment_bg']['val']; ?>" id="selectCreditPaymentMethod">
+                <div class="lw-wrap">
+                    <div class="lw-title lw-title_sm" style="color: <?= $sm['theme']['buy_credits_payment_color']['val']; ?>"><?= $sm['lang'][867]['text']; ?></div>
+                    <div class="lw-content lw-mb" style="color: <?= $sm['theme']['buy_credits_payment_color']['val']; ?>;font-size: 14px;padding-top: 10px"><?= $sm['lang'][691]['text']; ?>: <strong id="creditsPackageSelected"></strong></div>
+                    <div class="lw-choose">
+                        <div class="lw-group">
+                            <button class="lw-btn montserratRegular" onclick="proceedCheckout()" style="color: #333" data-lw-ripple><?= $sm['lang'][866]['text']; ?></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+
+</div>
+
+
+<?php 
+$checkLivePlugin = getData('plugins','enabled','where name = "live"');
+if($checkLivePlugin == 1){ ?>
+<div class="lw-widget lw-widget_fullscreen" data-widget="goingLive">
+    <div class="lw-overlay" data-widget-close="goingLive" onclick="closeLivePreview()" data-lw-close></div>
+    <div class="lw-container lw-container_md">
+        <div class="lw-item lw-item_bg lw-visible">
+            <button class="lw-close lw-close_circle"  onclick="closeLivePreview()">
+                <i class="icon icon--white ion-close-round" style="color: #000"></i>
+            </button>
+            <div class="lw-preview">
+                <video class="lw-pic" id="liveVideoPreview" muted autoplay>
+                </video>
+            </div>
+            <div class="lw-wrap lw-p-lg">
+                <div class="lw-center">
+                    <div class="lw-title"><?= $sm['lang'][829]['text']; ?></div>
+                    <div class="lw-content lw-mb-md"><?= $sm['lang'][832]['text']; ?></div>
+                    <?php if($sm['plugins']['live']['streamerCustomMessage'] == 'Yes'){?>
+                        <div class="lw-form">
+                            <div class="lw-field">
+                                <input class="lw-input" type="text" id="customLiveMessage" placeholder="<?= $sm['lang'][841]['text']; ?>" >
+                            </div>
+                            <button class="lw-btn gradient32" onclick="goLive()">
+                                <?= $sm['lang'][829]['text']; ?>
+                            </button>
+                        </div>
+                    <?php } else { ?>
+                        <div class="lw-form">
+                            <button class="lw-btn gradient32" style="margin: 0 auto" onclick="goLive()">
+                                <?= $sm['lang'][829]['text']; ?>
+                            </button>
+                        </div>
+                    <?php } ?>
+                    <div class="lw-content lw-content_md lw-mt-md">
+                        <a href="javascript:;" onclick="closeLivePreview()">
+                            <?= $sm['lang'][833]['text']; ?></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>
+
+<div class="lw-widget lw-widget_fullscreen" data-widget="onlyVerifiedStream">
+    <div class="lw-overlay" data-widget-close="onlyverifiedStream" data-lw-close></div>
+    <div class="lw-container lw-container_md">
+        <div class="lw-item lw-item_bg lw-visible">
+            <button class="lw-close lw-close_circle" data-lw-close>
+                <i class="icon icon--white ion-close-round" style="color: #000"></i>
+            </button>
+            <div class="lw-preview" style="padding-top: 50px">
+                <center>
+                    <img class="lw-pic profile-photo box-shadow" style="width: 120px;height: 120px;border-radius: 50%" data-src="<?= $sm['user']['profile_photo']; ?>">
+                </center>
+                </center>
+            </div>
+            <div class="lw-wrap lw-p-lg">
+                <div class="lw-center">
+                    <div class="lw-title"><?= $sm['lang'][848]['text']; ?></div>
+                    <div class="lw-content lw-mb-md"><?= $sm['lang'][849]['text']; ?></div>
+                    <div class="lw-content lw-content_md lw-mt-md">
+                        <a href="javascript:;" onclick="openVerifyAccount()">
+                            <?= $sm['lang'][365]['text']; ?></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="lw-widget lw-widget_fullscreen" data-widget="adminEndedStream">
+    <div class="lw-overlay"></div>
+    <div class="lw-container lw-container_md">
+        <div class="lw-item lw-item_bg lw-visible">
+            <div class="lw-preview" style="padding-top: 50px">
+                <center>
+                    <img class="lw-pic profile-photo box-shadow" style="width: 120px;height: 120px;border-radius: 50%" data-src="<?= $sm['user']['profile_photo']; ?>">
+                </center>
+                </center>
+            </div>
+            <div class="lw-wrap lw-p-lg">
+                <div class="lw-center">
+                    <div class="lw-title"><?= $sm['lang'][826]['text']; ?></div>
+                    <div class="lw-content lw-mb-md"><?= $sm['lang'][854]['text']; ?></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="lw-widget lw-widget_fullscreen" data-widget="streamerBanned">
+    <div class="lw-overlay" data-widget-close="streamerBanned" data-lw-close></div>
+    <div class="lw-container lw-container_md">
+        <div class="lw-item lw-item_bg lw-visible">
+            <button class="lw-close lw-close_circle" data-lw-close>
+                <i class="icon icon--white ion-close-round" style="color: #000"></i>
+            </button>            
+            <div class="lw-preview" style="padding-top: 50px">
+                <center>
+                    <img class="lw-pic profile-photo box-shadow" style="width: 120px;height: 120px;border-radius: 50%" data-src="<?= $sm['user']['profile_photo']; ?>">
+                </center>
+            </div>
+            <div class="lw-wrap lw-p-lg">
+                <div class="lw-center">
+                    <div class="lw-title"><?= $sm['lang'][851]['text']; ?></div>
+                    <div class="lw-content lw-mb-md"><?= $sm['lang'][855]['text']; ?></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="lw-widget lw-widget_fullscreen" data-widget="bannedStream">
+    <div class="lw-overlay" data-widget-close="bannedStream" data-lw-close></div>
+    <div class="lw-container lw-container_md">
+        <div class="lw-item lw-item_bg lw-visible">
+            <button class="lw-close lw-close_circle" data-lw-close>
+                <i class="icon icon--white ion-close-round" style="color: #000"></i>
+            </button>
+            <div class="lw-preview" style="padding-top: 50px">
+                <center>
+                    <img class="lw-pic profile-photo box-shadow" style="width: 120px;height: 120px;border-radius: 50%" data-src="<?= $sm['user']['profile_photo']; ?>">
+                </center>
+                </center>
+            </div>
+            <div class="lw-wrap lw-p-lg">
+                <div class="lw-center">
+                    <div class="lw-title"><?= $sm['lang'][850]['text']; ?></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="lw-widget lw-widget_fullscreen" data-widget="noWebcam">
+    <div class="lw-overlay" data-widget-close="noWebcam" data-lw-close></div>
+    <div class="lw-container lw-container_md">
+        <div class="lw-item lw-item_bg lw-visible">
+            <button class="lw-close lw-close_circle"  data-lw-close>
+                <i class="icon icon--white ion-close-round" style="color: #000"></i>
+            </button>
+            <div class="lw-preview">
+                <img src="<?= $sm['config']['theme_url'];?>/images/webcam.png" style="width: 100%"/>
+            </div>
+            <div class="lw-wrap lw-p-lg">
+                <div class="lw-center">
+                    <div class="lw-title"><?= $sm['lang'][830]['text']; ?></div>
+                    <div class="lw-content lw-mb-md"><?= $sm['lang'][831]['text']; ?></div>
+                    <div class="lw-content lw-content_md lw-mt-md">
+                        <a href="javascript:;" data-lw-close><?= $sm['lang'][620]['text']; ?></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="lw-widget lw-widget_fullscreen" data-widget="userProfileBasicInfo">
+    <div class="lw-overlay" data-lw-close></div>
+    <div class="lw-container lw-container_md">
+        <form class="lw-item lw-item_bg" method="post" id="update-profile">
+            <button class="lw-close" data-widget-close="userProfileBasicInfo" id="closeBasicInfo" data-lw-close>
+                <i class="icon icon--white ion-close-round"></i>
+            </button>
+
+            <?php if($sm['theme']['settings_user_header_gradient']['val'] == 'Yes'){ ?>
+                <div class="lw-wrap lw-bb <?= $sm['theme']['settings_user_header_bg']['val']; ?>" style="border-top-left-radius: 5px;border-top-right-radius: 5px;border: none">                
+            <?php } else { ?>
+                <div class="lw-wrap lw-bb" style="background:<?= $sm['theme']['settings_user_header_bg']['val']; ?>;border-top-left-radius: 5px;border-top-right-radius: 5px;border: none">
+            <?php } ?>
+
+                <div class="lw-panel lw-panel_lg">
+                    <div class="lw-preview lw-pic profile-photo" onclick="openMediaManager()" style="height: 80px;border-radius: 5px;cursor: pointer;"
+                    data-src="<?= $sm['user']['profile_photo']; ?>">
+                        
+                    </div>
+                    <div class="lw-group">
+                        <div class="lw-title" style="color: <?= $sm['theme']['settings_user_header_color']['val']; ?>">
+                            <?= $sm['lang'][649]['text']; ?>
+                        </div>
+                        <div class="lw-content" style="color: <?= $sm['theme']['settings_user_header_color']['val']; ?>">
+                            <?= $sm['lang'][133]['text']; ?>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lw-wrap" >
+                <div class="lw-inline">
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][331]['text']; ?></div>
+                        <div class="lw-group">
+                            <input class="lw-input" data-update-profile-info type="text" name="username" value="<?= $sm['user']['username']; ?>" id="updateUsername" required>
+                        </div>
+                    </div>                    
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][28]['text']; ?></div>
+                        <div class="lw-group">
+                            <input class="lw-input" data-update-profile-info type="email" name="email" value="<?= $sm['user']['email']; ?>" id="updateEmail" required>
+                        </div>
+                    </div>
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][26]['text']; ?></div>
+                        <div class="lw-group">                        
+                            <input class="lw-input" data-update-profile-info type="text" name="name" value="<?= $sm['user']['name']; ?>"  required>
+                        </div>
+                    </div>                    
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][30]['text']; ?></div>
+                        <div class="lw-group">
+                            <?php $timestamp = strtotime($sm['user']['birthday']); ?>
+                            <select class="lw-select" data-update-profile-info name="day" style="width: 25%;display: inline-table;">
+                                <option  style="display: none" selected="selected">
+                                    <?= date("d", $timestamp); ?>  
+                                </option>
+                                <?= date_dropdown_landing(1); ?>
+                            </select>
+                            <select class="lw-select" data-update-profile-info name="month" style="width: 42%;display: inline-table;">
+                                <option  style="display: none" value="<?= date("m", $timestamp); ?>" selected="selected">
+                                    <?= date("M", $timestamp); ?>  
+                                </option>
+                                <?= date_dropdown_landing(0,1); ?>
+                            </select> 
+                            <select class="lw-select" data-update-profile-info name="year" style="width: 30%;display: inline-table;">
+                                <option  style="display: none" selected="selected">
+                                    <?= date("Y", $timestamp); ?>  
+                                </option>
+                                <?= date_dropdown_landing(0,0,1); ?>
+                            </select>                                                        
+                        </div>
+                    </div>
+
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][32]['text']; ?></div>
+                        <div class="lw-group">
+                            <input class="lw-input" type="text" autocomplete="new-password" id="settingsLoc" placeholder="" required value="<?= $sm['user']['city']; ?>">
+                        </div>
+                    </div>
+
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][34]['text']; ?></div>
+                        <div class="lw-group">
+                            <select class="lw-select" data-update-profile-info name="gender">                    
+                                <option  style="display: none" selected="selected">
+                                   <?= getCurrentLang($sm['user']['lang']); ?> 
+                                </option>
+                            <?php
+                                foreach($sm['genders'] as $entry){
+                                    if($entry['id'] == $sm['user']['gender']){
+                                        echo '<option value="'.$entry['id'].'" selected>'.$entry['text'].'</option>';
+                                    } else {
+                                        echo '<option value="'.$entry['id'].'" style="color:#000;">'.$entry['text'].'</option>';
+                                    }
+                                }
+                            ?>
+                            </select> 
+                        </div>
+                    </div>
+
+                    <div class="lw-field profileSettingField">
+                        <div class="lw-label"><?= $sm['lang'][134]['text']; ?></div>
+                        <div class="lw-group">
+                            <select class="lw-select" data-update-profile-info name="lang">                           
+                                <option  style="display: none" value="<?= $sm['user']['lang']; ?>" selected="selected">
+                                   <?= getCurrentLang($sm['user']['lang']); ?> 
+                                </option>
+                                <?= getSiteLangs($sm['user']['lang']); ?>
+                            </select> 
+                        </div>
+                    </div>
+
+                   
+
+                    <input type="hidden" value="update" name="action" />
+                    <input type="hidden" name="city" data-update-profile-info id="locality" value="<?= $sm['user']['city']; ?>" />
+                    <input type="hidden" name="country" id="country" value="<?= $sm['user']['country']; ?>"  />
+                    <input type="hidden" name="lat" id="lat" value="<?= $sm['user']['lat']; ?>"  />
+                    <input type="hidden" name="lng" id="lng" value="<?= $sm['user']['lng']; ?>"  />
+                    <input type="hidden" name="editEmail" id="editEmail" value="<?= $sm['user']['email']; ?>"  />
+                    <input type="hidden" name="editUsername" id="editUsername" value="<?= $sm['user']['username']; ?>"  />
+                    <input type="hidden" name="editId" value="<?= $sm['user']['id']; ?>"  />
+
+                    <div style="position: relative;height: 30px;width: 100%;margin:0;margin-top:10px;padding:0;text-align: center;">
+                        <span id="update-error" style="width: 100%;padding-left: 10%;padding: 5px;margin-top: 20px;display: none;font-size: 16px;line-height: 30px;padding-left: 20px;padding-right: 20px;border-radius: 5px;color:#fff" class="red darken-4 montserratRegular"></span>
+                        <span id="update-success" style="width: 100%;padding-left-left: 10%;padding: 5px;margin-top: 20px;display: none;font-size: 16px;color:#fff;line-height: 30px;padding-left: 20px;padding-right: 20px;border-radius: 5px" class="green darken-1 montserratRegular"></span>      
+                    </div>                   
+                </div>                
+            </div>
+            <div class="lw-foot">                  
+                <button class="lw-btn montserrat" style="font-size: 16px;font-weight: bold;border-left:2px solid #eee" onclick="openWidget('userUpdateNotifications');" data-lw-ripple data-lw-close>
+                    <?= $sm['lang'][653]['text']; ?>
+                </button> 
+                <button class="lw-btn montserrat" style="font-size: 16px;font-weight: bold;border-left:2px solid #eee" onclick="goTo('blocked');" data-lw-ripple data-lw-close>
+                    <?= $sm['lang'][707]['text']; ?>
+                </button>                                             
+                <button class="lw-btn montserrat" style="font-size: 16px;font-weight: bold;border-left:2px solid #eee" onclick="openWidget('userUpdatePassword');" data-lw-ripple data-lw-close>
+                    <?= $sm['lang'][130]['text']; ?>
+                </button>
+                 
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+<div class="lw-widget lw-widget_fullscreen" data-widget="userUpdatePassword"  >
+    <div class="lw-overlay" data-lw-close></div>
+    <div class="lw-container lw-container_md">
+        <form class="lw-item lw-item_bg" method="post" id="change-password">
+            <button class="lw-close" data-widget-close="userUpdatePassword" data-lw-close>
+                <i class="icon icon--white ion-close-round"></i>
+            </button>
+
+            <?php if($sm['theme']['settings_user_header_gradient']['val'] == 'Yes'){ ?>
+                <div class="lw-wrap lw-bb <?= $sm['theme']['settings_user_header_bg']['val']; ?>" style="border-top-left-radius: 5px;border-top-right-radius: 5px;border: none">                
+            <?php } else { ?>
+                <div class="lw-wrap lw-bb" style="background:<?= $sm['theme']['settings_user_header_bg']['val']; ?>;border-top-left-radius: 5px;border-top-right-radius: 5px;border: none">
+            <?php } ?>
+
+                <div class="lw-panel lw-panel_lg">
+                    <div class="lw-preview lw-pic profile-photo" style="height: 80px;border-radius: 5px"
+                    data-src="<?= $sm['user']['profile_photo']; ?>">
+                        
+                    </div>
+                    <div class="lw-group">
+                        <div class="lw-title" style="color: <?= $sm['theme']['settings_user_header_color']['val']; ?>">
+                            <?= $sm['lang'][130]['text']; ?>
+                        </div>
+                        <div class="lw-content" style="color: <?= $sm['theme']['settings_user_header_color']['val']; ?>">
+                            <?= $sm['lang'][146]['text']; ?>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lw-wrap">
+                <div class="lw-inline">                  
+                    <div class="lw-field profileSettingField" >
+                        <div class="lw-label"><?= $sm['lang'][147]['text']; ?></div>
+                        <div class="lw-group">
+                            <input type="hidden" name="action" value="changep" > 
+                            <input type="hidden" name="user" value="<?= $sm['user']['id']; ?>" > 
+                            <input class="lw-input"  type="password" name="new_password" placeholder="Write your new password here" required>
+                        </div>
+                    </div>
+
+
+                    <p id="update-error" class="red darken-4 montserrat" style="color:#fff;font-size:16px;padding:5px;display:none;"></p>
+                    <p id="update-success" class="green darken-1 montserrat" style="color:#fff;border-radius:10px;font-size:16px;padding:5px;padding-left:20px;display:none;"></p>                     
+                </div>                
+            </div>
+            <div class="lw-foot">
+                <button class="lw-btn montserrat" onclick="openWidget('userProfileBasicInfo');" style="font-size: 22px;font-weight: bold;" data-lw-ripple data-lw-close>
+                    <i class="icon icon--white ion-ios-arrow-left" style="line-height: 22px"></i>
+                </button>                               
+                <button class="lw-btn montserrat" id="change-pwd-btn" style="font-size: 16px;font-weight: bold;border-left:2px solid #eee;color: #000">
+                    <?= $sm['lang'][130]['text']; ?>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div class="lw-widget lw-widget_fullscreen" data-widget="userUpdateNotifications">
+    <div class="lw-overlay" data-lw-close></div>
+    <div class="lw-container lw-container_md">
+        <div class="lw-item lw-item_bg">
+            <button class="lw-close" data-widget-close="userUpdateNotifications" data-lw-close>
+                <i class="icon icon--white ion-close-round"></i>
+            </button>
+
+            <?php if($sm['theme']['settings_user_header_gradient']['val'] == 'Yes'){ ?>
+                <div class="lw-wrap lw-bb <?= $sm['theme']['settings_user_header_bg']['val']; ?>" style="border-top-left-radius: 5px;border-top-right-radius: 5px;border: none">                
+            <?php } else { ?>
+                <div class="lw-wrap lw-bb" style="background:<?= $sm['theme']['settings_user_header_bg']['val']; ?>;border-top-left-radius: 5px;border-top-right-radius: 5px;border: none">
+            <?php } ?>
+
+                <div class="lw-panel lw-panel_lg">
+                    <div class="lw-preview lw-pic profile-photo hide-mobile" style="height: 80px;border-radius: 5px"
+                    data-src="<?= $sm['user']['profile_photo']; ?>">
+                        
+                    </div>
+                    <div class="lw-group">
+                        <div class="lw-title" style="color: <?= $sm['theme']['settings_user_header_color']['val']; ?>">
+                            <?= $sm['lang'][221]['text']; ?>
+                        </div>
+                        <div class="lw-content" style="color: <?= $sm['theme']['settings_user_header_color']['val']; ?>">
+                            <?= $sm['lang'][655]['text']; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lw-wrap">
+                <div class="lw-inline"> 
+                    <?php
+                    foreach ($sm['user_notifications'] as $notification => $value) { ?>
+                    <div class="lw-field profileSettingField">    
+                        <div style="position: relative;display: inline-table;width: 60%">
+                            <?php
+                                $col = $notification;
+                                if($notification == 'fan'){
+                                    echo $sm['lang'][487]['text'];
+                                }
+                                if($notification == 'match_me'){
+                                    echo $sm['lang'][488]['text'];
+                                } 
+                                if($notification == 'near_me'){
+                                    echo $sm['lang'][489]['text'];
+                                } 
+                                if($notification == 'message'){
+                                    echo $sm['lang'][490]['text'];
+                                }
+                            ?>
+                        </div>
+                        <?php 
+                        $i = 0;
+                        foreach ($value as $noti) { 
+                            $i++;
+                            if($noti == 1){
+                                $active = 'active';
+                            } else {
+                                $active = '';
+                            }
+                        ?>                        
+                            <?php if($i == 1){ ?>
+                                <div style="position: relative;display: inline-table;width: 11%">
+                                    <div class="btn btn--sm btn--white btn--page <?= $active; ?>" 
+                                        data-noti="<?= $col; ?>" data-noti-val="<?= $noti; ?>" style="cursor: pointer;height: 30px;width: 30px;border-radius: 50%" >
+                                        <i class="icon icon--white ion-ios-email-outline" style="font-size: 24px;margin-top: -4px;margin-left: -4px">
+                                            
+                                        </i>
+                                    </div>
+                                </div>
+                            <?php } ?>
+
+                            <?php if($i == 2){ ?>
+                                <div style="position: relative;display: inline-table;width: 11%">
+                                    <div class="btn btn--sm btn--white btn--page <?= $active; ?>"
+                                    data-noti="<?= $col; ?>" data-noti-val="<?= $noti; ?>" style="cursor: pointer;height: 30px;width: 30px;border-radius: 50%">
+                                        <i class="icon icon--white ion-android-phone-portrait" style="font-size: 21px;margin-top: -2px;margin-left: -3px">
+                                            
+                                        </i>
+                                    </div>
+                                </div>
+                            <?php } ?>
+
+                            <?php if($i == 3){ ?>
+                                <div style="position: relative;display: inline-table;width: 11%">
+                                    <div class="btn btn--sm btn--white btn--page <?= $active; ?>" 
+                                    data-noti="<?= $col; ?>" data-noti-val="<?= $noti; ?>" style="cursor: pointer;height: 30px;width: 30px;border-radius: 50%">
+                                        <i class="icon icon--white ion-laptop" style="font-size: 21px;margin-top: -2px;margin-left:-6px">
+                                            
+                                        </i>
+                                    </div>
+                                </div>
+                            <?php } ?>
+ 
+                        <?php } ?> 
+                        </div>         
+                    <?php } ?>
+                </div>
+            </div>
+
+
+            <div class="lw-foot">
+                <button class="lw-btn montserrat" onclick="openWidget('userProfileBasicInfo');" style="font-size: 22px;font-weight: bold;" data-lw-ripple data-lw-close>
+                    <i class="icon icon--white ion-ios-arrow-left" style="line-height: 22px"></i>
+                </button>                               
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+<!-- like, visit and chat notification -->
+<div class="lw-widget" data-widget="userInteraction">
+    <div class="lw-container" data-widget-container="userInteraction">
+
+    </div>
+</div>
+
+
+<div class="lw-widget lw-widget_fullscreen"  data-widget="userCreateStoryAlbum" data-widget-close="userCreateStoryAlbum">
+    <div class="lw-overlay" data-lw-close></div>    
+    <div class="lw-container lw-container_width_auto" style="min-width: 500px;max-width:840px!important;">
+        <div class="lw-item" style="background: #fafafa;">
+            <button class="lw-close" data-widget-close="userCreateStoryAlbum" data-lw-close>
+                <i class="icon icon--white ion-close-round"></i>
+            </button>            
+            <div class="lw-wrap lw-p-lg" style="padding: 0;overflow-y: auto;">
+                <div data-select-stories="1" style="display:none;height: 70vh;padding-left: 10px;padding-right: 10px;padding-bottom: 20px;padding-top: 20px">
+
+                    <div style="position: absolute;top: -65px;left: 0;width: auto;height: 50px;background: #fff;color: #222;border-radius: 5px;padding:0 25px 0 10px">
+                        <div class="lw-title lw-title_lg center text-shadow" data-album-stories-title style="line-height: 50px;">
+                            <?= $sm['lang'][669]['text']; ?>
+                        </div>
+                    </div>
+                    <div class="simple-promo__img center" data-story-album-div style="padding-bottom: 25px">         
+                        <div class="brick brick--xxlg center" onclick="upMedia('editStoryAlbum')"  style="background: none;cursor: pointer;border-radius: 25%;background: #eee;width: 130px;height:130px;padding-top: 30px" >
+
+                            <div class="brick-img profile-photo" data-story-album-edit data-src="" style="cursor: pointer;"></div>                                              
+                        </div>
+                    </div>                 
+                <?php 
+                    $userStories = array();
+                    $query = 'where uid = '.$sm['user']['id'];
+                    $order = 'id desc';
+                    $userStories = getArray('users_story',$query,$order); 
+                    if (!empty($userStories)) {
+                    foreach ($userStories as $val) { ?> 
+                        <?php if($val['storyType'] == 'image'){ ?>
+                        <div class="container-grid-stories" data-select-story-id="<?= $val['id']; ?>"  style="background-image:url('<?= $val["story"]; ?>')">                            
+                        <?php } else { ?>
+                        <div class="container-grid-stories" data-select-story-id="<?= $val['id']; ?>"  style="background: #eee">
+                            <div class="fullscreen-bg">
+                                <video loop muted preload="true" class="fullscreen-bg__video">
+                                    <source src="<?= $val["story"]; ?>" type="video/webm">
+                                    <source src="<?= $val["story"]; ?>" type="video/mp4">
+                                    <source src="<?= $val["story"]; ?>" type="video/ogg">
+                                </video>
+                            </div>
+                            <div class="selectStoryType">
+                                <svg viewBox="0 0 24 24" id="film" width="100%" fill="#fff" height="100%"><path stroke-linecap="round" d="M16 10.087l5-1.578v7.997l-4.998-1.578"></path><path d="M16 7H3v11h13z"></path></svg>                       
+                            </div>                            
+                        <?php } ?>
+
+                        <div class="selectStoryDate"><span><?= date('j M',$val['storyTime']); ?></span></div>
+
+
+                        <div class="circleclose" onclick="selectStoryToAlbum(this);" data-select="1" data-storyId="<?= $val["id"]; ?>">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="#1b1b1b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </div>
+
+                        <div class="circle-grid-stories" data-story-selected="<?= $val["id"]; ?>"></div>
+                        </div>
+                    <?php } } ?>
+
+                    <div style="position: absolute;bottom:-25px;left: 0;width: 100%;height: 50px;">
+                        <div class="lw-content lw-mb-md center" style="padding-top: 35px">
+                            <button class="lw-btn storyAlbum center" data-album-stories-btn="1" onclick="createStoryAlbum(1);" style="">
+                                <?= $sm['lang'][671]['text']; ?>
+                            </button>
+                            <button class="lw-btn storyAlbum center" data-album-stories-btn="2" onclick="updateStoryAlbum(this);" style="float:left">
+                                <?= $sm['lang'][681]['text']; ?>
+                            </button>                         
+                           <button class="lw-btn storyAlbum center" data-album-stories-btn="2" onclick="deleteStoryAlbum(this);" style="display: none;background:#E26C6F!important;float: right;">
+                                <?= $sm['lang'][680]['text']; ?>
+                            </button>                                                
+                        </div> 
+                    </div>
+                </div>
+
+                <div data-select-stories="0" class="center" style="padding: 45px;">
+                    <div class="lw-title lw-title_lg"><?= $sm['lang'][669]['text']; ?></div>
+                    <div class="lw-content lw-mb-md"><?= $sm['lang'][670]['text']; ?></div>
+                    <div class="simple-promo__img" style="padding-bottom: 25px">         
+                        <div class="brick brick--xxlg center" onclick="upMedia('storyAlbum')"  style="background: none;cursor: pointer;border-radius: 25%;background: #eee;width: 130px;height:130px;padding-top: 30px" >
+
+                            <div class="brick-img profile-photo" data-story-album data-src="" style="cursor: pointer;"></div>
+                            <svg id="storyAlbumCamera" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(2 3)"><path d="M20 16a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3l2-3h6l2 3h3a2 2 0 0 1 2 2v11z"/><circle cx="10" cy="10" r="4"/></g></svg>                                               
+                        </div>
+
+                    </div>                               
+                    <div class="lw-mb-md">
+                        <div class="lw-field">
+                            <input class="lw-input" type="text" style="width: 80%" id="storyAlbumName" placeholder="<?= $sm['lang'][864]['text']; ?>">
+                        </div>
+                    </div>
+                    <button class="lw-btn storyAlbum" onclick="createStoryAlbum(0);">
+                        <?= $sm['lang'][676]['text']; ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<audio id="notiSound" type="audio/wav" preload="false" ><source src='<?= $sm['config']['site_url'];?>assets/sounds/Notification.wav' /></audio>
+<audio id="chatSound" type="audio/wav" preload="false" ><source src='<?= $sm['config']['site_url'];?>assets/sounds/inchat-sound.mp3' /></audio>   
+<audio id="callSound" type="audio/wav" preload="false" ><source src='<?= $sm['config']['site_url'];?>assets/sounds/Call.mp3' /></audio>  
+
+
+<!-- cookies -->
+<?php if($sm['plugins']['terms']['showCookies'] == 'Yes'){ ?>
+    <?= getAbsolutePage('terms/cookiesLaw'); ?>
+<?php } ?>
+
+<div id="upload-story" style="display: none" >
+    <input type='file' id="uploadStoryContent">
+</div>
+<div id="loadingImages" style="position: absolute;width: 1px;height: 1px;overflow: hidden">
+</div>
+<div id="loadingVideos" style="position: absolute;width: 1px;height: 1px;overflow: hidden">
+</div>
+
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/jquery-2.1.1.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/jquery.form.min.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/materialize.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/classie.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/fbphotobox.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/scroller.js"></script> 
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/sweetalert.min.js"></script>
+
+<?php if($sm['plugins']['videocall']['enabled'] == 'Yes'){ ?>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/peer.js"></script> 
+<?php } ?>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/galleria-1.5.7.min.js"></script> 
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/jquery.preload.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/autocomplete.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/jquery-ui.min.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/TweenMax.min.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/favico.min.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/jquery.easing.min.js"></script>
+
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/slick.min.js"></script>
+
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/action-sheet.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/nprogress.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/jquery.numscroll.js"></script>
+
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/jquery.dm-uploader.min.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/slim-lightbox.min.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/little-widgets.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/flickity.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/emoji.js"></script>
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/vendor/adapter.min.js"></script>
+
+
+<script>
+    var nextStory = 0;
+    var storyPage = '';
+</script>
+
+<?php foreach($sm['plugin'] as $plugin){ ?>
+    <?php if(!empty($plugin['js_file'])){
+echo '<script src="'.$sm['config']['site_url'].'themes/plugins/'.$plugin['js_file'].'.js"></script>';
+            } 
+} ?>
+
+<script>
+$(window).on('load', function() {
+    $('#preloader-container').delay(275).fadeOut('slow'); 
+});
+
+function inIframe () {
+try {
+  return window.self !== window.top;
+} catch (e) {
+  return true;
+}
+}
+
+var rt = '';
+var channel = '';
+if(inIframe() !== true){
+    rt = new Pusher("<?= $pk; ?>", {
+      encrypted: true,
+      cluster: "<?=$sm['plugins']['pusher']['cluster']; ?>"
+    });    
+    channel = rt.subscribe("<?= $pk; ?>");
+} else {
+    rt = new Pusher("<?= $pk; ?>", {
+      encrypted: true,
+      cluster: "<?=$sm['plugins']['pusher']['cluster']; ?>"
+    });    
+    channel = rt.subscribe("<?= $pk; ?>iframe");    
+    console.log('iframe loaded no real time');
+}
+
+</script>
+
+
+<script src="<?php echo $sm['config']['theme_url']; ?>/js/belloo.js"></script>
+
+<script type="text/javascript">  
+
+var currentStory;
+var socialStory = new Story({
+    playlist: currentStory
+}); 
+
+$('body').css('height',h+'px');
+if(user_info.credits > 0){
+    $(".userCredits").numScroll();
+}
+</script>
+
+<?= $sm['plugins']['customHtml']['website_footer']; ?>
+</body>
+</html>

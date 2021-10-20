@@ -1,0 +1,38 @@
+<div class="modal profile-modal transparent">
+<div class="page overlay-page visible" style="z-index: 600;">
+    <div data-view-id="561">
+        <div class="layout layout--centered-content">
+            <div class="layout__content layout__content--vpadded layout__content--hpadded">
+                <center><div class="cta-box__header"><svg xmlns="http://www.w3.org/2000/svg" width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="#1a1ff5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="arcs"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg><br>{{lang[595].text}} </div>
+                <div class="cta-box__content" style="margin-bottom: 25px;">{{lang[602].text}}</div></center>
+                <div class="sharing-media" ng-click="uploadVerificationImage()">
+                    <div class="sharing-media__multimedia">
+                        <div class="multimedia">
+                            <div class="multimedia__image" style="background-image: url('{{verificationImage}}')"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layout__content layout__content--vpadded layout__content--hpadded">
+                <div class="cta-box">
+                    <div class="cta-box__header">{{lang[597].text}} </div>
+                    <div class="cta-box__content" style="margin-bottom: 15px;">{{lang[598].text}}</div>                    
+                    <div class="cta-box__buttons cta-box__buttons--wide">
+
+                    </div>
+                    <br>
+                    <div class="cta-box__buttons">
+                        <div class="button-wrapper">
+                            <div class="button-wrapper__item">
+                            	<button class="inline-button js-dismiss" ng-click="closeVerificationModal();">
+                            		<span class="inline-button__text">{{alang[2].text}}</span>
+                            	</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

@@ -1,0 +1,83 @@
+<?php 
+if($_GET['id'] != NULL ){
+    $usid = secureEncode($_GET['id']);  
+    getUserInfo($usid,1);
+}
+$check = blockedUser($sm['user']['id'],$sm['profile']['id']);
+if($check == 1){
+    header('Location:'.$sm['config']['site_url']);
+}
+$profile_info = json_encode($sm['profile']);    
+echo 
+'<script>
+current_user_id = ' . $sm['profile']['id'] .';
+var profile_info = '. $profile_info  . ';   
+url = "profile";
+</script>';
+?>
+<div class="slider-profile closed">
+    <div class="top-user-header">
+        <img class="like-top" src="<?= $sm['config']['theme_url']; ?>/images/like.jpg" data-id="<?=$sm['profile']['id']; ?>">
+        <img class="nolike-top" src="<?= $sm['config']['theme_url']; ?>/images/nolike.jpg" data-id="<?=$sm['profile']['id']; ?>"/>
+        <h2>
+            <?= $sm['profile']['name']; ?>, <?= $sm['profile']['age']; ?>
+            <div class="premium" data-tooltip="Premium"><i class="mdi-editor-attach-money"></i></div>
+            <div class="verified" data-tooltip="Verified"><i class="mdi-action-verified-user"></i></div>
+            <div class="popular" data-tooltip="Popular"><i class="mdi-social-whatshot"></i></div>
+        </h2>
+        <span><?= $sm['lang'][465]['text']; ?><?= time_elapsed_string($sm['profile']['last_access']); ?></span>
+    </div>
+    <div class="profile-photos" id="profile-photos">
+        <a data-url="photos" data-uid="<?= $sm['profile']['id']; ?>" href="javascript:;"><img src="<?= $sm['profile']['profile_photo']; ?>" /></a>
+        <?= getUserPhotosHeader($sm['profile']['id']); ?>  
+    </div>
+    <div class="profile-menu center-align ">
+        <ul>                    
+            <li class="selected" data-url="about"  data-uid="<?= $sm['profile']['id']; ?>">
+                <?= $sm['lang'][117]['text']; ?><?= $sm['profile']['first_name']; ?>
+            </li>
+            <li>
+                <b><?= $sm['profile']['total_likers']; ?></b><?= $sm['lang'][53]['text']; ?>
+            </li>                       
+            <? if($sm['profile']['total_photos_public'] > 0){ ?>
+            <li data-url="photos" data-uid="<?= $sm['profile']['id']; ?>">
+                <b><?= $sm['profile']['total_photos_public']; ?></b> <?= $sm['lang'][67]['text']; ?>
+            </li>
+            <? } else { ?>
+            <li>
+                <b>0</b> <?= $sm['lang'][67]['text']; ?>
+            </li>
+            <? } ?>
+            <? if($sm['profile']['total_photos_private'] > 0){ ?>
+            <li  data-url="p_photos"  data-uid="<?= $sm['profile']['id']; ?>">
+                <b><?= $sm['profile']['total_photos_private']; ?></b> <?= $sm['lang'][68]['text']; ?>
+            </li>   
+            <? } else { ?>
+            <li>
+                <b>0</b> <?= $sm['lang'][68]['text']; ?>
+            </li>
+            <? } ?> 
+        </ul>
+    </div>
+    <div class="profile-content center-align" style="height: 600px;">
+        <? if($sm['profile']['bio'] == ''){ ?><h1><?= $sm['lang'][118]['text']; ?></h1><? } else { echo '<h1 style="width:100%;font-size:20px;margin-top:20px;padding-right:10%;padding-left:10%;line-height:30px;">'.$sm['profile']['bio'].'</h1>'; } ?>
+        <div class="bubble ">
+            <i class="mdi-social-cake"></i>
+            <h3><?= $sm['profile']['age']; ?></h3><span><?= $sm['lang'][119]['text']; ?></span>
+        </div>
+        <div class="bubble ">
+            <i class="mdi-maps-place"></i>
+            <h3 id="city"><?= $sm['profile']['city']; ?></h3><span><?= $sm['profile']['country']; ?></span>
+        </div>
+        <div class="bubble ">
+            <i class="mdi-action-favorite"></i>
+            <? if($sm['profile']['looking'] == 1){ ?>
+                <h3><?= $sm['lang'][111]['text']; ?></h3><span><?= $sm['lang'][120]['text']; ?></span>
+            <? } else if($sm['profile']['looking'] == 2){ ?>
+               <h3><?= $sm['lang'][110]['text']; ?></h3><span><?= $sm['lang'][121]['text']; ?></span>
+            <? } else { ?>  
+                <h3><?= $sm['lang'][112]['text']; ?></h3><span><?= $sm['lang'][122]['text']; ?></span>
+            <? } ?>                                                 
+        </div>
+    </div>
+</div>

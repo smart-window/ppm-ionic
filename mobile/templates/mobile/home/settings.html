@@ -1,0 +1,99 @@
+<ion-view>
+  <ion-nav-title>
+      <div class="layout__header" >
+          <div class="navigation-bar  navigation-bar--static navigation-bar--no-background" style="background: #fff">
+              <div class="navigation-bar__primary">
+                <div class="navigation-bar__icon js-goto" ng-click="goBackSettings();">
+                    <div class="icon" style="left: 0px;">
+                            <svg class="icon__content icon__content--inactive">
+    <svg viewBox="0 0 64 64" id="navigation-bar-back" width="100%" height="100%"><path d="M12.05 33.28l13.83 13.83-1.81 1.81L7.4 32.25l.26-.26-.23-.24 16.6-16.67 1.82 1.81-13.78 13.83h44.25v2.56H12.05z"></path></svg>
+                        </svg>
+                    </div>
+                </div>
+              </div>
+              <div class="navigation-bar__main" style="margin-top: -4px">
+                  <div class="navigation-bar__logo">
+                       <span class="comforta">{{alang[40].text}}</span>
+                  </div>
+              </div>
+              <div class="navigation-bar__secondary" style="margin-right: 20px;">
+              </div>
+          </div>
+      </div>    
+</ion-nav-title>
+
+ <ion-content class="animated fadeIn">
+    <div class="list m-n">
+      <div class="item item-divider b-none"></div>
+      <div class="item item-divider b-none text-u-c comforta">{{alang[84].text}}</div>
+      
+      <div class="item" horizontal layout center>
+        <div class="row no-padder" ng-click="openChangeLocModal()">
+          <div class="col-25 comforta">
+            {{alang[85].text}}
+          </div>
+          <div class="col-75 text-right comforta">
+            <input style="border:none;float:right;" ng-value="me.city"  />
+          </div>
+        </div>
+      </div>
+
+      <div class="item b-t comforta">
+        {{alang[86].text}}
+        <span class="item-note comforta">
+        <div>{{distance}} {{distanceMeter}}</div>     
+        </span>
+    
+        <div class="range range-positive comforta" ng-init="distance = initDistance">
+          <input type="range" name="distance" min="1" max="distanceLimit" value="distance" ng-model="distance" 
+             ng-model-options="{ updateOn: 'change' }"
+             ng-change="updateDistance(distance)" class="w-full">
+        </div>
+      </div>
+
+      <div class="item" ng-click="updateGender()" horizontal layout center>
+        <div class="row no-padder">
+          <div class="col-40 comforta">
+            {{alang[90].text}}
+          </div>
+          <div class="col-60 text-right comforta">
+             {{gender}}
+            <div class="text-xs text-muted"></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="item b-t comforta">
+       {{alang[91].text}}
+
+       <div class="range range-positive comforta">
+          <div class="range-label">{{range.from}}</div>
+          <ui-multi-range ng-step="1" ng-min="ageMin" ng-max="ageMax" ng-model-min="range.from" ng-model-max="range.to" ng-change-min="updateAge(range.from,range.to)" ng-change-max="updateAge(range.from,range.to)"></ui-multi-range>
+          <div class="range-label">{{range.to}}</div>
+        </div>          
+      </div>
+
+      <div class="item item-toggle comforta gradient32" ng-if="updateOnlineCheck" style="color: #fff">
+        {{alang[92].text}}
+        <label class="toggle toggle-assertive">
+          <input type="checkbox" ng-checked="online" ng-click="updateOnline()">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
+      <div class="item item-toggle comforta gradient32" ng-if="!updateOnlineCheck" style="color: #fff;pointer-events: auto" ng-click="openPremiumModal()">
+        {{alang[92].text}}<br>
+        <small>{{lang[689].text}}</small>
+        <label class="toggle toggle-assertive" style="margin-top: 10px">
+          <input type="checkbox" disabled="">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+    </div>
+  </ion-content> 
+</ion-view>

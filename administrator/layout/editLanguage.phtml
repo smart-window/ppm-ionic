@@ -1,0 +1,251 @@
+<?php
+  if($sm['admin_ajax'] == false){
+    header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=languages');
+  }
+?>
+<script>
+    aurl = 'editLang';
+    var translateTo = '<?= $sm['editLang']['prefix']; ?>';
+</script>
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px ">
+    <div class="page__heading d-flex align-items-center">
+        <div class="flex">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item" ><a href="javascript:;" onclick="goTo('languages');">Languages</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><?= $sm['editLang']['name']; ?> - <?= $sm['editLang']['title']; ?></li>
+                </ol>
+            </nav>          
+        </div>  
+        <?php if($sm['editLang']['id'] != 1){ ?>
+            <a href="javascript:;" 
+            onclick="autoTranslate()" class="btn btn-light" 
+            style="margin-right: 10px">
+            <i class="material-icons">language</i> Global auto-translate </a>          
+            <a href="javascript:;" 
+            onclick="deleteLanguage(<?= $sm['editLang']['id']; ?>);" class="btn btn-danger ml-3">
+            <i class="material-icons">delete</i> Delete <?= $sm['editLang']['name']; ?></a>                      
+        <?php } ?>
+    </div>    
+    <div class="card">
+        <div class="card-header card-header-large bg-white">
+            <h2 class="card-header__title" style="font-weight: bold"><?= $sm['editLang']['name']; ?> - <?= $sm['editLang']['title']; ?></h2>
+            <div class="ml-auto" style="position: absolute;right: 10px;top: 15px;">
+                <div class="input-group input-group-merge mb-2" style="width: 620px;" >
+                    <input id="search_lang_text" type="search" class="form-control form-control-prepended" placeholder="Search" style="margin-right: 10px">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <i class="material-icons mr-1">search</i>
+                        </div>
+                    </div>                     
+                </div>                
+              
+            </div>
+        </div>
+    </div>
+
+    
+        <?php 
+            if($sm['editLang']['table'] == 'gender'){
+                echo '<div class="row">'.getAdminLangEditGender($sm['editLang']['id']).'</div>';
+            } else if($sm['editLang']['table'] == 'questions'){ ?>
+            <div class="row">
+                <div class="card card-form flex-column flex-sm-row divHidden" style="height: 60px;width: 100%;margin: 15px">
+                    <div class="card-form__body card-body-form-group flex">
+                      <div class="row">
+                          <div class="col-sm-12"> 
+                              <div class="form-group">
+                                  <label>Profile Questions</label>                    
+                              </div>
+                          </div>                                                 
+                      </div>
+                    </div>              
+                </div>
+            </div>
+            <div class="row">                
+            <?= getAdminLangEditQuestions($sm['editLang']['id']); ?>
+            </div>
+            <div class="row">              
+                <div class="card card-form flex-column flex-sm-row divHidden" style="height: 60px;width: 100%;margin: 15px">
+                    <div class="card-form__body card-body-form-group flex">
+                      <div class="row">
+                          <div class="col-sm-12"> 
+                              <div class="form-group">
+                                  <label>Profile Answers</label>                    
+                              </div>
+                          </div>                                                 
+                      </div>
+                    </div>              
+                </div> 
+            </div> 
+            <div class="row">               
+                <?= getAdminLangEditAnswers($sm['editLang']['id']); ?>
+            </div>  
+            <?php } else if ($sm['editLang']['table'] == 'landing_lang'){ 
+            $landing = 'AND theme = "'.$sm['settings']['landingTheme'].'" AND preset = "'.$sm['settings']['landingThemePreset'].'"';
+            echo '<div class="row">'.getAdminLangEdit($sm['editLang']['id'],$sm['editLang']['table'],$landing).'</div>';
+            } else if ($sm['editLang']['table'] == 'seo_lang'){
+            echo '<div class="row">'.getAdminLangEditSeo($sm['editLang']['id'],$sm['editLang']['table']).'</div>';
+            } else { 
+            echo '<div class="row">'.getAdminLangEdit($sm['editLang']['id'],$sm['editLang']['table']).'</div>';
+            }
+        ?>
+    </div>
+</div>
+
+<script>
+$('[data-edit-lang]').keyup(function(){
+    var lid = $(this).attr('data-edit-lang')
+   $('.row').find('input[data-edit-lang="'+lid+'"]').css("background","#f1f1f1"); 
+})
+$("[data-langid]").change(function(){
+var langid = $(this).attr('data-langid');
+var val = $(this).val();            
+var lid = $(this).attr('data-lid'); 
+var theme = $(this).attr('data-theme'); 
+$.ajax({ 
+    type: "POST", 
+    url: request_source() + "/admin.php",
+    data: {
+        action : "editlang",
+        langid : langid,
+        table: '<?=$sm['editLang']['table']; ?>',
+        landingPreset: '<?= $sm['settings']['landingThemePreset']; ?>',
+        landing: '<?= $sm['settings']['landingTheme']; ?>',
+        val : val,  
+        theme : theme,                  
+        lid: lid
+    },
+    beforeSend: function(){
+        $('.row').find('input[data-lid="'+lid+'"]').css("background","#f1f1f1");   
+    },
+    success: function(response){
+        $('.row').find('input[data-lid="'+lid+'"]').css("background","#ceffc9");                   
+    }
+}); 
+});
+ 
+$("[data-langid-seo]").change(function(){
+    var langid = $(this).attr('data-langid-seo');
+    var val = $(this).val();            
+    var lid = $(this).attr('data-lid'); 
+    var page = $(this).attr('data-page'); 
+    var lg = $(this).attr('data-lang-loading'); 
+    console.log(lg);
+    $.ajax({ 
+        type: "POST", 
+        url: request_source() + "/admin.php",
+        data: {
+            action : "editlangseo",
+            langid : langid,
+            val : val,
+            page : page,                  
+            id: lid
+        },
+        beforeSend: function(){
+            $('.row').find('input[data-lang-loading="'+lg+'"]').css("background","#f1f1f1");   
+        },
+        success: function(response){
+            $('.row').find('input[data-lang-loading="'+lg+'"]').css("background","#ceffc9");                   
+        }
+    }); 
+});
+
+ 
+$("[data-langid-g]").change(function(){
+    var langid = $(this).attr('data-langid-g');
+    var val = $(this).val();            
+    var gid = $(this).attr('data-gid'); 
+    $.ajax({ 
+        type: "POST", 
+        url: request_source() + "/admin.php",
+        data: {
+            action : "editlanggender",
+            langid : langid,
+            val : val,                  
+            id: gid
+        },
+        beforeSend: function(){
+            $('.row').find('input[data-gid="'+gid+'"]').css("background","#f1f1f1");   
+        },
+        success: function(response){
+            $('.row').find('input[data-gid="'+gid+'"]').css("background","#ceffc9");                   
+        }
+    }); 
+});
+
+$("[data-langid-q]").change(function(){
+var langid = $(this).attr('data-langid-q');
+var val = $(this).val();            
+var qid = $(this).attr('data-questionid');  
+$.ajax({ 
+    type: "POST", 
+    url: request_source() + "/admin.php",
+    data: {
+        action : "editlangq",
+        langid : langid,
+        val : val,                  
+        id: qid
+    },
+    beforeSend: function(){
+        $('.row').find('input[data-questionid="'+qid+'"]').css("background","#f1f1f1");    
+    },
+    success: function(response){
+        $('.row').find('input[data-questionid="'+qid+'"]').css("background","#ceffc9");                    
+    }
+}); 
+});
+$("[data-langid-answer]").change(function(){
+    var langid = $(this).attr('data-langid-answer');
+    var val = $(this).val();            
+    var aid = $(this).attr('data-answerid');    
+    var qid = $(this).attr('data-qid'); 
+    $.ajax({ 
+        type: "POST", 
+        url: request_source() + "/admin.php",
+        data: {
+            action : "editlanganswer",
+            langid : langid,
+            val : val,                  
+            qid: qid,
+            id: aid
+        },
+        beforeSend: function(){
+            $('.row').find('input[data-answeid="'+aid+qid+'"]').css("background","#f1f1f1");   
+        },
+        success: function(response){
+            $('.row').find('input[data-answeid="'+aid+qid+'"]').css("background","#ceffc9");                   
+        }
+    }); 
+});
+
+function filterText(search){
+  var search = search.toLowerCase();
+  if(search != ''){
+    $('[data-filter-lang]').hide();
+    $('[data-filter-lang]').each(function(){
+      var filter = $(this).attr('data-filter-lang');
+      var c = filter.includes(search);
+      if(c){    
+        $('[data-filter-lang="'+filter+'"]').show();
+      }
+    })
+  } else {
+    $('[data-filter-lang]').show();
+  }
+}
+$('#search_lang_text').keyup(function(e) {
+    filterText($(this).val());
+});
+$('#search_lang_text').on('search', function () {
+    filterText($(this).val());
+});
+
+
+function autoTranslateSingle(text,idVal,langId){
+    translate('<?= $sm['editLang']['prefix']; ?>',text,idVal,langId).then(updateAutoTranslate);
+}
+
+
+</script>

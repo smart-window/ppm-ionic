@@ -1,0 +1,194 @@
+<?php
+  if($sm['admin_ajax'] == false){
+    header('Location:'.$sm['config']['site_url'].'index.php?page=admin&p=plugins');
+  }
+?>
+<script>
+  aurl = 'chats';
+  currentMenu = 'plugins';
+  currentMenuCollapse = 'chats';  
+</script>
+
+<?php 
+  $timestamp = time();
+  $dw = date( "w", $timestamp);
+  global $mysqli;
+  $allChats = $mysqli->query("SELECT DISTINCT s_id,r_id FROM chat where fake = 1  and online_day = '".$dw."' order by id DESC");  
+?>
+
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px;min-height: 500px ">
+  <div class="page__heading d-flex align-items-center">
+      <div class="flex">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','')">Plugins</a></li>
+                <li class="breadcrumb-item"><a href="#" onclick="goTo('plugins','','Fake Users')">Fake Users</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Fake users chat</li>
+            </ol>            
+          </nav>
+      </div>
+      <a href="#" class="btn btn-light ml-3" onclick="goTo('plugins','','')"><i class="material-icons mr-1">arrow_back</i></a>
+  </div>
+
+  <div class="app-chat-container" data-full-height-chat>
+      <div class="row h-100 m-0">
+
+  <div class="col-lg-5 py-3 px-0 bg-light border-left d-flex flex-column card" style="border-radius: 0">
+
+      <div class="form-group px-3">
+
+          <div class="flex">
+              <nav aria-label="breadcrumb" style="margin-bottom: 15px">
+                <center>
+                <ol class="breadcrumb" style="margin: 0 auto;text-align: center;">
+                    <li class="breadcrumb-item">
+                      <a href="javascript:;" id='new-messages' onclick="fakeMessagesTab('New');" style="font-size: 12px;color: #0069f5">NEW</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                      <a href="javascript:;" id='all-messages' onclick="fakeMessagesTab('All');" style="font-size: 12px;color:#999">ALL MESSAGES (<?= $allChats->num_rows; ?>)</a>
+                    </li>
+                </ol>  
+                </center>          
+              </nav>
+          </div>        
+          <div class="input-group input-group-merge input-group-rounded">
+              <input type="search" class="form-control form-control-prepended" id="search_chat_member" placeholder="Filter members">
+              <div class="input-group-prepend">
+                  <div class="input-group-text">
+                      <span class="material-icons">filter_list</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="flex d-flex flex-column" style="overflow-x: hidden!important" data-full-height-chat-right>
+          <div data-simplebar class="h-100">
+<div class="alert alert-soft-info  align-items-center" id="no-new-messages" role="alert" style="margin:10px;text-align: center;display: none">
+    <div class="text-body">No new messages</div>
+</div>
+              <div class="list-group list-group-flush" data-fake-new-messages style="position: relative; z-index: 0;">
+              </div>
+
+          </div>
+      </div>
+  </div> 
+
+  <div class="col-lg-7 py-3 d-flex flex-column h-100 bg-white card">
+      <div class="search-form form-control-rounded search-form--light" style="display: none">
+          <input type="text" class="form-control" placeholder="Search messages" id="searchSample02">
+          <button class="btn" type="button" role="button"><i class="material-icons">search</i></button>
+      </div>
+
+      <div class="flex p-3 d-flex flex-column" id="chat_container" style="height: 550px;overflow-y: auto">
+          <div data-simplebar class="h-100" id="chat_result" >
+
+          </div>
+      </div>
+
+      <form class="input-group input-group-merge" id="c-send">
+          <input type="text" class="form-control form-control-appended" required="" id="chat-message" placeholder="Type message">
+          <input type="hidden" class="form-control form-control-appended" required="" id="r_id" style="display: none">  
+          <input type="hidden" class="form-control form-control-appended" required="" id="fake_id" style="display: none">  
+          <input type="hidden" class="form-control form-control-appended" required="" id="fake_name" style="display: none">  
+          <input type="hidden" class="form-control form-control-appended" required="" id="fake_photo" style="display: none">                                              
+          <div class="input-group-append" >
+              <div class="input-group-text pr-2" >
+                  <button class="btn btn-flush" type="submit"><i class="material-icons">send</i></button>
+              </div>
+          </div>
+      </form>
+
+  </div>
+
+      </div>
+  </div>    
+</div>
+
+
+<script>
+var selectedTab = 'New';
+
+clearInterval(checkFakeUserMessages);
+checkFakeUserMessages = setInterval(function(){
+  console.log(selectedTab);  
+  if(selectedTab == 'New'){
+    console.log('checking new messages');
+    $.ajax({
+        url: request_source()+'/chat.php', 
+        data: {
+            action: 'fake_list',
+            tab: 'New'
+        },  
+        type: "post",
+        dataType: 'JSON',           
+        success: function(response) {
+          if(response['conv']){
+            $('#no-new-messages').hide();
+            response['conv'].forEach(function(conv) {
+              if (!$('[data-conv='+conv+']').length) {
+                $('[data-fake-new-messages]').prepend(response[conv]['data']);
+              } else {
+                //console.log('last chat id:'+response[conv]['chatId']);
+                //console.log('new last chat id:'+$('[data-conv='+conv+']').attr('data-chatid'));
+                
+                if(response[conv]['chatId'] > $('[data-conv='+conv+']').attr('data-chatid')){
+                  $('[data-conv='+conv+']').remove();
+                  $('[data-fake-new-messages]').prepend(response[conv]['data']);
+                }
+              }
+            });
+          }
+        },
+    });
+  }
+},3500);
+
+function fakeMessagesTab(tab){
+  selectedTab = tab;
+  if(tab == 'All'){
+    $('#all-messages').css('color','#0069f5');
+    $('#new-messages').css('color','#999');
+  } else {
+    $('[data-fake-new-messages]').html('');
+    $('#new-messages').css('color','#0069f5');
+    $('#all-messages').css('color','#999');
+  }
+  $('[data-fake-new-messages]').css('opacity','0.5');
+  $.ajax({
+      url: request_source()+'/chat.php', 
+      data: {
+          action: 'fake_list',
+          tab: tab
+      },  
+      type: "post",
+      dataType: 'JSON',           
+      success: function(response) {
+        $('[data-fake-new-messages]').css('opacity','1');
+
+        if(response['conv']){
+          $('[data-fake-new-messages]').html('');
+          response['conv'].forEach(function(conv) {
+
+            if(tab == 'All'){
+              $('#all-messages').text('ALL MESSAGES ('+response['conv'].length+')');
+            } else {
+              $('#new-messages').text('NEW ('+response['conv'].length+')');
+            }
+            
+            $('[data-fake-new-messages]').append(response[conv]['data']);
+          });
+          $('#no-new-messages').hide();
+        } else {
+            if(tab == 'All'){
+              $('#all-messages').text('ALL MESSAGES (0)');
+            } else {
+              $('#new-messages').text('NEW (0)');
+            }   
+            $('#no-new-messages').show();       
+        }
+      },
+  });  
+}
+
+$('#new-messages').click();
+</script>

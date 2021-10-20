@@ -1,0 +1,110 @@
+<script>
+url = "popularity";
+</script>            
+    <?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    <div class="col s2 real" style="padding-right: 0px;" >
+        <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+                echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+            }
+        ?>
+    </div>
+    <div class="col s8 real"  id="site-content">
+    <?php } else { ?>
+        <div class="col s8 real fix-width-content" style="padding-right: 0px;" id="site-content">
+    <?php } ?>             
+    <div class="wall popularityContent" style="background: <?= $sm['theme']['wall_bg_credits']['val']; ?>;"> 
+        <div class="payment-promo " style="margin-top: 0px;">
+            <div class="payment-promo__content"><center>
+            <p class="payment-promo__txts montserratBold" style="width:70%;font-size: 30px;padding-top: 0"> <?= $sm['lang'][505]['text']; ?> <?= $sm['user']['city']; ?> <?= $sm['lang'][506]['text']; ?>… </p>
+            <div class="popularity-lines">
+            <div class="popularity-line js-popularity-promo-block" data-popularity-promo-block-type="1">
+                <div class="left popularity-col">
+                    <h1 class="popularity-col__title montserrat"><?= $sm['lang'][507]['text']; ?></h1>
+                    <p> <?= $sm['lang'][508]['text']; ?>! </p>
+                    <div class="btn btn--riseup <?= $sm['theme']['credits_section_rise_up_bg']['val']; ?>" onclick="showRiseUp();" style="background: <?= $sm['theme']['credits_section_rise_up_bg']['val']; ?>"> <span class="btn-txt" style="color: <?= $sm['theme']['credits_section_rise_up_color']['val']; ?>"><?= $sm['lang'][509]['text']; ?>!</span></div>
+                </div>
+                <div class="popularity-col">
+                    <div class="popularity-col__img popularity-col__img--riseup popularity-col__img--male ">
+                        <div class="popularity-col__user-photo profile-photo" data-src="<?= randomPhoto($sm['user']['id']); ?>"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="popularity-line" >
+                <div class="left popularity-col ">
+                    <h1 class="popularity-col__title montserrat"><?= $sm['lang'][510]['text']; ?></h1>
+                    <p> <?= $sm['lang'][511]['text']; ?> <b><?= $sm['lang'][512]['text']; ?>!</b> </p>
+                    <div class="btn btn--encounters <?= $sm['theme']['credits_section_discover_up_bg']['val']; ?>" onclick="showDiscover();" style="background: <?= $sm['theme']['credits_section_discover_up_bg']['val']; ?>"> <span class="btn-txt" style="color: <?= $sm['theme']['credits_section_discover_up_color']['val']; ?>"><?= $sm['lang'][513]['text']; ?>!</span></div>
+                    <div class="popularity-col__cost js-service-cost js-control js-core-events-container hidden">
+                        <div class="service-cost">
+                            <p class="service-cost__text"> </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="popularity-col">
+                    <div class="popularity-col__img popularity-col__img--meets">
+                        <div class="popularity-col__user-photo">
+                            <div class="popularity-col__user-photo_">
+                            <img class="profile-photo" src="<?= randomPhoto($sm['user']['id']); ?>"></div>
+                        </div>
+                        <div class="brick brick--lg brick--stroke popularity-col__others popularity-col__others--1">
+                            <div class="brick-img"><img src="<?= randomPhotoUser($sm['user']['s_gender']); ?>" alt=""></div>
+                            <mark class="brick brick--xsm brick--like brick--stroke"><i class="icon icon--white ion-heart" style="font-size: 17px"></i></mark>
+                        </div>
+                        <div class="brick brick--lg brick--stroke popularity-col__others popularity-col__others--2">
+                            <div class="brick-img"><img src="<?= randomPhotoUser($sm['user']['s_gender']); ?>" alt=""></div>
+                            <mark class="brick brick--xsm brick--like brick--stroke"><i class="icon icon--white ion-heart" style="font-size: 17px"></i></mark>
+                        </div>
+                        <div class="brick brick--lg brick--stroke popularity-col__others popularity-col__others--3">
+                            <div class="brick-img"><img src="<?= randomPhotoUser($sm['user']['s_gender']); ?>" alt=""></div>
+                            <mark class="brick brick--xsm brick--like brick--stroke"><i class="icon icon--white ion-heart" style="font-size: 17px"></i></mark>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="popularity-line">
+                <div class="left popularity-col">
+                    <h1 class="popularity-col__title montserrat"><?= $sm['lang'][514]['text']; ?>!</h1>
+                    <p> <?= $sm['user']['first_name']; ?>, <?= $sm['lang'][515]['text']; ?> <?= $sm['user']['city']; ?> <?= $sm['lang'][516]['text']; ?>!</p>
+                    <div class="btn btn--spotlight <?= $sm['theme']['credits_section_spotlight_up_bg']['val']; ?>" onclick="showSpotlight();" style="background: <?= $sm['theme']['credits_section_spotlight_up_bg']['val']; ?>"> <span class="btn-txt" style="color: <?= $sm['theme']['credits_section_spotlight_up_color']['val']; ?>"><?= $sm['lang'][517]['text']; ?>!</span> </div>
+                </div>
+                <div class="popularity-col">
+                    <div class="popularity-col__img popularity-col__img--spotlight">
+                        <div class="popularity-col__shadow_circle"></div>
+                        <div class="popularity-col__user-photo_">
+                            <div class="brick brick--lg brick--blue brick--hover popularity-col__add">
+                                <div class="brick-img"><img src="<?= $sm['user']['profile_photo']; ?>"></div><i class="icon icon--xsm icon--white"></i> </div>
+                            <div class="brick brick--lg brick--spotlight brick--outline popularity-col__owner">
+                                <div class="brick-img"><img src="<?= $sm['user']['profile_photo']; ?>" alt=""></div>
+                            </div>
+                            <div class="brick brick--lg popularity-col__others popularity-col__others--1">
+                                <div class="brick-img"><img src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                            </div>
+                            <div class="brick brick--lg popularity-col__others popularity-col__others--2">
+                                <div class="brick-img"><img src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                            </div>
+                            <div class="brick brick--lg popularity-col__others popularity-col__others--3">
+                                <div class="brick-img"><img src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                            </div>
+                            <div class="brick brick--lg popularity-col__others popularity-col__others--4">
+                                <div class="brick-img"><img src="<?= randomPhotoUser($sm['user']['s_gender']); ?>"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+</center></div>
+        </div>
+    </div>
+    <?= getAbsolutePage('footer'); ?>     
+</div>
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    <div class="col s2 real" style="position: relative;">
+        <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+                echo '<div class="ad-zone-vertical" style="margin-left:79px;">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+            }
+        ?>  
+    </div>
+<?php }?>     

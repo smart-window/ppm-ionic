@@ -1,0 +1,35 @@
+<script>
+url = "privacy";
+</script>            
+
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    <div class="col s2 real" style="padding-right: 0px;" >
+    <?php 
+        if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+            echo '<div class="ad-zone-vertical">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+        }
+    ?>      
+    </div>
+    <div class="col s8 real mainContentBorderColor"  id="site-content" style="background: <?=$sm['theme']['wall_bg_default']['val']; ?>;">
+<?php } else { ?>
+    <div class="col s8 real fix-width-content mainContentBorderColor" style="padding-right: 0px;background: <?=$sm['theme']['wall_bg_default']['val']; ?>;" id="site-content">
+<?php } ?>
+
+     
+
+<div class="wall" style="overflow-y:auto;background: none;color: <?=$sm['theme']['wall_font_color_default']['val']; ?>;padding: 25px"> 
+    <?= $sm['plugins']['terms']['privacy']; ?>
+</div>
+
+<?= getAbsolutePage('footer'); ?>   
+</div>
+
+<?php if($sm['theme']['design_style_wide']['val'] == 'Yes'){ ?>
+    <div class="col s2 real" style="position: relative;">
+        <?php 
+            if($sm['plugins']['adsWeb']['enabled'] == 'Yes' && $sm['plugins']['adsWeb']['enable_160x600'] == "Yes"){ 
+                echo '<div class="ad-zone-vertical" style="margin-left:79px;">'.$sm['plugins']['adsWeb']['160x600'].'</div>';
+            }
+        ?>  
+    </div>
+<?php }?>

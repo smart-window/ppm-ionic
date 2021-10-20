@@ -1,0 +1,40 @@
+<div class="modal profile-modal transparent">
+<div class="page overlay-page visible" style="z-index: 600;">
+    <div data-view-id="561">
+        <div class="layout layout--centered-content">
+            <div class="layout__content layout__content--vpadded layout__content--hpadded">
+                <div class="sharing-media">
+                    <div class="sharing-media__multimedia">
+                        <div class="multimedia">
+                            <div class="multimedia__image" style="background-image: url('{{shareImage}}')"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layout__content layout__content--vpadded layout__content--hpadded">
+                <div class="cta-box">
+                    <div class="cta-box__header" style="margin-bottom: 24px">{{lang[542].text}} {{cu.first_name}}</div>
+                    <div class="cta-box__content cta-box__content--vpadded cta-box__content--hpadded">
+                    <input type="number" ng-model="creditsAmount" value="0" ng-init="creditsAmount=0" class="share-copy-fallback js-copy-link-input" style="font-size: 48px;height: 50px;margin-bottom: 10px"></div>
+                    <div class="cta-box__buttons">
+                        <div class="button-wrapper">
+                            <div class="button-wrapper__item" ng-click="sendCreditsNow(creditsAmount,cu.id,cu)">
+                                <button class="button button--stroke boostProfile" style="background-color: #FDDE02;border-radius: 5px">
+                                    <div class="button__content" >
+                                        <span class="button__text" style="color:#ff9102;font-weight: bold">{{lang[544].text}}</span>
+                                    </div>
+                                </button>
+                            </div><br>                          
+                            <div class="button-wrapper__item">
+                            	<button class="inline-button js-dismiss" ng-click="closeSendCreditsModal();">
+                            		<span class="inline-button__text">{{alang[2].text}}</span>
+                            	</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

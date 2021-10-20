@@ -1,0 +1,225 @@
+.wall .search{
+    position: relative;
+    display: inline-block;
+    width: 200px;
+    height: 280px;
+    text-align:center;
+    margin-right: 14px;
+    border-radius: 5px;
+    
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background: #fff;
+}
+.wall .search::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: 5px;
+    transition: box-shadow .2s ease-in-out;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, .10);
+}
+.wall .search:hover::after {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, .03);
+}
+.wall .search .photos-count{
+    position: absolute;
+    top: 2%;
+    right: 2%;
+    width: 40px;
+    height: 25px;
+    border-radius: 25px;
+    background: rgba(0,0,0,.45);   
+    z-index: 100;
+}
+.wall .search .photos-count i{
+    position: absolute;
+    margin-left: 0;
+    left:5px;
+    margin-top: 2px;    
+    color:#fff;
+}
+.wall .search .photos-count span{
+    position: absolute;
+    margin-left: 0;
+    top:4px;
+    left:22px;
+    font-weight: 600;
+    font-size: 10px;
+    color:#fff;
+}
+.wall .search .profile-photo{
+    position: absolute;
+    top: 0;
+    left:0;
+    width: 100%;
+    height: 210px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color:#e6ecf2; 
+
+    background-size:   cover;
+    background-repeat: no-repeat;
+    background-position: top center;     
+}
+.wall .search .name{
+    position: absolute;
+    top: 80%;
+    width: 100%;
+    height: 15%;
+    z-index:99;
+}
+.wall .search .name h1{
+    font-family: 'Montserrat';    
+    font-size: 18px;
+    font-weight: 500;
+    padding: 0;
+    margin: 0;
+    margin-left: 10px;
+    margin-top: 15px;
+    line-height: 0;
+
+}
+.wall .search .name h1 i{
+    display: inline-block;
+    margin-right: 1px;
+}
+.online {
+    font-size: 10px;
+    color:#17d425;    
+}
+.wall .search .name .loc{
+    font-family: 'Montserrat';
+    font-size: 12px;
+    font-weight: 500;
+    position: absolute;
+    top:92%;
+    left: 0;
+    width: 100%;
+    height: 20%;
+    line-height: 0;
+}
+.wall .search .name .loc span{
+}
+.wall .search .name .loc i{
+    color: #888;
+    margin-right:2px;
+}
+.wall .search .name h1 b{
+    font-weight: 500;
+    color: #333;
+}
+.wall .search .name h1 a{
+    color: #333;
+}
+.wall .search .footer{
+    position: relative;
+    top: 75%;
+    width: 100%;
+    left:-16px;
+    height: 25%;
+    margin:0 auto;
+    background: none;
+
+
+}
+.wall .search .footer .like{
+    position: absolute;
+    left: 80px;
+    top:-16px;
+    margin-top: 0px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50px;
+    margin-right: 2px;
+    cursor: pointer;
+    background:#f02138;
+    border:3px solid #fff;
+    color: #fff;
+}
+.wall .search .footer .like i{
+    position: absolute;
+    padding: 0;
+    left:4px;
+    color:#fff;
+    font-size: 16px;
+    opacity: 1;
+}
+.wall .search .footer .like:hover{      
+}
+.wall .search .footer .premium{
+    position: absolute;
+    left: 120px;
+    top:-16px;  
+    margin-top: 0px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50px;
+    margin-right: 2px;
+    cursor: pointer;
+    background:#9121f0;
+    border:3px solid #fff;
+    color: #fff;
+}
+.wall .search .footer .premium i{
+    position: absolute;
+    padding: 0;
+    left:4px;
+    color:#fff;
+    font-size: 16px;
+    opacity: 1;
+}
+.wall .search .footer .verified{
+    position: absolute;
+    left: 40px;
+    top:-16px;
+    margin-top: 0px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50px;
+    margin-right: 2px;
+    cursor: pointer;
+    background:#5ec735;
+    border:3px solid #fff;
+}
+.wall .search .footer .verified i{
+    position: absolute;
+    padding: 0;
+    margin-left: -8px;
+    font-size: 16px;
+    color:#fff;
+    opacity: 1;
+}
+.wall .search .footer .popular{
+    position: absolute;
+    left: 160px;
+    top:-16px;
+    margin-top: 0px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50px;
+    margin-right: 2px;
+    cursor: pointer;
+    background:#f04d21;
+    border:3px solid #fff;
+}
+.wall .search .footer .popular i{
+    position: absolute;
+    padding: 0;
+    margin-left: -8px;
+    font-size: 16px;
+    color:#fff;
+    opacity: 1;
+}
+@media only screen and (max-width: 1280px) { 
+    .wall .search{
+        width: 185px;
+        height: 265px;
+    }   
+    .wall .search .profile-photo{
+        height: 195px;
+    }      
+}

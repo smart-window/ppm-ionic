@@ -1,0 +1,303 @@
+<script>
+  aurl = 'users';
+  currentMenu = 'all-users';
+  currentMenuCollapse = 'users';  
+</script>
+<?php 
+$currentTime = time()-300;
+
+$days = 86400 * 7;
+$days = time() - $days;
+$date1 = date('m/d/Y', $days);
+$date2 = date('m/d/Y', time());
+
+if($sm['moderator']['Users'] == 'No'){
+  header("Location: ".$sm['config']['site_url'].'cp');
+  exit;
+}
+?>
+
+
+
+<!-- SECTION CONTENT -->
+<div class="container-fluid page__container" style="padding-top:25px ">
+  <div class="card-group" id="results">
+      <div class="card card-body text-center">
+          <div class="d-flex flex-row align-items-center">
+              <div class="card-header__title m-0">Total</div>
+              <div class="text-amount ml-auto font16"><?= selectC('users',''); ?></div>
+          </div>
+      </div>
+      <div class="card card-body text-center">
+          <div class="d-flex flex-row align-items-center">
+              <div class="card-header__title m-0">Real</div>
+              <div class="text-amount ml-auto font16"><?= selectC('users','where fake = 0'); ?></div>
+          </div>
+      </div>      
+      <div class="card card-body text-center">
+          <div class="d-flex flex-row align-items-center">
+              <div class="card-header__title m-0">Fake</div>
+              <div class="text-amount ml-auto font16"><?= selectC('users','where fake = 1'); ?></div>
+          </div>
+      </div>
+      <div class="card card-body text-center">
+          <div class="d-flex flex-row align-items-center">
+              <div class="card-header__title m-0">Premium</div>
+              <div class="text-amount ml-auto font16"><?= selectC('users','where premium = 1'); ?></div>
+          </div>
+      </div>
+      <div class="card card-body text-center">
+          <div class="d-flex flex-row align-items-center">
+              <div class="card-header__title m-0">Online</div>
+              <div class="text-amount ml-auto font16"><?= selectC('users','where last_access >= '.$currentTime); ?></div>
+          </div>
+      </div>
+      <div class="card card-body text-center">
+          <div class="d-flex flex-row align-items-center">
+              <div class="card-header__title m-0">Verified</div>
+              <div class="text-amount ml-auto font16"><?= selectC('users','where verified = 1'); ?></div>
+          </div>
+      </div>                                                      
+  </div>
+
+  <div class="card card-form d-flex flex-column flex-sm-row" >
+      <div class="card-form__body card-body-form-group flex">
+          <div class="row">
+              <div class="col-sm-6">
+                  <div class="form-group">
+                      <label for="filter_name">Search</label>
+                      <input id="filter_name" type="search" data-sf="search" class="form-control" placeholder="Search users by name,email,ip or id">
+                  </div>
+              </div>
+              <div class="col-sm-3">
+                  <div class="form-group">
+                      <label for="filter_category">Gender</label><br>
+                      <select id="filter_category" data-sf="gender" class="custom-select">
+                          <option value="all">All genders</option>
+                          <?php
+                              foreach($sm['genders'] as $entry){
+                                  echo '<option value="'.$entry['id'].'" style="color:#000;">
+                                  '.$entry['text'].'</option>';
+                              }
+                          ?>
+                      </select>
+                  </div>
+              </div> 
+                                                  
+              <div class="col-sm-3">
+                  <div class="form-group">
+                      <label for="filter_date">Register date</label>
+                      <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1" style="position: absolute;right: 12px;top: -3px;z-index: 9;cursor: pointer;">
+                          <input type="checkbox" id="filterDate" data-sfc="dateEnabled" class="custom-control-input" style="cursor: pointer;">
+                          <label class="custom-control-label" for="filterDate" style="cursor: pointer;"></label>
+                      </div>
+                      <input type="text" class="form-control" id="filterDateOverlay" value="<?=$date1;?> to <?=$date2;?>" style="position: absolute;width: 90%;" disabled>                       
+                      <input id="filter_date" type="text" class="form-control" placeholder="Select date ..." data-sf="date" value="<?=$date1;?> to <?=$date2;?>"  data-toggle="flatpickr" data-flatpickr-mode="range" data-flatpickr-alt-format="m/d/Y" data-flatpickr-date-format="m/d/Y" >
+                  </div>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-sm-6">
+                  <div class="form-group" style="width:45%;display: inline-table;">
+                      <label for="filter_country">Country</label><br>
+                      <select id="filter_country" data-sf="country" data-sf-country class="custom-select">
+                          <option value="all">All locations</option>
+                          <?php 
+                            $countries = getArrayDSelected('country','users');
+                            foreach ($countries as $val) { ?>
+                              <option value="<?= $val['country']; ?>"><?= $val['country']; ?></option>
+                          <?php } ?>
+                      </select>
+                  </div>
+                  <div class="form-group" style="width:45%;margin-left:5%;display: inline-table;">
+                      <label for="filter_city">City</label><br>
+                      <select id="filter_city" data-sf="city" data-sf-city disabled class="custom-select">
+                          <option value="all">All locations</option>
+                      </select>
+                  </div>                  
+              </div> 
+
+              <div class="col-sm-3">
+                  <div class="form-group">
+                      <label for="filter_category">Age</label><br>
+                      <input type="number" class="form-control" data-sf="age1" value="18" style="width: 40%;display: inline-table;">
+                      <input type="number" class="form-control" data-sf="age2" value="45" style="width: 40%;display: inline-table;margin-left: 20px">
+                  </div>
+              </div> 
+              <div class="col-sm-3">
+                  <div class="form-group">
+                      <label for="filter_category">Order by</label><br>
+                      <select id="filter_category" data-sf="order" class="custom-select">
+                          <option value="last_access">Last connection</option>                        
+                          <option value="id">Id</option>
+                          <option value="credits">Credits</option>
+                          <option value="popular">Popular</option>
+                          <option value="verified">Verified</option>
+                          <option value="moderator">Moderator</option>
+                      </select>
+                  </div>
+              </div>              
+          </div>
+          <div class="row">          
+              <div class="col-sm-2">
+                  <div class="form-group">
+                      <label for="filter_online">Online now</label>
+                      <div class="custom-control custom-checkbox mt-sm-2">
+                          <input type="checkbox" data-sfc="online" class="custom-control-input" id="filter_online" >
+                          <label class="custom-control-label" for="filter_online">Yes</label>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-sm-2">
+                  <div class="form-group">
+                      <label for="filter_real">Real user</label>
+                      <div class="custom-control custom-checkbox mt-sm-2">
+                          <input type="checkbox" class="custom-control-input" data-sfc="realUser" checked="true"  id="filter_real" >
+                          <label class="custom-control-label" for="filter_real">Yes</label>
+                      </div>
+                  </div>
+              </div>                
+              <div class="col-sm-2">
+                  <div class="form-group">
+                      <label for="filter_fake">Fake user</label>
+                      <div class="custom-control custom-checkbox mt-sm-2">
+                          <input type="checkbox" class="custom-control-input" data-sfc="fake" checked="true"  id="filter_fake" >
+                          <label class="custom-control-label" for="filter_fake">Yes</label>
+                      </div>
+                  </div>
+              </div>                                                   
+              <div class="col-sm-2">
+                  <div class="form-group">
+                      <label for="filter_premium">Premium</label>
+                      <div class="custom-control custom-checkbox mt-sm-2">
+                          <input type="checkbox" class="custom-control-input" data-sfc="premium"  id="filter_premium">
+                          <label class="custom-control-label" for="filter_premium">Yes</label>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-sm-2">
+                  <div class="form-group">
+                      <label for="filter_verified">Verified</label>
+                      <div class="custom-control custom-checkbox mt-sm-2">
+                          <input type="checkbox" class="custom-control-input" data-sfc="verified"  id="filter_verified">
+                          <label class="custom-control-label" for="filter_verified">Yes</label>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-sm-2">
+                  <div class="form-group">
+                      <label for="filter_withStory">With Story</label>
+                      <div class="custom-control custom-checkbox mt-sm-2">
+                          <input type="checkbox" class="custom-control-input" data-sfc="withStory"  id="filter_withStory">
+                          <label class="custom-control-label" for="filter_withStory">Yes</label>
+                      </div>
+                  </div>
+              </div>                            
+          </div>
+      </div>
+      <button class="btn bg-white border-left border-top border-top-sm-0 rounded-top-0 rounded-top-sm rounded-left-sm-0" data-update-user-search style="outline: none">
+        <i class="material-icons text-primary icon-30pt" data-update-search-btn>refresh</i></button>
+  </div>
+
+  <div class="card card-form  flex-column flex-sm-row divHidden" data-selected-users>
+      <div class="card-form__body card-body-form-group flex">
+          <div class="row">
+              <div class="col-sm-12">
+                  <div class="form-group">
+                      <label for="filter_name">Selected <strong data-selected-users-total></strong> users</label> 
+                  </div>
+                  <div class="avatar-group" data-checkedUsers-photos style="position: absolute;top: -7px;left: 180px">
+                  </div>
+              </div>                                                 
+          </div>
+      </div>
+
+      <div class="dropdown">
+          <button class="btn bg-white border-left border-top border-top-sm-0 rounded-top-0 rounded-top-sm rounded-left-sm-0" data-toggle="dropdown" data-caret="false" style="border-radius:0px;background: #fff;width: 100%;height: 100%">
+             <i class="material-icons icon-30pt" style="color: #000">more_horiz</i>
+          </button> 
+          <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#modal-update-onlineDay"  style="font-size: 13px">
+                <i class="material-icons icon-20pt" style="color: #000">access_time</i>
+                Update online day of <span data-selected-users-total></span> accounts
+              </a>  
+              <div class="dropdown-divider"></div>          
+              <a class="dropdown-item" href="#" onclick="adminBulkAction('delete','users');" style="font-size: 13px">
+                <i class="material-icons icon-20pt" style="color: #000">delete_forever</i>
+                Delete <span data-selected-users-total></span> accounts
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#" onclick="adminBulkAction('ban','users','email,No');" style="font-size: 13px">
+                <i class="material-icons icon-20pt" style="color: #b50000">block</i>
+                Delete and ban email of <span data-selected-users-total></span> users
+              </a>                          
+              <a class="dropdown-item" href="#" onclick="adminBulkAction('ban','users','ip,No');" style="font-size: 13px">
+                <i class="material-icons icon-20pt" style="color: #b50000">block</i>
+                Ban IP address of <span data-selected-users-total></span> users
+              </a>
+                           
+          </div>
+      </div>            
+  </div>
+
+  <div class="card-header card-header-large bg-light" data-user-search-result style="position:relative;display: none">
+      <h4 class="card-header__title"><i class="material-icons mr-3">search</i> <strong>Search result <span id="totalResult"></span> users</strong></h4>
+     <button type="button" class="btn btn-light" onclick="openWidget('createNewUserModal');" style="position: absolute;top: 10px;right: 10px;">
+        <i class="material-icons mr-1">person_add</i> Create new user
+     </button>       
+  </div>
+  <div class="card-header card-header-large bg-light" data-user-searching>
+      <h4 class="card-header__title"><i class="material-icons mr-3">search</i> <strong>Searching users...</strong></h4>
+  </div>
+
+  <div class="card card-form">
+      <div class="row no-gutters">
+          <div class="col-lg-12 card-form__body">
+
+              <div class="table-responsive border-bottom" data-search data-toggle="lists" data-lists-values='["js-lists-values-employee-name"]' style="min-height: 450px">   
+                  <table class="table mb-0 thead-border-top-0">
+                      <thead>
+                          <tr style="background: #fff">
+                              <th style="width: 18px;">
+                                  <div class="custom-control custom-checkbox">
+                                      <input type="checkbox" onclick="checkAll(this)" class="custom-control-input" data-target="#usersTable" id="customCheckAll">
+                                      <label class="custom-control-label" style="cursor: pointer;"  for="customCheckAll"><span class="text-hide">Toggle all</span></label>
+                                  </div>
+                              </th>
+                              <th  style="width: 250px;">Full name</th>
+                              <th style="width: 210px;">Location</th>
+                              <th style="width: 37px;">Type</th>
+                              <th style="width: 140px;">Last Activity</th>
+                              <th style="width: 51px;">Credits</th>
+                              <th style="width: 51px;">Premium</th>  
+                              <th style="width: 51px;">IP</th>                                                                                
+                              <th style="width: 24px;"></th>
+                          </tr>
+                      </thead>
+
+                      <tbody class="list" id="usersTable" style="height: 400px;overflow-y: scroll">
+                      </tbody>
+                  </table>
+              </div>
+
+              <div class="card-footer text-center">
+                <span class="text-muted">Showing </span>
+                <span data-current-view-users>25</span>
+                <span class="text-muted">of </span>
+                <span data-current-total-users></span> 
+                <span class="text-muted">results</span>
+                <a href="#results" data-nextPage-user-search>
+                  <i class="material-icons icon-muted float-right">arrow_forward</i>
+                </a>
+                <a href="#results" data-backPage-user-search style="display: none">
+                  <i class="material-icons icon-muted float-left" >arrow_backward</i>
+                </a>
+              </div> 
+          </div>         
+      </div>
+  </div>                     
+
+</div>
+
+
+
